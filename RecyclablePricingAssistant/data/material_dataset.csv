@@ -1,0 +1,501 @@
+text,language,materials,source
+"I have plastic bottles to sell",English,Plastic,manually_authored
+"I have old newspapers",English,Paper,manually_authored
+"We have cardboard boxes",English,Cardboard,manually_authored
+"I collected aluminum cans",English,Aluminum,manually_authored
+"I have some scrap iron",English,Other_Metals,manually_authored
+"May mga bote ng plastik ako",Filipino,Plastic,manually_authored
+"May lumang dyaryo kami",Filipino,Paper,manually_authored
+"May mga kahon ng karton ako",Filipino,Cardboard,manually_authored
+"May mga lata ng aluminum kami",Filipino,Aluminum,manually_authored
+"May bakal akong ibebenta",Filipino,Other_Metals,manually_authored
+"May plastic bottles at lumang karton kami",Taglish,Plastic|Cardboard,manually_authored
+"May newspapers at plastic containers ako",Taglish,Paper|Plastic,manually_authored
+"May aluminum cans at bakal kami",Taglish,Aluminum|Other_Metals,manually_authored
+"Can you collect my glass bottles?",English,Glass,manually_authored
+"May bote ng salamin ako",Filipino,Glass,manually_authored
+"May old glass bottles at karton kami",Taglish,Glass|Cardboard,manually_authored
+"I have some old electronic cables",English,Electronic_Waste,manually_authored
+"May lumang electronic parts ako",Filipino,Electronic_Waste,manually_authored
+"May plastic containers at aluminum cans kami",Taglish,Plastic|Aluminum,manually_authored
+"I am not sure what material these items are",English,Unknown,manually_authored
+"I have empty plastic water jugs",English,Plastic,manually_authored
+"Do you buy used plastic food tubs?",English,Plastic,manually_authored
+"These old detergent containers are plastic",English,Plastic,manually_authored
+"I collected plastic bottle caps for recycling",English,Plastic,manually_authored
+"Can I sell these plastic storage containers?",English,Plastic,manually_authored
+"May mga plastik na timba akong ibebenta",Filipino,Plastic,manually_authored
+"May mga lalagyang plastik mula sa kusina",Filipino,Plastic,manually_authored
+"May naipon akong mga bote ng softdrinks na plastik",Filipino,Plastic,manually_authored
+"Pwede bang ibenta ang mga plastik na balde?",Filipino,Plastic,manually_authored
+"May mga lumang takip ng plastik na bote kami",Filipino,Plastic,manually_authored
+"May plastic tubs at detergent containers ako",Taglish,Plastic,manually_authored
+"Can you weigh these plastic food containers?",English,Plastic,manually_authored
+"May mga plastic bottle caps at water jugs kami",Taglish,Plastic,manually_authored
+"May plastic packaging akong galing sa grocery",Taglish,Plastic,manually_authored
+"These cracked plastic bins are no longer useful",English,Plastic,manually_authored
+"May mga plastik na paso mula sa hardin",Filipino,Plastic,manually_authored
+"May empty plastic shampoo bottles akong dala",Taglish,Plastic,manually_authored
+"I separated plastic buckets from other waste",English,Plastic,manually_authored
+"May mga lumang plastic basins sa bodega",Taglish,Plastic,manually_authored
+"How much can I get for these plastic containers?",English,Plastic,manually_authored
+"I have used school notebooks to recycle",English,Paper,manually_authored
+"Do you accept old paper envelopes?",English,Paper,manually_authored
+"Our store has leftover paper shopping bags",English,Paper,manually_authored
+"I want to sell a stack of printed documents",English,Paper,manually_authored
+"Are old calendars considered recyclable paper?",English,Paper,manually_authored
+"May mga lumang papel mula sa paaralan",Filipino,Paper,manually_authored
+"May mga sobre na papel akong naipon",Filipino,Paper,manually_authored
+"May lumang kuwaderno at papel kami sa bahay",Filipino,Paper,manually_authored
+"Tinatanggap ba ninyo ang mga polyeto na papel?",Filipino,Paper,manually_authored
+"May mga paper bags akong gustong ibenta",Taglish,Paper,manually_authored
+"May printed documents at used notebooks ako",Taglish,Paper,manually_authored
+"Can these paper envelopes be recycled?",English,Paper,manually_authored
+"May mga lumang resibo at papel sa tindahan",Filipino,Paper,manually_authored
+"I gathered paper leaflets from an event",English,Paper,manually_authored
+"May scratch paper at lumang worksheets kami",Taglish,Paper,manually_authored
+"These discarded instruction manuals are made of paper",English,Paper,manually_authored
+"May mga lumang papel na pambalot ako",Filipino,Paper,manually_authored
+"May paper folders at notebooks akong dala",Taglish,Paper,manually_authored
+"Would you accept paper booklets for recycling?",English,Paper,manually_authored
+"May mga papel mula sa lumang kalendaryo",Filipino,Paper,manually_authored
+"I have empty cardboard shipping boxes",English,Cardboard,manually_authored
+"Can you collect these corrugated cartons?",English,Cardboard,manually_authored
+"We have cardboard packaging from a refrigerator",English,Cardboard,manually_authored
+"I flattened several delivery boxes for recycling",English,Cardboard,manually_authored
+"These thick cardboard sheets came from packaging",English,Cardboard,manually_authored
+"May mga kahon ng karton mula sa tindahan",Filipino,Cardboard,manually_authored
+"May malalaking karton ng appliances kami",Filipino,Cardboard,manually_authored
+"Pinatag ko ang mga kahon para madaling dalhin",Filipino,Cardboard,manually_authored
+"May mga karton mula sa mga online delivery",Filipino,Cardboard,manually_authored
+"Magkano ang bayad sa bawat kilo ng karton?",Filipino,Cardboard,manually_authored
+"May cardboard packaging at delivery cartons kami",Taglish,Cardboard,manually_authored
+"Can I sell these flattened cardboard sleeves?",English,Cardboard,manually_authored
+"May corrugated boxes akong galing sa warehouse",Taglish,Cardboard,manually_authored
+"May mga empty carton boxes mula sa appliances",Taglish,Cardboard,manually_authored
+"These cardboard dividers came from product packaging",English,Cardboard,manually_authored
+"May mga karton ng sapatos na hindi na kailangan",Filipino,Cardboard,manually_authored
+"May shipping cartons at packaging boards ako",Taglish,Cardboard,manually_authored
+"I saved the cardboard boxes from our deliveries",English,Cardboard,manually_authored
+"May tuyong karton mula sa mga kahon ng gamit",Filipino,Cardboard,manually_authored
+"Can your junkshop weigh these cardboard cartons?",English,Cardboard,manually_authored
+"I have aluminum beverage cans from a party",English,Aluminum,manually_authored
+"Do you purchase empty aluminum food cans?",English,Aluminum,manually_authored
+"These drink cans are labeled as aluminum",English,Aluminum,manually_authored
+"I sorted aluminum cans into a separate sack",English,Aluminum,manually_authored
+"Can I bring aluminum scrap for your price list?",English,Aluminum,manually_authored
+"May mga lata ng inuming aluminum ako",Filipino,Aluminum,manually_authored
+"May mga basyong lata mula sa softdrinks",Filipino,Aluminum,manually_authored
+"Pinaghiwalay namin ang mga lata na aluminum",Filipino,Aluminum,manually_authored
+"Magkano ang presyo ng aluminum kada kilo?",Filipino,Aluminum,manually_authored
+"May naipong aluminum cans sa aming tindahan",Filipino,Aluminum,manually_authored
+"May aluminum drink cans at food tins ako",Taglish,Aluminum,manually_authored
+"Pwede bang ibenta itong crushed aluminum cans?",Taglish,Aluminum,manually_authored
+"May aluminum scrap na tira mula sa proyekto",Taglish,Aluminum,manually_authored
+"I gathered empty aluminum energy drink cans",English,Aluminum,manually_authored
+"May mga lata na aluminum ang materyal",Filipino,Aluminum,manually_authored
+"These aluminum cans have already been rinsed",English,Aluminum,manually_authored
+"May aluminum beverage containers akong dala",Taglish,Aluminum,manually_authored
+"Can you estimate the value of my aluminum scrap?",English,Aluminum,manually_authored
+"May mga aluminum cans sa likod ng bahay",Filipino,Aluminum,manually_authored
+"I want to recycle these lightweight aluminum tins",English,Aluminum,manually_authored
+"I have some old steel brackets from a repair",English,Other_Metals,manually_authored
+"Do you accept copper pipe offcuts?",English,Other_Metals,manually_authored
+"There are iron rods left over from construction",English,Other_Metals,manually_authored
+"I want to sell a bundle of metal fasteners",English,Other_Metals,manually_authored
+"These old brass fittings are no longer needed",English,Other_Metals,manually_authored
+"May mga lumang tubo ng bakal kami",Filipino,Other_Metals,manually_authored
+"May mga piraso ng tanso mula sa pagkukumpuni",Filipino,Other_Metals,manually_authored
+"May bakal na pamalo sa aming bodega",Filipino,Other_Metals,manually_authored
+"Tumatanggap ba kayo ng mga brass na piyesa?",Filipino,Other_Metals,manually_authored
+"May mga bakal na turnilyo at bolt ako",Filipino,Other_Metals,manually_authored
+"May copper pipes at steel brackets akong ibebenta",Taglish,Other_Metals,manually_authored
+"May scrap iron at metal fasteners kami",Taglish,Other_Metals,manually_authored
+"Can you weigh these stainless steel parts?",English,Other_Metals,manually_authored
+"May brass handles at copper scraps ako",Taglish,Other_Metals,manually_authored
+"I found old metal hinges and steel rods",English,Other_Metals,manually_authored
+"May mga piraso ng stainless steel sa garahe",Filipino,Other_Metals,manually_authored
+"May scrap metal mula sa lumang gate kami",Taglish,Other_Metals,manually_authored
+"These iron bars were removed from a fence",English,Other_Metals,manually_authored
+"May mga metal fitting mula sa tubo",Filipino,Other_Metals,manually_authored
+"I collected copper wire pieces and brass parts",English,Other_Metals,manually_authored
+"I have empty glass sauce jars",English,Glass,manually_authored
+"Do you buy glass beverage bottles?",English,Glass,manually_authored
+"These containers are made entirely of glass",English,Glass,manually_authored
+"I gathered empty glass pickle jars",English,Glass,manually_authored
+"Can I recycle glass food storage jars?",English,Glass,manually_authored
+"May mga garapong salamin mula sa kusina",Filipino,Glass,manually_authored
+"May mga bote ng katas na gawa sa salamin",Filipino,Glass,manually_authored
+"May lumang bote ng pabango na salamin",Filipino,Glass,manually_authored
+"Tinatanggap ba ang mga basyong bote ng salamin?",Filipino,Glass,manually_authored
+"May mga garapon ng atsara na salamin kami",Filipino,Glass,manually_authored
+"May glass sauce jars at beverage bottles ako",Taglish,Glass,manually_authored
+"Pwede bang ibenta ang glass storage jars?",Taglish,Glass,manually_authored
+"May clear glass containers from the pantry kami",Taglish,Glass,manually_authored
+"These empty glass condiment bottles are recyclable",English,Glass,manually_authored
+"May mga basyong garapon ng kape na salamin",Filipino,Glass,manually_authored
+"I have several empty glass jam jars",English,Glass,manually_authored
+"May glass bottles at garapon akong nilinis",Taglish,Glass,manually_authored
+"Can you accept glass containers from food products?",English,Glass,manually_authored
+"May mga bote ng suka na gawa sa salamin",Filipino,Glass,manually_authored
+"These glass jars have been separated from other waste",English,Glass,manually_authored
+"I have a broken computer mouse",English,Electronic_Waste,manually_authored
+"Do you collect damaged phone chargers?",English,Electronic_Waste,manually_authored
+"These old laptop components no longer function",English,Electronic_Waste,manually_authored
+"I need to dispose of a faulty power adapter",English,Electronic_Waste,manually_authored
+"There are used earphones and electronic accessories",English,Electronic_Waste,manually_authored
+"May sirang charger ng cellphone ako",Filipino,Electronic_Waste,manually_authored
+"May lumang keyboard at mouse mula sa computer",Filipino,Electronic_Waste,manually_authored
+"May sirang radyo at elektronikong piyesa kami",Filipino,Electronic_Waste,manually_authored
+"Saan dadalhin ang lumang circuit board?",Filipino,Electronic_Waste,manually_authored
+"May mga lumang kable ng laptop kami",Filipino,Electronic_Waste,manually_authored
+"May broken phone chargers at earphones ako",Taglish,Electronic_Waste,manually_authored
+"May old laptop parts at computer accessories kami",Taglish,Electronic_Waste,manually_authored
+"Tinatanggap ba ang damaged power adapters?",Taglish,Electronic_Waste,manually_authored
+"May sirang electronic remote controls ako",Taglish,Electronic_Waste,manually_authored
+"I have an outdated router and modem",English,Electronic_Waste,manually_authored
+"May lumang printer parts na hindi na gumagana",Filipino,Electronic_Waste,manually_authored
+"May damaged tablet at electronic accessories kami",Taglish,Electronic_Waste,manually_authored
+"Can you tell me where to bring a broken monitor?",English,Electronic_Waste,manually_authored
+"May sirang computer speakers akong itatabi muna",Taglish,Electronic_Waste,manually_authored
+"These old electronic circuit components came from a device",English,Electronic_Waste,manually_authored
+"I have a few items but cannot identify them",English,Unknown,manually_authored
+"Can you inspect this mixed pile first?",English,Unknown,manually_authored
+"I do not know what these objects are made from",English,Unknown,manually_authored
+"How much are these things worth?",English,Unknown,manually_authored
+"Someone gave me assorted scrap and I need help identifying it",English,Unknown,manually_authored
+"May ilang gamit ako pero hindi ko alam ang materyal",Filipino,Unknown,manually_authored
+"Hindi ko matukoy kung anong klaseng bagay ang mga ito",Filipino,Unknown,manually_authored
+"May halo-halong bagay dito na gusto kong ipasuri",Filipino,Unknown,manually_authored
+"Ano kaya ang materyal ng mga gamit na ito?",Filipino,Unknown,manually_authored
+"May dala akong mga bagay na walang label",Filipino,Unknown,manually_authored
+"May assorted scrap ako, puwede bang tingnan muna?",Taglish,Unknown,manually_authored
+"Hindi ko sure kung anong material itong items",Taglish,Unknown,manually_authored
+"Can you identify these items before I sort them?",English,Unknown,manually_authored
+"May mixed items kami pero hindi pa sorted",Taglish,Unknown,manually_authored
+"I found these objects in storage and need identification",English,Unknown,manually_authored
+"Hindi ko alam kung recyclable ang mga ito",Filipino,Unknown,manually_authored
+"May mga lumang gamit akong hindi makilala",Filipino,Unknown,manually_authored
+"Please help me figure out the material of this item",English,Unknown,manually_authored
+"May scrap items ako pero walang detalye",Taglish,Unknown,manually_authored
+"I only know that these items are used",English,Unknown,manually_authored
+"I have plastic bottles and paper bags",English,Plastic|Paper,manually_authored
+"We collected cardboard cartons and aluminum cans",English,Cardboard|Aluminum,manually_authored
+"May glass jars at plastic containers kami",Filipino,Glass|Plastic,manually_authored
+"May lumang papel at bakal akong ibebenta",Filipino,Paper|Other_Metals,manually_authored
+"May cardboard boxes at electronic cables ako",Taglish,Cardboard|Electronic_Waste,manually_authored
+"I have glass bottles and steel pipes",English,Glass|Other_Metals,manually_authored
+"May aluminum cans at glass jars kami",Taglish,Aluminum|Glass,manually_authored
+"I collected plastic tubs and old notebooks",English,Plastic|Paper,manually_authored
+"May karton at mga lata ng aluminum kami",Filipino,Cardboard|Aluminum,manually_authored
+"May copper scraps at lumang computer cables ako",Taglish,Other_Metals|Electronic_Waste,manually_authored
+"We have plastic jugs, cardboard boxes, and glass jars",English,Plastic|Cardboard|Glass,manually_authored
+"May paper bags at plastic food containers kami",Taglish,Paper|Plastic,manually_authored
+"I want to sell aluminum cans and copper pipes",English,Aluminum|Other_Metals,manually_authored
+"May glass bottles at old newspapers ako",Taglish,Glass|Paper,manually_authored
+"May sirang charger at plastic containers kami",Taglish,Electronic_Waste|Plastic,manually_authored
+"I found cardboard packaging and paper documents",English,Cardboard|Paper,manually_authored
+"May bakal na rods at aluminum cans akong dala",Taglish,Other_Metals|Aluminum,manually_authored
+"We separated glass jars, paper, and plastic bottles",English,Glass|Paper|Plastic,manually_authored
+"May electronic parts at mga kahon ng karton kami",Filipino,Electronic_Waste|Cardboard,manually_authored
+"May aluminum cans, paper sheets, at plastic tubs ako",Taglish,Aluminum|Paper|Plastic,manually_authored
+"I have plastic shampoo bottles and glass jars",English,Plastic|Glass,manually_authored
+"May lumang dyaryo at corrugated cartons kami",Taglish,Paper|Cardboard,manually_authored
+"May bakal at bote ng salamin akong ibebenta",Filipino,Other_Metals|Glass,manually_authored
+"These computer cables and aluminum cans are for recycling",English,Electronic_Waste|Aluminum,manually_authored
+"May paper notebooks at sirang keyboard ako",Taglish,Paper|Electronic_Waste,manually_authored
+"We have steel brackets and cardboard packaging",English,Other_Metals|Cardboard,manually_authored
+"May plastic bottles, glass jars, at aluminum cans kami",Taglish,Plastic|Glass|Aluminum,manually_authored
+"May lumang papel, karton, at bakal ako",Filipino,Paper|Cardboard|Other_Metals,manually_authored
+"I gathered glass bottles, plastic jugs, and old newspapers",English,Glass|Plastic|Paper,manually_authored
+"May computer parts at metal pipes kami",Taglish,Electronic_Waste|Other_Metals,manually_authored
+"I have aluminum drink cans and paper cartons",English,Aluminum|Paper,manually_authored
+"May plastic containers at lumang notebooks akong dala",Taglish,Plastic|Paper,manually_authored
+"We found glass jars and corrugated cardboard boxes",English,Glass|Cardboard,manually_authored
+"May aluminum cans at broken phone chargers kami",Taglish,Aluminum|Electronic_Waste,manually_authored
+"May steel pipes, plastic tubs, at karton kami",Taglish,Other_Metals|Plastic|Cardboard,manually_authored
+"I want to recycle paper flyers and glass bottles",English,Paper|Glass,manually_authored
+"May sirang mouse, lumang bakal, at plastic jugs ako",Taglish,Electronic_Waste|Other_Metals|Plastic,manually_authored
+"These cardboard boxes contain separate glass jars",English,Cardboard|Glass,manually_authored
+"May papel, aluminum cans, at electronic wires kami",Taglish,Paper|Aluminum|Electronic_Waste,manually_authored
+"I collected plastic bottles, cardboard cartons, and steel scraps",English,Plastic|Cardboard|Other_Metals,manually_authored
+"I have empty plastic water jugs to sell",English,Plastic,synthetically_generated
+"Can your shop take these cracked plastic storage bins?",English,Plastic,synthetically_generated
+"There are plastic food containers in our garage",English,Plastic,synthetically_generated
+"I collected several detergent bottles made of plastic",English,Plastic,synthetically_generated
+"Do you buy used plastic pails by the kilo?",English,Plastic,synthetically_generated
+"These are disposable plastic cups from an event",English,Plastic,synthetically_generated
+"I found plastic packaging and wrappers in the storeroom",English,Plastic,synthetically_generated
+"We have a sack of plastic drink bottles",English,Plastic,synthetically_generated
+"The old plastic basin is no longer needed",English,Plastic,synthetically_generated
+"I want to dispose of these plastic shampoo bottles",English,Plastic,synthetically_generated
+"May mga galon na plastik akong gustong ipabenta",Filipino,Plastic,synthetically_generated
+"May sirang plastic na palanggana kami",Taglish,Plastic,synthetically_generated
+"May mga bote ng softdrinks na plastik sa bahay",Taglish,Plastic,synthetically_generated
+"Tumatanggap ba kayo ng lumang plastic timba?",Filipino,Plastic,synthetically_generated
+"May supot at plastic packaging akong naipon",Taglish,Plastic,synthetically_generated
+"May mga lalagyan ng pagkain na gawa sa plastik",Filipino,Plastic,synthetically_generated
+"Ibebenta ko sana itong mga plastic na paso",Taglish,Plastic,synthetically_generated
+"May isang sako kaming plastic bottles",Taglish,Plastic,synthetically_generated
+"May mga bote ng shampoo at sabon ako",Filipino,Plastic,synthetically_generated
+"May mga basag na plastic storage box kami",Taglish,Plastic,synthetically_generated
+"May lumang plastic na tabo at timba sa bodega",Taglish,Plastic,synthetically_generated
+"Puwede bang ibenta ang mga plastik na lalagyan ng mantika?",Filipino,Plastic,synthetically_generated
+"May plastic cups at food containers pagkatapos ng handaan",Taglish,Plastic,synthetically_generated
+"Naghahanap ako ng junkshop para sa plastic jugs",Taglish,Plastic,synthetically_generated
+"May mga empty plastic bottles po ako",Taglish,Plastic,synthetically_generated
+"These plastic crates are taking up space in the shop",English,Plastic,synthetically_generated
+"I have a bundle of rigid plastic packaging",English,Plastic,synthetically_generated
+"The containers are plastic, not glass",English,Plastic,synthetically_generated
+"Can I sell old plastic plant pots?",English,Plastic,synthetically_generated
+"I sorted the plastic bottles away from the other trash",English,Plastic,synthetically_generated
+"I have old magazines and loose paper to recycle",English,Paper,synthetically_generated
+"Can I sell a bundle of used office paper?",English,Paper,synthetically_generated
+"We cleared out boxes of old school worksheets",English,Paper,synthetically_generated
+"There are paper flyers left over from an event",English,Paper,synthetically_generated
+"I collected discarded notebooks from the classroom",English,Paper,synthetically_generated
+"Do you accept paper envelopes?",English,Paper,synthetically_generated
+"These are stacks of printed documents for recycling",English,Paper,synthetically_generated
+"I have old paperback pages and newspapers",English,Paper,synthetically_generated
+"The paper bags are clean and dry",English,Paper,synthetically_generated
+"We have a sack filled with used writing paper",English,Paper,synthetically_generated
+"May mga lumang magasin akong ibebenta",Filipino,Paper,synthetically_generated
+"May isang kahon ng papel mula sa opisina",Filipino,Paper,synthetically_generated
+"May mga lumang notebook at bond paper kami",Taglish,Paper,synthetically_generated
+"Tumatanggap ba kayo ng diyaryo kada kilo?",Taglish,Paper,synthetically_generated
+"May mga sobre at flyers na hindi na kailangan",Taglish,Paper,synthetically_generated
+"Nakaipon ako ng mga papel mula sa school",Taglish,Paper,synthetically_generated
+"May lumang libro at papel akong gustong ipa-recycle",Filipino,Paper,synthetically_generated
+"May mga papel na galing sa printer",Taglish,Paper,synthetically_generated
+"Puwede bang ibenta ang lumang magazines?",Taglish,Paper,synthetically_generated
+"May mga papel na nakatabi sa stockroom",Taglish,Paper,synthetically_generated
+"May tambak na dyaryo sa bahay ng lola ko",Taglish,Paper,synthetically_generated
+"May mga resibo at lumang dokumento kami",Taglish,Paper,synthetically_generated
+"May mga paper bags mula sa grocery",Taglish,Paper,synthetically_generated
+"Nais kong ipa-recycle ang mga lumang papel",Filipino,Paper,synthetically_generated
+"May mga karton? Hindi, papel lang ang dala ko",Filipino,Paper,synthetically_generated
+"These old catalogs are mostly paper",English,Paper,synthetically_generated
+"I want to recycle used printer paper",English,Paper,synthetically_generated
+"A bundle of newspapers is ready for pickup",English,Paper,synthetically_generated
+"The material is paper from old notebooks",English,Paper,synthetically_generated
+"We separated paper sheets from cardboard boxes",English,Paper,synthetically_generated
+"I have flattened cardboard cartons from deliveries",English,Cardboard,synthetically_generated
+"Can you collect these large shipping boxes?",English,Cardboard,synthetically_generated
+"There are corrugated cardboard sheets in the stockroom",English,Cardboard,synthetically_generated
+"I have several empty appliance cartons",English,Cardboard,synthetically_generated
+"These cardboard boxes came from online orders",English,Cardboard,synthetically_generated
+"Do you buy clean cardboard packaging?",English,Cardboard,synthetically_generated
+"We broke down the boxes to save storage space",English,Cardboard,synthetically_generated
+"I have a stack of cardboard dividers",English,Cardboard,synthetically_generated
+"The shop has leftover cardboard from product shipments",English,Cardboard,synthetically_generated
+"Can these thick cardboard cartons be recycled?",English,Cardboard,synthetically_generated
+"May mga kahon ng karton mula sa delivery",Filipino,Cardboard,synthetically_generated
+"May tambak na cardboard boxes sa tindahan",Taglish,Cardboard,synthetically_generated
+"Gusto kong ibenta ang mga kahon ng appliances",Taglish,Cardboard,synthetically_generated
+"May mga patag na karton mula sa online orders",Taglish,Cardboard,synthetically_generated
+"Tumatanggap ba kayo ng corrugated cardboard?",Taglish,Cardboard,synthetically_generated
+"May malaking kahon ng refrigerator na wala nang laman",Filipino,Cardboard,synthetically_generated
+"May mga karton ng sapatos sa bodega",Taglish,Cardboard,synthetically_generated
+"Nakaipon kami ng mga kahon mula sa grocery delivery",Taglish,Cardboard,synthetically_generated
+"May mga cardboard divider at packaging kami",Taglish,Cardboard,synthetically_generated
+"Puwede bang kunin ang mga lumang kahon ng karton?",Filipino,Cardboard,synthetically_generated
+"May mga karton ng electric fan at rice cooker",Taglish,Cardboard,synthetically_generated
+"May kahon-kahong karton mula sa tindahan",Filipino,Cardboard,synthetically_generated
+"May mga box na karton sa likod ng bahay",Taglish,Cardboard,synthetically_generated
+"Itatabi ko muna ang mga karton para maibenta",Filipino,Cardboard,synthetically_generated
+"May mga karton na pangbalot ng gamit",Filipino,Cardboard,synthetically_generated
+"The boxes are cardboard rather than plastic",English,Cardboard,synthetically_generated
+"I have a bundle of corrugated cardboard pieces",English,Cardboard,synthetically_generated
+"Our warehouse has cardboard packaging waste",English,Cardboard,synthetically_generated
+"These cardboard cartons are dry and uncontaminated",English,Cardboard,synthetically_generated
+"Please identify this pile of flattened cardboard boxes",English,Cardboard,synthetically_generated
+"I have aluminum drink cans from a family gathering",English,Aluminum,synthetically_generated
+"Are these aluminum cooking trays accepted?",English,Aluminum,synthetically_generated
+"We collected aluminum cans for recycling",English,Aluminum,synthetically_generated
+"I have lightweight aluminum scraps from a window frame",English,Aluminum,synthetically_generated
+"Can I sell clean aluminum foil trays?",English,Aluminum,synthetically_generated
+"There are aluminum lids and cans in this bag",English,Aluminum,synthetically_generated
+"The old frame is made of aluminum",English,Aluminum,synthetically_generated
+"I have a container of crushed beverage cans",English,Aluminum,synthetically_generated
+"Do you accept aluminum pots?",English,Aluminum,synthetically_generated
+"These metal pieces are specifically aluminum",English,Aluminum,synthetically_generated
+"May mga lata ng aluminum mula sa inuman",Taglish,Aluminum,synthetically_generated
+"May aluminum window frame kaming pinalitan",Taglish,Aluminum,synthetically_generated
+"Tumatanggap ba kayo ng aluminum na kaldero?",Taglish,Aluminum,synthetically_generated
+"May isang sako ng aluminum cans ako",Taglish,Aluminum,synthetically_generated
+"May mga aluminum tray at takip sa kusina",Taglish,Aluminum,synthetically_generated
+"Ibebenta sana namin ang lumang aluminum frame",Taglish,Aluminum,synthetically_generated
+"May pira-pirasong aluminum mula sa repair",Taglish,Aluminum,synthetically_generated
+"May mga lata ng inumin na dinurog namin",Taglish,Aluminum,synthetically_generated
+"Aluminum po ang materyal ng mga lumang frame",Taglish,Aluminum,synthetically_generated
+"May aluminum foil trays na hindi na gagamitin",Taglish,Aluminum,synthetically_generated
+"May mga lata ng softdrinks na aluminum",Taglish,Aluminum,synthetically_generated
+"Puwede bang timbangin ang aluminum scraps namin?",Taglish,Aluminum,synthetically_generated
+"May lumang aluminum ladder sa bodega",Taglish,Aluminum,synthetically_generated
+"Nakuha namin ang aluminum parts mula sa lumang gamit",Taglish,Aluminum,synthetically_generated
+"May mga aluminum can at foil container kami",Taglish,Aluminum,synthetically_generated
+"The scrap pieces came from an aluminum railing",English,Aluminum,synthetically_generated
+"I separated aluminum cans from steel items",English,Aluminum,synthetically_generated
+"There are used aluminum pans in the storage area",English,Aluminum,synthetically_generated
+"I want to recycle aluminum beverage containers",English,Aluminum,synthetically_generated
+"These are aluminum sheets left from a repair job",English,Aluminum,synthetically_generated
+"I have rusty iron bars from a renovation",English,Other_Metals,synthetically_generated
+"Can your shop buy scrap copper wire?",English,Other_Metals,synthetically_generated
+"There are old steel brackets in our workshop",English,Other_Metals,synthetically_generated
+"I found brass fittings during a cleanup",English,Other_Metals,synthetically_generated
+"These metal pipes are made of iron",English,Other_Metals,synthetically_generated
+"I have a bucket of mixed steel screws",English,Other_Metals,synthetically_generated
+"Do you accept copper scraps by weight?",English,Other_Metals,synthetically_generated
+"We removed a steel gate and kept the pieces",English,Other_Metals,synthetically_generated
+"There are old metal hinges and bolts",English,Other_Metals,synthetically_generated
+"The scrap includes iron rods and steel plates",English,Other_Metals,synthetically_generated
+"May mga bakal na tubo mula sa repair",Taglish,Other_Metals,synthetically_generated
+"May lumang tansong wire kami",Taglish,Other_Metals,synthetically_generated
+"Tumatanggap ba kayo ng brass fittings?",Taglish,Other_Metals,synthetically_generated
+"May mga piraso ng bakal galing sa gate",Taglish,Other_Metals,synthetically_generated
+"May scrap metal mula sa pagkukumpuni ng bahay",Taglish,Other_Metals,synthetically_generated
+"May mga steel bracket at turnilyo kami",Taglish,Other_Metals,synthetically_generated
+"Ibebenta ko ang mga lumang iron bars",Taglish,Other_Metals,synthetically_generated
+"May tansong piyesa sa lumang makina",Taglish,Other_Metals,synthetically_generated
+"May mga bakal na bisagra at bolt sa bodega",Taglish,Other_Metals,synthetically_generated
+"May lumang metal rack na gawa sa bakal",Taglish,Other_Metals,synthetically_generated
+"May mga piraso ng copper pipe ako",Taglish,Other_Metals,synthetically_generated
+"Puwede bang ibenta ang mga bakal na kadena?",Filipino,Other_Metals,synthetically_generated
+"May mga brass handle mula sa lumang pinto",Taglish,Other_Metals,synthetically_generated
+"May steel sheets na natira sa construction",Taglish,Other_Metals,synthetically_generated
+"May scrap na stainless steel mula sa kusina",Taglish,Other_Metals,synthetically_generated
+"The old railing is steel, not aluminum",English,Other_Metals,synthetically_generated
+"I have iron nails and metal offcuts",English,Other_Metals,synthetically_generated
+"These copper connectors came from an electrical repair",English,Other_Metals,synthetically_generated
+"A pile of steel parts is ready for recycling",English,Other_Metals,synthetically_generated
+"I sorted brass, copper, and iron pieces separately",English,Other_Metals,synthetically_generated
+"I have empty glass jars from the kitchen",English,Glass,synthetically_generated
+"Can you accept glass beverage bottles?",English,Glass,synthetically_generated
+"We collected clear glass bottles for recycling",English,Glass,synthetically_generated
+"There are glass sauce jars in this crate",English,Glass,synthetically_generated
+"I have several empty perfume bottles made of glass",English,Glass,synthetically_generated
+"Do you buy glass containers?",English,Glass,synthetically_generated
+"These are intact glass jars for recycling",English,Glass,synthetically_generated
+"I saved glass bottles from a small event",English,Glass,synthetically_generated
+"The containers are glass, not plastic",English,Glass,synthetically_generated
+"I have a box of used glass food jars",English,Glass,synthetically_generated
+"May mga bote ng salamin akong naipon",Filipino,Glass,synthetically_generated
+"May garapong salamin mula sa kusina",Filipino,Glass,synthetically_generated
+"Tumatanggap ba kayo ng glass bottles?",Taglish,Glass,synthetically_generated
+"May mga garapon ng pasta sauce kami",Taglish,Glass,synthetically_generated
+"May lumang bote ng pabango na salamin",Taglish,Glass,synthetically_generated
+"Ibebenta sana namin ang mga bote ng juice na salamin",Taglish,Glass,synthetically_generated
+"May mga lalagyan na salamin at hindi plastik",Taglish,Glass,synthetically_generated
+"May mga bote ng suka at toyo na salamin",Taglish,Glass,synthetically_generated
+"May kahon ng glass jars sa tindahan",Taglish,Glass,synthetically_generated
+"Puwede bang dalhin ang mga bote ng salamin?",Filipino,Glass,synthetically_generated
+"May mga garapon ng jam na walang laman",Taglish,Glass,synthetically_generated
+"May mga bote ng softdrinks na gawa sa salamin",Taglish,Glass,synthetically_generated
+"May mga glass containers mula sa restaurant",Taglish,Glass,synthetically_generated
+"Itatabi ko ang mga lumang garapong salamin",Filipino,Glass,synthetically_generated
+"May ilang bote ng salamin mula sa pantry",Taglish,Glass,synthetically_generated
+"These glass jars are clean and empty",English,Glass,synthetically_generated
+"I want to recycle glass condiment bottles",English,Glass,synthetically_generated
+"The item is a glass container with a screw lid",English,Glass,synthetically_generated
+"We have reusable glass bottles after an event",English,Glass,synthetically_generated
+"I separated glass jars from plastic containers",English,Glass,synthetically_generated
+"I have a broken computer mouse to dispose of",English,Electronic_Waste,synthetically_generated
+"Do you accept old phone chargers?",English,Electronic_Waste,synthetically_generated
+"There are damaged USB cables in this box",English,Electronic_Waste,synthetically_generated
+"I found an outdated router and keyboard",English,Electronic_Waste,synthetically_generated
+"Can electronic circuit boards be accepted?",English,Electronic_Waste,synthetically_generated
+"We replaced a broken computer monitor",English,Electronic_Waste,synthetically_generated
+"I have a box of old remote controls",English,Electronic_Waste,synthetically_generated
+"These are used earphones with damaged wires",English,Electronic_Waste,synthetically_generated
+"I want to recycle an old power adapter",English,Electronic_Waste,synthetically_generated
+"There are computer components from an upgrade",English,Electronic_Waste,synthetically_generated
+"May sirang charger ng cellphone ako",Filipino,Electronic_Waste,synthetically_generated
+"May mga lumang USB cable sa drawer",Taglish,Electronic_Waste,synthetically_generated
+"Tumatanggap ba kayo ng sirang keyboard?",Taglish,Electronic_Waste,synthetically_generated
+"May lumang router at modem kami",Taglish,Electronic_Waste,synthetically_generated
+"May electronic parts mula sa sirang computer",Taglish,Electronic_Waste,synthetically_generated
+"May mga lumang earphones na hindi gumagana",Taglish,Electronic_Waste,synthetically_generated
+"Ibebenta sana ang sirang power adapter",Taglish,Electronic_Waste,synthetically_generated
+"May circuit board mula sa lumang appliance",Taglish,Electronic_Waste,synthetically_generated
+"May sirang computer mouse at keyboard ako",Taglish,Electronic_Waste,synthetically_generated
+"May mga remote control na sira na",Taglish,Electronic_Waste,synthetically_generated
+"May lumang cellphone na hindi na bumubukas",Taglish,Electronic_Waste,synthetically_generated
+"Paano i-recycle ang mga lumang electronic cables?",Taglish,Electronic_Waste,synthetically_generated
+"May sirang speaker at computer accessories kami",Taglish,Electronic_Waste,synthetically_generated
+"May mga charger at adapter sa kahon",Taglish,Electronic_Waste,synthetically_generated
+"May lumang printer na hindi na gumagana",Taglish,Electronic_Waste,synthetically_generated
+"I have a damaged tablet and its charging cable",English,Electronic_Waste,synthetically_generated
+"These are discarded electronic components",English,Electronic_Waste,synthetically_generated
+"I removed the old circuit board from a device",English,Electronic_Waste,synthetically_generated
+"The box contains used computer accessories",English,Electronic_Waste,synthetically_generated
+"We have broken electronic gadgets awaiting disposal",English,Electronic_Waste,synthetically_generated
+"I have some items but I cannot tell what they are made of",English,Unknown,synthetically_generated
+"Can you identify these things from my description?",English,Unknown,synthetically_generated
+"May mga gamit ako pero hindi ko alam ang materyal",Filipino,Unknown,synthetically_generated
+"Mixed items are in the sack and have not been sorted",English,Unknown,synthetically_generated
+"May halo-halong gamit kami na hindi pa natutukoy",Taglish,Unknown,synthetically_generated
+"I found these objects in storage but have no labels",English,Unknown,synthetically_generated
+"Hindi ko matukoy kung anong klaseng materyal ito",Filipino,Unknown,synthetically_generated
+"I have recyclable-looking things, but I am unsure what they are",English,Unknown,synthetically_generated
+"May mga lumang bagay ako na hindi ko kilala",Filipino,Unknown,synthetically_generated
+"The items are mixed together and I cannot describe them",English,Unknown,synthetically_generated
+"Ano po kaya ang materyal ng mga gamit na ito?",Filipino,Unknown,synthetically_generated
+"I only know that these items are old",English,Unknown,synthetically_generated
+"May laman ang sako pero hindi ko pa ito nabubuksan",Filipino,Unknown,synthetically_generated
+"I have a pile of assorted objects with no details",English,Unknown,synthetically_generated
+"Hindi ko alam kung plastik, metal, o iba ang mga ito",Filipino,Unknown,synthetically_generated
+"Can I send a description later? I am not sure yet",English,Unknown,synthetically_generated
+"May mga bagay sa bodega na hindi ko pa na-check",Taglish,Unknown,synthetically_generated
+"The material is unclear from the information I have",English,Unknown,synthetically_generated
+"May mixed materials pero hindi ko alam ang bawat isa",Taglish,Unknown,synthetically_generated
+"I do not know the names or materials of these items",English,Unknown,synthetically_generated
+"Hindi ko pa alam kung ano ang puwedeng i-recycle rito",Filipino,Unknown,synthetically_generated
+"These are assorted leftovers from a cleanup",English,Unknown,synthetically_generated
+"May mga lumang piyesa pero hindi ko alam kung saan galing",Taglish,Unknown,synthetically_generated
+"I cannot determine the material from the current description",English,Unknown,synthetically_generated
+"May ilang gamit na nakolekta pero hindi pa na-sort",Taglish,Unknown,synthetically_generated
+"I have a bag of things someone gave me, with no details",English,Unknown,synthetically_generated
+"Hindi malinaw kung anong materyal ang tinutukoy ko",Filipino,Unknown,synthetically_generated
+"There are various items here; I have not inspected them",English,Unknown,synthetically_generated
+"May mga bagay akong gustong ipasuri muna",Filipino,Unknown,synthetically_generated
+"I need help identifying the materials because I have no information",English,Unknown,synthetically_generated
+"I have plastic bottles and old newspapers",English,Plastic|Paper,synthetically_generated
+"May plastic containers at mga kahon ng karton kami",Taglish,Plastic|Cardboard,synthetically_generated
+"I collected glass jars and aluminum cans",English,Glass|Aluminum,synthetically_generated
+"May bakal at tansong wire mula sa repair",Taglish,Other_Metals,synthetically_generated
+"We have cardboard boxes and paper bags",English,Cardboard|Paper,synthetically_generated
+"May glass bottles at plastic jugs ako",Taglish,Glass|Plastic,synthetically_generated
+"There are aluminum cans and steel screws in the bin",English,Aluminum|Other_Metals,synthetically_generated
+"May lumang papel at electronic cables kami",Taglish,Paper|Electronic_Waste,synthetically_generated
+"I want to recycle plastic pails and glass jars",English,Plastic|Glass,synthetically_generated
+"May cardboard packaging at aluminum trays kami",Taglish,Cardboard|Aluminum,synthetically_generated
+"The sack contains paper sheets and plastic wrappers",English,Paper|Plastic,synthetically_generated
+"May bakal na tubo at lumang charger ako",Taglish,Other_Metals|Electronic_Waste,synthetically_generated
+"We have glass sauce jars and cardboard cartons",English,Glass|Cardboard,synthetically_generated
+"May aluminum cans at plastic bottles pagkatapos ng event",Taglish,Aluminum|Plastic,synthetically_generated
+"I found copper wire and old computer cables",English,Other_Metals|Electronic_Waste,synthetically_generated
+"May papel, karton, at plastic bottles sa stockroom",Taglish,Paper|Cardboard|Plastic,synthetically_generated
+"We have glass containers, paper bags, and aluminum cans",English,Glass|Paper|Aluminum,synthetically_generated
+"May plastic timba at bakal na rack kami",Taglish,Plastic|Other_Metals,synthetically_generated
+"I separated cardboard boxes from glass bottles",English,Cardboard|Glass,synthetically_generated
+"May old notebooks at sirang computer mouse ako",Taglish,Paper|Electronic_Waste,synthetically_generated
+"Plastic food tubs and aluminum drink cans are ready",English,Plastic|Aluminum,synthetically_generated
+"May garapong salamin at paper envelopes kami",Taglish,Glass|Paper,synthetically_generated
+"I have steel brackets, cardboard boxes, and plastic bins",English,Other_Metals|Cardboard|Plastic,synthetically_generated
+"May aluminum frame at glass panel mula sa renovation",Taglish,Aluminum|Glass,synthetically_generated
+"We collected newspapers, cardboard, and glass jars",English,Paper|Cardboard|Glass,synthetically_generated
+"May plastic bottles, copper wire, at lumang notebook",Taglish,Plastic|Other_Metals|Paper,synthetically_generated
+"The box has a charger, aluminum cans, and plastic packaging",English,Electronic_Waste|Aluminum|Plastic,synthetically_generated
+"May karton, glass bottles, at bakal na piyesa kami",Taglish,Cardboard|Glass|Other_Metals,synthetically_generated
+"I have paper flyers and electronic circuit boards",English,Paper|Electronic_Waste,synthetically_generated
+"May plastic packaging at glass jars sa kusina",Taglish,Plastic|Glass,synthetically_generated
+"Cardboard cartons and steel pipes came from the storage room",English,Cardboard|Other_Metals,synthetically_generated
+"May aluminum trays, paper bags, at plastic cups kami",Taglish,Aluminum|Paper|Plastic,synthetically_generated
+"I want to sell glass bottles and old metal hinges",English,Glass|Other_Metals,synthetically_generated
+"May lumang charger at karton ng appliance kami",Taglish,Electronic_Waste|Cardboard,synthetically_generated
+"We have plastic crates, paper sheets, and glass jars",English,Plastic|Paper|Glass,synthetically_generated
+"May lata ng aluminum at lumang copper wire ako",Taglish,Aluminum|Other_Metals,synthetically_generated
+"I sorted cardboard packaging and electronic cables",English,Cardboard|Electronic_Waste,synthetically_generated
+"May plastic containers, glass bottles, at paper bags kami",Taglish,Plastic|Glass|Paper,synthetically_generated
+"Aluminum cans and cardboard shipping boxes are in the garage",English,Aluminum|Cardboard,synthetically_generated
+"May bakal na bracket, plastic bin, at lumang papel",Taglish,Other_Metals|Plastic|Paper,synthetically_generated
