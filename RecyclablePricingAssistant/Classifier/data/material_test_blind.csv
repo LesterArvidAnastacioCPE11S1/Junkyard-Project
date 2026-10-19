@@ -22,3 +22,53 @@ May tansong wire at bakal na rods kami,Taglish,Other_Metals,manually_authored
 "We have newspapers and cardboard boxes, plus a few odd items we cannot identify.",English,Cardboard|Paper,manually_authored
 "Old circuit boards, a broken laptop charger, and tangled USB cables from the office.",English,Electronic_Waste,manually_authored
 May mga lumang sako ng bigas na plastik at mga bote ng soda na plastik din.,Taglish,Plastic,manually_authored
+"Boss, may ibebenta sana ako: mga lumang diyaryo, magazine, at papel na pang-print. Nakatali na po lahat.",Taglish,Paper,synthetically_generated
+"We found a pile of clean PET drink bottles and a few empty cooking-oil jugs while clearing the balcony. The items are all plastic.",English,Plastic,synthetically_generated
+"May mga lumang kahon ng sapatos at karton ng appliance na tinupi namin. Hindi nabasa sa ulan at puwede nang ikarga.",Filipino,Cardboard,synthetically_generated
+"The canteen saved its aluminum soda cans and shallow aluminum food trays in a separate sack. Can those be recycled?",English,Aluminum,synthetically_generated
+"May mga bakal na tubo, piraso ng copper wire, at sirang metal hinges mula sa pagawaan. Scrap metal po ang mga ito.",Filipino,Other_Metals,synthetically_generated
+"We have empty glass jars from pasta sauce, honey, and jam. The lids have been removed and the jars are stored in a crate.",English,Glass,synthetically_generated
+"May sirang cellphone, charger, at earphones po akong hindi na magamit. Gusto ko sana itong ipa-recycle bilang electronic waste.",Filipino,Electronic_Waste,synthetically_generated
+"We are clearing a shop after closing and have bundles of old receipts, paper invoices, and newspapers. There are no cardboard boxes in this batch.",English,Paper,synthetically_generated
+"Boss, puro plastic na timba, galon, at lalagyan ng detergent ang dala namin. Wala nang laman ang mga ito.",Taglish,Plastic,synthetically_generated
+"The delivery team left us with a stack of corrugated cartons and heavy cardboard packaging. We folded everything to save space.",English,Cardboard,synthetically_generated
+"May mga aluminum kaldero at lata po kami, kasama ang ilang aluminum trays na ginamit sa catering. Gusto naming malaman kung tinatanggap ninyo.",Filipino,Aluminum,synthetically_generated
+"A broken motherboard, damaged computer mouse, and dead power adapter were found in the office drawer. Are these electronic waste?",English,Electronic_Waste,synthetically_generated
+"May mga bote ng soft drinks na salamin at garapong pinaglagyan ng suka. Nahiwalay na ang mga ito sa ibang lalagyan.",Filipino,Glass,synthetically_generated
+"The renovation left iron rods, a steel shelf frame, and several rusty bolts. We want to sell the metal scrap by weight.",English,Other_Metals,synthetically_generated
+"May mga lumang papel at diyaryo po akong ibebenta. Mayroon ding isang saradong sako na hindi ko pa nabubuksan at hindi ko alam kung ano ang laman.",Filipino,Paper,synthetically_generated
+"I have a sack of assorted things from a storage room. I cannot tell what any of them are made from, and I have not opened the wrapping.",English,Unknown,synthetically_generated
+"May mga lalagyan po kami at maliliit na piraso ng kung anu-ano, pero hindi ko alam kung plastik, metal, o salamin ang mga ito.",Filipino,Unknown,synthetically_generated
+"We have empty plastic bottles for sale. The glass jars on the next shelf belong to our neighbor and should not be included in this lot.",English,Plastic,synthetically_generated
+"I am selling aluminum cans and cardboard cartons today. The plastic tubs are being kept for reuse, so please do not count them with the items for sale.",English,Aluminum|Cardboard,synthetically_generated
+"May mga karton at lumang diyaryo akong ibebenta. Yung glass bottles ay gagamitin pa namin, kaya hindi kasama sa ibebenta.",Filipino,Cardboard|Paper,synthetically_generated
+"We have a mixed bag from a cleanup, but I only know that some items are containers and some are small parts. I cannot identify their materials yet.",English,Unknown,synthetically_generated
+"Boss, may plastic shampoo bottles at mga lata ng aluminum po. Yung lumang keyboard ay hindi na kasama dahil naibigay na namin sa iba.",Taglish,Aluminum|Plastic,synthetically_generated
+"A box contains old paper manuals, a cardboard packaging sleeve, and plastic cable ties. The manuals and packaging are dry and ready to sell.",English,Cardboard|Paper|Plastic,synthetically_generated
+"May garapon na salamin, bote ng tubig na plastic, at mga lumang diyaryo po kaming dala. Nasa magkakahiwalay na supot ang bawat isa.",Filipino,Glass|Paper|Plastic,synthetically_generated
+"We found a handful of items in an unlabeled bag. They could be metal, glass, or plastic, but we have not checked them and cannot say for sure.",English,Unknown,synthetically_generated
+"May aluminum cans po akong ibebenta. Ang mga bote ng salamin sa bahay ay hindi kasama dahil gagamitin pa namin.",Filipino,Aluminum,synthetically_generated
+"We are selling glass sauce jars and cardboard cartons. The old steel brackets are staying with the landlord, so they are not part of the sale.",English,Cardboard|Glass,synthetically_generated
+"May lumang charger at sirang mouse po kami, kasama ang plastic bottles na naipon sa bahay. Hindi pa namin alam kung ano ang laman ng isang kahon na walang label.",Taglish,Electronic_Waste|Plastic,synthetically_generated
+"I have some loose pieces from a drawer, but I do not know whether they are from an appliance, packaging, or a container. I cannot identify their materials from the description.",English,Unknown,synthetically_generated
+"May mga piraso ng bakal at copper wire po mula sa repair, pati mga lumang papel na manual. May sirang router din na hindi na gumagana.",Filipino,Electronic_Waste|Other_Metals|Paper,synthetically_generated
+"Our shop has plastic detergent containers, aluminum cans, and old newspapers. The cardboard cartons were collected by another recycler yesterday.",English,Aluminum|Paper|Plastic,synthetically_generated
+"May mga kahon ng karton, bote ng salamin, at plastic food containers po mula sa tindahan. Ang mga aluminum cans ay naibenta na namin kahapon.",Filipino,Cardboard|Glass|Plastic,synthetically_generated
+"The items are in a sack and look like small pieces of different materials, but I do not know their composition or original use.",English,Unknown,synthetically_generated
+"Boss, may old computer keyboard, damaged charger, at circuit board po kami. May copper wires at bakal na bracket din mula sa repair shop.",Taglish,Electronic_Waste|Other_Metals,synthetically_generated
+"We are clearing a classroom and found used worksheets, paper notebooks, cardboard project boxes, and plastic drink bottles. All are dry.",English,Cardboard|Paper|Plastic,synthetically_generated
+"May aluminum tray, garapong salamin, at lumang steel shelf parts po. Kasama rin ang plastic pails at empty bottles.",Filipino,Aluminum|Glass|Other_Metals|Plastic,synthetically_generated
+"I found a box of broken accessories: a USB cable, a power adapter, and a small router board. I do not know if the other wrapped items inside are electronic parts.",English,Electronic_Waste,synthetically_generated
+"May mga bote ng shampoo at plastic gallons po kaming ibebenta. Ang mga lumang papel sa opisina ay hindi kasama sa lot na ito.",Filipino,Plastic,synthetically_generated
+"We have glass beverage bottles and aluminum cans from a family gathering. The plastic cups are reusable and are not being sold.",English,Aluminum|Glass,synthetically_generated
+"May mga karton ng delivery at lumang diyaryo po sa bodega. May nakita rin kaming sirang printer at keyboard mula sa opisina.",Taglish,Cardboard|Electronic_Waste|Paper,synthetically_generated
+"A metal workshop has copper wire scraps, iron rods, and steel bolts. The items are ordinary metal offcuts rather than functioning products.",English,Other_Metals,synthetically_generated
+"May mga plastic bottles at garapong salamin po ako. Hindi ko matukoy ang laman ng isang supot dahil hindi ko pa ito nabubuksan.",Filipino,Glass|Plastic,synthetically_generated
+"Our store is selling old magazines, cardboard cartons, and empty plastic detergent jugs. The aluminum cans were already picked up by another buyer.",English,Cardboard|Paper|Plastic,synthetically_generated
+"Boss, may sirang cellphone at charger po, pati mga bote ng salamin at lata ng soft drinks. Yung karton ay naiwan sa ibang bodega.",Taglish,Aluminum|Electronic_Waste|Glass,synthetically_generated
+"I have a few items from a cleanup but can only describe them as containers and scraps. I cannot confidently identify the material of any item.",English,Unknown,synthetically_generated
+"May old paper files, cardboard boxes, at plastic organizers po kami sa office. May broken mouse at power adapter din na hindi na gagamitin.",Taglish,Cardboard|Electronic_Waste|Paper|Plastic,synthetically_generated
+"We have a stack of newspapers and paper envelopes, along with several empty glass jars. The plastic bottles are for household reuse and are not part of this batch.",English,Glass|Paper,synthetically_generated
+"May bakal na hinges, aluminum cans, at mga lumang notebook po kaming ibebenta. Nahiwalay na ang mga ito sa mga gamit na itatago pa namin.",Filipino,Aluminum|Other_Metals|Paper,synthetically_generated
+"A storage box has several unidentified objects of mixed shapes and weights. I do not know if they are recyclable or what materials they contain.",English,Unknown,synthetically_generated
+"May plastic food tubs, cardboard cartons, at glass bottles po mula sa restaurant. May mga lumang copper wires din mula sa repair ng ilaw.",Filipino,Cardboard|Glass|Other_Metals|Plastic,synthetically_generated

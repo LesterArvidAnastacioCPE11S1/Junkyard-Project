@@ -8,8 +8,8 @@ above them.
 import sys
 from collections import Counter
 
-from RecyclablePricingAssistant.Classifier.dataset_utils import TEST_PATHS, load_test_dataset, split_labels
-from RecyclablePricingAssistant.Classifier.material_classifier import classify_material, labels_or_unknown, load_model
+from dataset_utils import TEST_PATHS, load_test_dataset, split_labels
+from material_classifier import classify_material, labels_or_unknown, load_model
 
 SHOW_PASSING = True          # set False to print only the failing messages
 PREVIEW_CHARS = 90

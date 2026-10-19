@@ -1,6 +1,6 @@
 import pandas as pd
 
-from RecyclablePricingAssistant.Classifier.dataset_utils import (
+from dataset_utils import (
     LONG_PATH, LONG_TEST_PATH, SHORT_PATH, TEST_PATHS, VOCAB_PATH,
     find_problems, load_dataset,
 )

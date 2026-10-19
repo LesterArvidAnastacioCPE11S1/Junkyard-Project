@@ -3,11 +3,11 @@ import pandas as pd
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import MultiLabelBinarizer
 
-from RecyclablePricingAssistant.Classifier.dataset_utils import (
+from dataset_utils import (
     LONG_PATH, SHORT_PATH, VOCAB_PATH,
     find_problems, load_all_test_texts, load_dataset, split_labels,
 )
-from RecyclablePricingAssistant.Classifier.material_classifier import (
+from material_classifier import (
     MODEL_PATH, build_model, classify_material, labels_or_unknown,
 )
 
