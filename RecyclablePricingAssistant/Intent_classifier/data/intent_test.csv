@@ -1,0 +1,249 @@
+text,language,intent,source
+"hm po per kilo ng karton?",Taglish,Price_Inquiry,manually_authored
+"pls tell me price of bakal today",Taglish,Price_Inquiry,manually_authored
+"How much is the rate of alum cans now?",English,Price_Inquiry,manually_authored
+"Magkano na po ngayon ang tanso, bumaba ba?",Filipino,Price_Inquiry,manually_authored
+"Hi! Do you buy broken electric fans? What is the price?",English,Price_Inquiry,manually_authored
+"boss anu presyo ng bote ngaun",Taglish,Price_Inquiry,manually_authored
+"What are your buying rates for scrap this week? Thanks",English,Price_Inquiry,manually_authored
+"Magkano po ba ang bili sa sirang laptop at cellphone?",Taglish,Price_Inquiry,manually_authored
+"Hello po. Ano po ang kasalukuyang presyo ng PET bottles per kilo?",Taglish,Price_Inquiry,manually_authored
+"how much for 20 kilos of newspapers?",English,Price_Inquiry,manually_authored
+"Magkano po ang kilo ng mga plastik na bote ngayong araw?",Filipino,Price_Inquiry,manually_authored
+"price of galvanized iron sheets po?",Taglish,Price_Inquiry,manually_authored
+"Pa pickup po sa Lunes ng umaga, 2 sako ng bote",Taglish,Pickup_Request,manually_authored
+"Can you collect from our house tomorrow? Address is 14 Sampaguita St, Brgy. Culiat.",English,Pickup_Request,manually_authored
+"pls send ur driver today, items ready na po",Taglish,Pickup_Request,manually_authored
+"Magpapakuha po ako ng mga lumang gamit sa bahay, pwede po ba sa Sabado?",Taglish,Pickup_Request,manually_authored
+"Request for pickup: 3 boxes of newspapers, near the barangay hall. Anytime after 1pm.",English,Pickup_Request,manually_authored
+"Maaari po bang paki-daan ang aming mga karton bukas ng hapon?",Filipino,Pickup_Request,manually_authored
+"Hi, is your truck coming by our street this week? We have scrap to be collected.",English,Pickup_Request,manually_authored
+"boss pakuha po ng lata at bote sa amin mamaya, nasa labas na po",Taglish,Pickup_Request,manually_authored
+"I need a pickup asap, our storage room is full of paper and cardboard.",English,Pickup_Request,manually_authored
+"Pwede po bang ipakuha ang mga bakal sa aming bakuran sa Huwebes?",Filipino,Pickup_Request,manually_authored
+"Hello, we're at Tandang Sora. Can your driver pass by at 4pm to get the bottles?",English,Pickup_Request,manually_authored
+"pa-schedule po ng pickup next week, di ko pa alam exact day",Taglish,Pickup_Request,manually_authored
+"We generate around 5 tons of cardboard monthly, can we negotiate a rate?",English,Bulk_Negotiation,manually_authored
+"boss malaki po volume namin, 1 truck na plastic every week, may special price po ba?",Taglish,Bulk_Negotiation,manually_authored
+"Kung higit 1000 kilos po ang dadalhin, may mas mataas po bang presyo?",Filipino,Bulk_Negotiation,manually_authored
+"Looking for a long term buyer of our aluminum scrap. Can we discuss pricing?",English,Bulk_Negotiation,manually_authored
+"Yung kabilang junkshop 12 pesos per kilo sa karton, kaya niyo po ba yun for 800 kilos?",Taglish,Bulk_Negotiation,manually_authored
+"Our company disposes of metal waste in large volume. Do you have a contract rate?",English,Bulk_Negotiation,manually_authored
+"Gusto po naming makipag-negotiate ng presyo para sa aming regular na bentahan ng papel.",Taglish,Bulk_Negotiation,manually_authored
+"Is it possible to get a higher rate if we deliver 2 tons of glass bottles ourselves?",English,Bulk_Negotiation,manually_authored
+"may bulk discount po ba kayo sa lata? mga 700 kilos po",Taglish,Bulk_Negotiation,manually_authored
+"Magbibigay po ba kayo ng mas magandang presyo kung buwan-buwan kaming magdadala ng maraming kilo ng bakal?",Filipino,Bulk_Negotiation,manually_authored
+"Can you quote us a wholesale price for 3000 plastic bottles?",English,Bulk_Negotiation,manually_authored
+"Pwede po ba natin pag-usapan yung rate? Marami po kasi kaming scrap na wire, nasa 400 kilos.",Taglish,Bulk_Negotiation,manually_authored
+"Reminder: your parcel is out for delivery today.",English,Other,manually_authored
+"ok po boss thanks",Taglish,Other,manually_authored
+"Hi do u sell sacks? I need empty sacks for my store",English,Other,manually_authored
+"Your Globe promo expires tomorrow. Reply YES to extend.",English,Other,manually_authored
+"san po banda ang shop niyo? first time ko pupunta",Taglish,Other,manually_authored
+"Congrats! You won a brand new phone. Click bit.ly/claim123 now.",English,Other,manually_authored
+"Salamat po sa pagbili kahapon, ingat po kayo palagi.",Filipino,Other,manually_authored
+"Good evening po, may nakita po ba kayong naiwan kong bag?",Taglish,Other,manually_authored
+"Your verification code is 5521. It expires in 5 minutes.",English,Other,manually_authored
+"Pasensya na po, hindi po ako ito, maling text.",Filipino,Other,manually_authored
+"Happy new year po sa inyong lahat! More blessings!",Taglish,Other,manually_authored
+"Are you open tomorrow? Just checking.",English,Other,
+"how much na po ang copper boss",Taglish,Price_Inquiry,synthetically_generated
+"magkano kg ng karton?",Taglish,Price_Inquiry,synthetically_generated
+"Hi, price per kilo of PET? thanks",English,Price_Inquiry,synthetically_generated
+"Whats the rate for scrap aluminium sheets po?",Taglish,Price_Inquiry,synthetically_generated
+"Pwede pa-ask presyo ng bakal ngayon? salamat po",Taglish,Price_Inquiry,synthetically_generated
+"Do you still buy newspapers? how much per kg?",English,Price_Inquiry,synthetically_generated
+"ano price ng tansong kawad per kilo ngayon po?",Taglish,Price_Inquiry,synthetically_generated
+"How much would 5 kilos of cans get me?",English,Price_Inquiry,synthetically_generated
+"Magkano po bili niyo sa bote ng gin?",Filipino,Price_Inquiry,synthetically_generated
+"Good morning po! Magkano po ba ang kilo ng plastic bottles at karton?",Taglish,Price_Inquiry,synthetically_generated
+"hm yero po",Taglish,Price_Inquiry,synthetically_generated
+"What is your price for old books and notebooks?",English,Price_Inquiry,synthetically_generated
+"Could you update me on the price of iron today?",English,Price_Inquiry,synthetically_generated
+"Boss mataas ba presyo ng lata ngayon? magkano po?",Taglish,Price_Inquiry,synthetically_generated
+"How much do you pay per kilo for aluminum wire?",English,Price_Inquiry,synthetically_generated
+"Hello! Magkano ang bili ng sirang rice cooker?",Taglish,Price_Inquiry,synthetically_generated
+"Pa-send naman po ng price list ng scrap, thank you",Taglish,Price_Inquiry,synthetically_generated
+"Magkano po ang kilo ng mga lumang kuwaderno?",Filipino,Price_Inquiry,synthetically_generated
+"What is the rate for transparent plastic bottles?",English,Price_Inquiry,synthetically_generated
+"ano pong rate sa lumang bakal na kama?",Taglish,Price_Inquiry,synthetically_generated
+"Is cardboard still 4 pesos per kilo?",English,Price_Inquiry,synthetically_generated
+"Magkano po yung bili niyo sa sirang cellphone charger at cable?",Taglish,Price_Inquiry,synthetically_generated
+"pls how much per kilo ng salamin na bote",Taglish,Price_Inquiry,synthetically_generated
+"Ano po ang buying price ng PET bottles, yung malinis na?",Taglish,Price_Inquiry,synthetically_generated
+"Quick check: current price for brass?",English,Price_Inquiry,synthetically_generated
+"Magkano po ba ang bayad sa dalawang sako ng lata?",Filipino,Price_Inquiry,synthetically_generated
+"Hi po! Presyo po ng mga lumang diyaryo ngayon?",Filipino,Price_Inquiry,synthetically_generated
+"What's your rate on plastic gallons?",English,Price_Inquiry,synthetically_generated
+"Magkano po ang bili sa stainless na lababo?",Filipino,Price_Inquiry,synthetically_generated
+"Can you tell me how much aluminum cans are per kilo this week?",English,Price_Inquiry,synthetically_generated
+"boss nagbabago ba presyo araw-araw? magkano po tanso ngayon",Taglish,Price_Inquiry,synthetically_generated
+"Magkano po yung presyo ng bakal na tubo, kilo po",Filipino,Price_Inquiry,synthetically_generated
+"how much is mixed paper po",Taglish,Price_Inquiry,synthetically_generated
+"Ano po ang presyo ng mga basyong bote ng softdrinks?",Filipino,Price_Inquiry,synthetically_generated
+"I just want to know the current rate for copper pipes.",English,Price_Inquiry,synthetically_generated
+"Magkano na po ang kilo ng plastik na timba?",Filipino,Price_Inquiry,synthetically_generated
+"Hello, magkano po ang rate ninyo sa lata ng sardinas?",Taglish,Price_Inquiry,synthetically_generated
+"How much for scrap electric motors?",English,Price_Inquiry,synthetically_generated
+"Magkano po ang bili ninyo ng computer parts na sira na?",Taglish,Price_Inquiry,synthetically_generated
+"Presyo ng karton ngayon? Thanks.",Taglish,Price_Inquiry,synthetically_generated
+"May I ask the price per kilo of used paper and cardboard?",English,Price_Inquiry,synthetically_generated
+"boss kamusta presyo ng aluminum? tumaas?",Taglish,Price_Inquiry,synthetically_generated
+"Magkano po ang isang kilo ng lumang yero?",Filipino,Price_Inquiry,synthetically_generated
+"How much are you buying glass jars at today?",English,Price_Inquiry,synthetically_generated
+"Ano po ba ang bili sa recyclable na plastik, per kilo?",Taglish,Price_Inquiry,synthetically_generated
+"Magkano po ang bili niyo sa electric wires na may plastic pa?",Taglish,Price_Inquiry,synthetically_generated
+"price check po sa lata and bote",Taglish,Price_Inquiry,synthetically_generated
+"How much would you give me for old kitchen pots made of aluminum?",English,Price_Inquiry,synthetically_generated
+"Magkano po ang karton sa inyo kumpara sa dati?",Filipino,Price_Inquiry,synthetically_generated
+"Hi po, ask lang po magkano ang kilo ng PET ngayon.",Taglish,Price_Inquiry,synthetically_generated
+"pa pickup po bukas ng umaga, may 3 sako ng bote",Taglish,Pickup_Request,synthetically_generated
+"Hi, pls collect our old newspapers on Friday. 7 Mabini St.",English,Pickup_Request,synthetically_generated
+"Can you send your truck to our warehouse this week? We have scrap metal ready.",English,Pickup_Request,synthetically_generated
+"pwede po ba kunin niyo na ngayon yung karton? nasa gate na po",Taglish,Pickup_Request,synthetically_generated
+"Gusto ko pong magpa-pickup ng mga lumang appliances, nasa Brgy. Sikatuna po kami.",Taglish,Pickup_Request,synthetically_generated
+"Could a driver stop by around 3pm? Items are bagged near the door.",English,Pickup_Request,synthetically_generated
+"boss pa-collect po ng plastic, 2 sako lang po",Taglish,Pickup_Request,synthetically_generated
+"I would like to book a collection for Sunday morning please.",English,Pickup_Request,synthetically_generated
+"Maaari po ba kayong dumaan sa bahay namin sa Martes para kumuha ng mga bote?",Filipino,Pickup_Request,synthetically_generated
+"Please come get the aluminum cans, they're in front of 33 Kalayaan Ave.",English,Pickup_Request,synthetically_generated
+"Do you collect from houses? I have around 20 kilos of paper and want it picked up.",English,Pickup_Request,synthetically_generated
+"pa-schedule po ng pickup, Sat 10am, 5 boxes po",Taglish,Pickup_Request,synthetically_generated
+"Kunin niyo na po yung mga lumang bakal sa bakuran namin bukas, salamat po",Filipino,Pickup_Request,synthetically_generated
+"My family is moving. Please pick up all our scrap on Thursday.",English,Pickup_Request,synthetically_generated
+"Hello po, pwede po ba ipakuha yung sirang aircon at electric fan?",Taglish,Pickup_Request,synthetically_generated
+"Request po ng driver today, nasa bahay lang po ako buong araw.",Taglish,Pickup_Request,synthetically_generated
+"Can the truck come by this evening? The bottles are inside the garage.",English,Pickup_Request,synthetically_generated
+"Pakikuha po ang aming mga karton sa harap ng tindahan bukas ng umaga.",Filipino,Pickup_Request,synthetically_generated
+"Sir, pwede po ba kayong pumunta sa school namin Friday para kunin ang mga lumang papel?",Taglish,Pickup_Request,synthetically_generated
+"Need your driver to pick up cans, location is Brgy. Commonwealth.",English,Pickup_Request,synthetically_generated
+"pa-add po sa collection bukas, 4 sacks of plastic",Taglish,Pickup_Request,synthetically_generated
+"Magpapakuha po ako ng mga bote sa Linggo ng hapon, nasa Novaliches po.",Filipino,Pickup_Request,synthetically_generated
+"Is there a driver free tomorrow to get our scrap iron? Please advise.",English,Pickup_Request,synthetically_generated
+"boss dumaan kayo dito mamaya, kunin niyo yung mga lata na naka-sako",Taglish,Pickup_Request,synthetically_generated
+"We need someone to haul away old metal shelves from our store.",English,Pickup_Request,synthetically_generated
+"Maaari po bang ipakuha ang mga lumang gamit na bakal namin sa Sabado?",Filipino,Pickup_Request,synthetically_generated
+"Pa-pick up po please, glass bottles po. Tomorrow after 2pm.",Taglish,Pickup_Request,synthetically_generated
+"Our cardboard is stacked outside. Can you collect it before noon tomorrow?",English,Pickup_Request,synthetically_generated
+"Puwede po bang kunin ng driver ninyo ang mga diyaryo namin ngayong hapon?",Filipino,Pickup_Request,synthetically_generated
+"Hello, could I request a pickup at 12 Bonifacio St. on Monday?",English,Pickup_Request,synthetically_generated
+"pwede po magpa-pickup ng electronics? sirang monitor po at keyboard",Taglish,Pickup_Request,synthetically_generated
+"boss may truck po ba kayong pwedeng pumunta sa Quezon Ave? gusto ko ipakuha scrap namin",Taglish,Pickup_Request,synthetically_generated
+"Please send a truck for our scrap. It's too heavy for us to bring to your shop.",English,Pickup_Request,synthetically_generated
+"Magpapa-pickup po sana ng plastic na timba at galon bukas.",Taglish,Pickup_Request,synthetically_generated
+"Pakipuntahan po ang aming bahay sa Biyernes para kunin ang mga bote at lata.",Filipino,Pickup_Request,synthetically_generated
+"Hi! Could you collect our paper waste on Wednesday morning?",English,Pickup_Request,synthetically_generated
+"kuya paki-pickup naman po ng mga karton, ready na po",Taglish,Pickup_Request,synthetically_generated
+"Gusto kong ipakuha ngayong linggo ang mga sirang kagamitan namin.",Filipino,Pickup_Request,synthetically_generated
+"Our driver can't deliver, so we need you to pick up the metal scraps from our shop.",English,Pickup_Request,synthetically_generated
+"pa-pick up po next week, mga old magazines po",Taglish,Pickup_Request,synthetically_generated
+"Maaari po bang makahingi ng pickup bukas? May 6 na sako po ng lata.",Filipino,Pickup_Request,synthetically_generated
+"I have around 15 kilos of cans. Can someone pick them up today?",English,Pickup_Request,synthetically_generated
+"Pa-collect po ng scrap, nasa Barangay Fairview po kami.",Taglish,Pickup_Request,synthetically_generated
+"Is it possible to request a pickup on short notice? We're clearing our garage.",English,Pickup_Request,synthetically_generated
+"Pwede po ba kayong mag-pickup sa mismong araw na ito? Naka-ready na po lahat.",Taglish,Pickup_Request,synthetically_generated
+"Kunin niyo na lang po dito sa bahay yung mga plastik, di po kasi ako makakapunta sa shop.",Taglish,Pickup_Request,synthetically_generated
+"Please arrange a driver for Tuesday at 9am to collect our glass bottles.",English,Pickup_Request,synthetically_generated
+"Pakikuha po ng mga lumang diyaryo namin sa umaga ng Huwebes.",Filipino,Pickup_Request,synthetically_generated
+"boss, request pickup, 10 kilos aluminum po, bukas ng hapon",Taglish,Pickup_Request,synthetically_generated
+"Can your people come to our home to take the scrap? We're elderly and can't carry it.",English,Pickup_Request,synthetically_generated
+"We have about 2 tons of paper every month. Can you give us a special rate?",English,Bulk_Negotiation,synthetically_generated
+"boss gusto ko po sana mag-supply ng plastic regularly, may better price po ba?",Taglish,Bulk_Negotiation,synthetically_generated
+"Can you do better than 8 pesos per kilo if we deliver 1 ton of cardboard?",English,Bulk_Negotiation,synthetically_generated
+"Maramihan po ang aming ibebenta, ano po ang pinakamataas ninyong presyo?",Filipino,Bulk_Negotiation,synthetically_generated
+"Our company has a large stock of scrap metal. Can we discuss a price?",English,Bulk_Negotiation,synthetically_generated
+"Magkano po ang bili niyo kung 1500 kilos ng karton? Baka po puwedeng tawaran.",Taglish,Bulk_Negotiation,synthetically_generated
+"We're a bottling plant, with lots of broken glass every week. Do you offer contract pricing?",English,Bulk_Negotiation,synthetically_generated
+"hello po, truck-load po ng bakal yung ibebenta namin, mapag-uusapan po ba presyo?",Taglish,Bulk_Negotiation,synthetically_generated
+"Would you commit to a fixed rate for our monthly aluminum scrap?",English,Bulk_Negotiation,synthetically_generated
+"May ibang buyer na nag-offer ng 15 per kilo sa tanso, kayang tapatan for 300 kilos?",Taglish,Bulk_Negotiation,synthetically_generated
+"We need a regular buyer for 1 ton of plastic per week. What's your offer?",English,Bulk_Negotiation,synthetically_generated
+"Para sa 800 kilong lata, may diskwento po ba o dagdag sa presyo?",Filipino,Bulk_Negotiation,synthetically_generated
+"Can we negotiate if I sell all my scrap in one go, around 3 tons?",English,Bulk_Negotiation,synthetically_generated
+"Gusto po naming ng long term agreement sa scrap na papel, malaki po ang volume namin.",Taglish,Bulk_Negotiation,synthetically_generated
+"I represent a construction company with tons of steel offcuts. What is your best rate?",English,Bulk_Negotiation,synthetically_generated
+"boss kung 2 tons na plastic po, magkano na po rate?",Taglish,Bulk_Negotiation,synthetically_generated
+"Our factory can supply 500 kilos of copper every month. Interested in a deal?",English,Bulk_Negotiation,synthetically_generated
+"pwede po bang pag-usapan ang presyo, galing po kaming pabrika",Taglish,Bulk_Negotiation,synthetically_generated
+"If we sell in volume, will you increase your buying price?",English,Bulk_Negotiation,synthetically_generated
+"Mayroon po kaming ilang toneladang bote, handa po ba kayong makipag-negosasyon?",Filipino,Bulk_Negotiation,synthetically_generated
+"Can you offer a wholesale rate for 4000 aluminum cans?",English,Bulk_Negotiation,synthetically_generated
+"boss, 1 ton po yung karton namin every 2 weeks, may special rate po ba kayo for regular supplier?",Taglish,Bulk_Negotiation,synthetically_generated
+"We're selling our entire warehouse stock of scrap. Please give us your best price.",English,Bulk_Negotiation,synthetically_generated
+"Kung 600 kilos ng papel ang dadalhin, puwede po bang mas mataas ang bili?",Taglish,Bulk_Negotiation,synthetically_generated
+"Looking to negotiate a monthly rate for 5 tons of plastic.",English,Bulk_Negotiation,synthetically_generated
+"Magbibigay po ba kayo ng presyong pang-maramihan para sa dalawang toneladang bakal namin?",Filipino,Bulk_Negotiation,synthetically_generated
+"Our competitor offered more for the same 700 kilos. Can you beat their price?",English,Bulk_Negotiation,synthetically_generated
+"boss gusto ko pong mag-bulk sale ng bote, mga 2000 pieces, magkano po?",Taglish,Bulk_Negotiation,synthetically_generated
+"Hello, is there a contract rate for companies that sell scrap regularly?",English,Bulk_Negotiation,synthetically_generated
+"Malaking volume po ang aming mga lata buwan-buwan, makakakuha po ba kami ng mas magandang presyo?",Filipino,Bulk_Negotiation,synthetically_generated
+"We have a big batch of mixed recyclables, nearly 2 tons. Can we agree on a package price?",English,Bulk_Negotiation,synthetically_generated
+"Hi po, interested po kami sa tuloy-tuloy na bentahan ng karton, pa-quote po for 1 ton",Taglish,Bulk_Negotiation,synthetically_generated
+"Can I get a better price if I sell you 1200 kilos of scrap iron?",English,Bulk_Negotiation,synthetically_generated
+"Marami po kaming lumang makina na bakal, pwede po bang mag-offer kayo ng package price?",Taglish,Bulk_Negotiation,synthetically_generated
+"We are a school with 3 tons of old paper after our renovation. What will you pay for the whole lot?",English,Bulk_Negotiation,synthetically_generated
+"boss pag 500 kilos na aluminum po ba may kaltas o dagdag sa bili?",Taglish,Bulk_Negotiation,synthetically_generated
+"Gusto po naming makipagkasundo sa mas mataas na presyo dahil regular po kaming magsusuplay.",Filipino,Bulk_Negotiation,synthetically_generated
+"Do you negotiate prices for large lots of copper wire? We have about 600 kilos.",English,Bulk_Negotiation,synthetically_generated
+"We can deliver 2 truckloads of cardboard each month. What price can you commit to?",English,Bulk_Negotiation,synthetically_generated
+"Para po sa mahigit isang libong kilo ng bote, ano po ang maibibigay ninyong presyo?",Filipino,Bulk_Negotiation,synthetically_generated
+"Can we talk about the price? We have a lot of glass bottles from our events business.",English,Bulk_Negotiation,synthetically_generated
+"boss, marami po kaming plastic na lalagyan galing sa pabrika, pwede po bang tawaran?",Taglish,Bulk_Negotiation,synthetically_generated
+"We want to sign a supply agreement for our paper waste. Please send your terms.",English,Bulk_Negotiation,synthetically_generated
+"Mataas po ba ang rate kung 1 trak ng karton ang ibebenta ko?",Taglish,Bulk_Negotiation,synthetically_generated
+"Is there room to negotiate on the price for 900 kilos of mixed plastic?",English,Bulk_Negotiation,synthetically_generated
+"Magsu-supply po sana kami ng aluminum scrap every week, anong price na po?",Taglish,Bulk_Negotiation,synthetically_generated
+"Our company is clearing 8 tons of steel. Can we sit down and discuss your rate?",English,Bulk_Negotiation,synthetically_generated
+"boss may special price po ba para sa mga regular na nagbebenta ng maramihan?",Taglish,Bulk_Negotiation,synthetically_generated
+"We'd like a quote for a bulk purchase of our scrap copper, roughly 350 kilos.",English,Bulk_Negotiation,synthetically_generated
+"Kung isang buong trak po ng scrap ang dadalhin, puwede po bang pag-usapan ang rate?",Taglish,Bulk_Negotiation,synthetically_generated
+"Your parcel from Shopee is arriving today, please prepare PHP 350.",English,Other,synthetically_generated
+"Thank you for the pickup yesterday, your driver was very polite.",English,Other,synthetically_generated
+"salamat po boss, nakuha ko na po yung bayad",Taglish,Other,synthetically_generated
+"Hi, can I charge my phone at your shop for a bit?",English,Other,synthetically_generated
+"Your OTP is 118273. Never share it with anyone, including our staff.",English,Other,synthetically_generated
+"Hello po, nagbebenta po ba kayo ng timbangan?",Taglish,Other,synthetically_generated
+"Saan po ang pinakamalapit na sakayan papunta sa shop ninyo?",Taglish,Other,synthetically_generated
+"Congratulations! You've been pre-approved for a PHP 20,000 loan. Apply now.",English,Other,synthetically_generated
+"ano po oras kayo nagbubukas tuwing Lunes?",Taglish,Other,synthetically_generated
+"Hi po, hiring po ba kayo ng helper? Mag-aapply po sana ako.",Taglish,Other,synthetically_generated
+"Good morning po, bukas po ba kayo ngayong holiday?",Taglish,Other,synthetically_generated
+"Sorry po, wrong recipient po pala.",Taglish,Other,synthetically_generated
+"Your Smart prepaid promo will expire tonight. Reload now to keep your data.",English,Other,synthetically_generated
+"Boss, naiwan ko po yata ang aking wallet sa shop kahapon.",Taglish,Other,synthetically_generated
+"Happy anniversary po sa shop ninyo! Sana dumami pa ang customers.",Taglish,Other,synthetically_generated
+"Can you recommend where to buy a second-hand tricycle?",English,Other,synthetically_generated
+"Dear subscriber, your bill of PHP 1,299 is due on the 28th.",English,Other,synthetically_generated
+"Wala po kayo sa shop kanina, nagpunta po ako. Kailan po kayo babalik?",Taglish,Other,synthetically_generated
+"Ok po, thank you po sa info.",Taglish,Other,synthetically_generated
+"Mag-ingat po kayo sa bagyo, boss. Stay safe!",Taglish,Other,synthetically_generated
+"You have 1 new voicemail. Call 233 to listen.",English,Other,synthetically_generated
+"Hi, I saw your shop on Facebook. Do you also repair bicycles?",English,Other,synthetically_generated
+"Pasensya na po sa abala, nagkamali po ako ng pinadalhan.",Filipino,Other,synthetically_generated
+"Your Maya wallet received PHP 1,000 from a friend.",English,Other,synthetically_generated
+"Is your shop okay with students visiting for a school project about recycling?",English,Other,synthetically_generated
+"Good evening po, tanong ko lang po kung may CR po sa shop ninyo.",Taglish,Other,synthetically_generated
+"Reminder: Barangay clean-up drive this Saturday 6 AM. Everyone is invited.",English,Other,synthetically_generated
+"Hi sir, I'm a student doing a thesis. May I interview you about your business?",English,Other,synthetically_generated
+"FREE iPhone giveaway! Like and share our page to join.",English,Other,synthetically_generated
+"Salamat po sa pagtanggap ng mga gamit namin kahapon, ang bilis po ng proseso.",Taglish,Other,synthetically_generated
+"Boss, available po ba ang number ni Mang Tonyo? May ipapakiusap lang po.",Taglish,Other,synthetically_generated
+"Your delivery rider is on the way. Please be ready to receive your order.",English,Other,synthetically_generated
+"Hello po, ikaw po ba si Ate Marites? Kumusta po kayo?",Taglish,Other,synthetically_generated
+"What brand of weighing scale do you use? I want to buy one for my store.",English,Other,synthetically_generated
+"Paalala: Bukas na po ang huling araw ng enrollment sa ating paaralan.",Taglish,Other,synthetically_generated
+"Good day! Are you looking for additional manpower for your shop?",English,Other,synthetically_generated
+"Nagtanong lang po ako kung may nakita kayong itim na backpack dito.",Filipino,Other,synthetically_generated
+"Dear customer, you have 3 unread messages in your inbox.",English,Other,synthetically_generated
+"boss, ok na po yung bayad ko, salamat sa lahat!",Taglish,Other,synthetically_generated
+"Hi, I'd like to report that the road in front of your shop is blocked.",English,Other,synthetically_generated
+"Hello po, ano po pangalan ng may-ari ng junkshop na ito? Para po sa permit namin.",Taglish,Other,synthetically_generated
+"Gusto ko lang pong mag-sorry kasi hindi ako nakarating kanina.",Taglish,Other,synthetically_generated
+"Your Grab ride is arriving in 2 minutes. Look for a white Toyota Vios.",English,Other,synthetically_generated
+"Pwede po ba kayong maging sponsor sa aming barangay fiesta?",Taglish,Other,synthetically_generated
+"Thank you for choosing us! Please rate your experience from 1 to 5.",English,Other,synthetically_generated
+"Boss, may alam po ba kayong marunong mag-ayos ng ref?",Taglish,Other,synthetically_generated
+"Is this the number of the junkshop owner? Just checking, sorry for disturbing.",English,Other,synthetically_generated
+"Mensahe mula sa bangko: Huwag ibigay ang iyong PIN kaninuman.",Filipino,Other,synthetically_generated
+"boss kumusta, matagal na tayong di nagkita. Update ka naman.",Taglish,Other,synthetically_generated
+"Merry Christmas po sa inyong lahat, boss!",Taglish,Other,synthetically_generated

@@ -1,4 +1,4 @@
-# this is the main classifier for the Recyclable Pricing Assistant. It is trained on the
+# this is the main classifier for the Recyclable Pricing Assistant and it is trained on the
 # "materials" column of the dataset, which is a pipe-separated list of materials.
 import re
 from dataclasses import dataclass
@@ -10,7 +10,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.pipeline import Pipeline, make_union
 
-MODEL_PATH = Path("models/material_classifier.joblib")
+
+MODEL_PATH = Path(__file__).resolve().parent / "models" / "material_classifier.joblib"
 
 # ---- Inference settings ------------------------------------------------------
 THRESHOLD = 0.50          # minimum clause-level probability to accept a material

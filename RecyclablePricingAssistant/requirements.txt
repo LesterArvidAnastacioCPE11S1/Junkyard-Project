@@ -4,3 +4,5 @@ scikit-learn
 joblib
 pillow
 pyarrow
+fastapi
+uvicorn
