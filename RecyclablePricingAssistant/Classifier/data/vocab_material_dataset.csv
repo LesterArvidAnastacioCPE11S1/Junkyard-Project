@@ -1,0 +1,80 @@
+﻿text,language,materials,source
+We have PET bottles and plastic gallons to sell,English,Plastic,manually_authored
+May mga PET bottles at plastic na galon kami,Taglish,Plastic,manually_authored
+Ibebenta ko ang mga plastik na timba at palanggana,Filipino,Plastic,manually_authored
+Do you buy plastic crates and plastic drums?,English,Plastic,manually_authored
+May sando bags at plastic wrappers kami sa bahay,Taglish,Plastic,manually_authored
+Mga lumang plastic na upuan at mesa ang dala namin,Taglish,Plastic,manually_authored
+I have empty shampoo bottles and detergent containers,English,Plastic,manually_authored
+May mga sako ng bigas na plastik kami,Taglish,Plastic,manually_authored
+Plastic cups and plastic food containers po,Taglish,Plastic,manually_authored
+May mga plastic casing at plastic covers kami,Taglish,Plastic,manually_authored
+Bubble wrap and plastic packaging from deliveries,English,Plastic,manually_authored
+Lumang plastic na bote ng mantika at toyo,Taglish,Plastic,manually_authored
+We have old magazines and telephone directories,English,Paper,manually_authored
+May mga magasin at lumang libro kami,Taglish,Paper,manually_authored
+"Used bond paper, folders, and envelopes from the office",English,Paper,manually_authored
+Mga lumang resibo at papel na gamit na,Filipino,Paper,manually_authored
+May textbooks at notebooks na hindi na ginagamit,Taglish,Paper,manually_authored
+Shredded paper and old files to sell,English,Paper,manually_authored
+Mga lumang diyaryo at kuwaderno po,Filipino,Paper,manually_authored
+Printed documents and used receipts,English,Paper,manually_authored
+We have pizza boxes and corrugated cartons,English,Cardboard,manually_authored
+May mga kahon ng sapatos at karton ng appliances kami,Taglish,Cardboard,manually_authored
+Flattened cartons from our deliveries,English,Cardboard,manually_authored
+Mga karton na pinaglagyan ng delivery,Filipino,Cardboard,manually_authored
+Empty cartons from the supermarket,English,Cardboard,manually_authored
+May mga kahon ng pizza at kahon ng karton,Taglish,Cardboard,manually_authored
+Large carton boxes from a TV and refrigerator,English,Cardboard,manually_authored
+May lumang kaldero at kawali na aluminum kami,Taglish,Aluminum,manually_authored
+We have beer cans and soda cans,English,Aluminum,manually_authored
+Crushed cans and aluminum foil to sell,English,Aluminum,manually_authored
+Aluminum ladder at aluminum window frames,Taglish,Aluminum,manually_authored
+May mga lata ng beer at softdrinks kami,Taglish,Aluminum,manually_authored
+Used aluminum foil trays and old pots,English,Aluminum,manually_authored
+Mga aluminum na kagamitan sa kusina,Taglish,Aluminum,manually_authored
+Do you buy aluminum cans by the kilo?,English,Aluminum,manually_authored
+We have stainless steel pots and brass fittings,English,Other_Metals,manually_authored
+May mga tin cans at yero kami,Taglish,Other_Metals,manually_authored
+Lumang GI sheets at bakal na tubo,Taglish,Other_Metals,manually_authored
+Mga alambreng tanso at bakal na rebar,Filipino,Other_Metals,manually_authored
+Copper tubing and old iron grills,English,Other_Metals,manually_authored
+May steel drums at metal cabinet kami,Taglish,Other_Metals,manually_authored
+Rusty iron bars and galvanized sheets,English,Other_Metals,manually_authored
+Mga bakal na kadena at lumang gate,Filipino,Other_Metals,manually_authored
+Brass faucets and copper pipes from the plumbing,English,Other_Metals,manually_authored
+May bakal na kama at lumang tubo,Taglish,Other_Metals,manually_authored
+We have wine bottles and beer bottles,English,Glass,manually_authored
+May mga bote ng alak at bote ng beer na salamin,Taglish,Glass,manually_authored
+Old window glass and a broken mirror,English,Glass,manually_authored
+Mga garapon at bote na salamin,Filipino,Glass,manually_authored
+Empty glass drinking glasses and jars,English,Glass,manually_authored
+May mga bote ng softdrinks na salamin kami,Taglish,Glass,manually_authored
+Glass sauce jars and perfume bottles,English,Glass,manually_authored
+May lumang bintana na salamin,Taglish,Glass,manually_authored
+Broken hair dryer and electric fan,English,Electronic_Waste,manually_authored
+Sirang rice cooker at electric fan,Taglish,Electronic_Waste,manually_authored
+"Old computer monitor, CPU, and keyboard",English,Electronic_Waste,manually_authored
+May lumang cellphone at power bank kami,Taglish,Electronic_Waste,manually_authored
+Damaged laptop charger and USB cables,English,Electronic_Waste,manually_authored
+Circuit boards and old motherboards,English,Electronic_Waste,manually_authored
+Mga sirang calculator at TV remote,Taglish,Electronic_Waste,manually_authored
+Broken speakers and old radio,English,Electronic_Waste,manually_authored
+May sirang extension cord at adapter,Taglish,Electronic_Waste,manually_authored
+Spoiled microwave oven and toaster,English,Electronic_Waste,manually_authored
+I have wine bottles and plastic gallons,English,Glass|Plastic,manually_authored
+May hair dryer at plastic basins kami,Taglish,Electronic_Waste|Plastic,manually_authored
+Pizza boxes and magazines to sell,English,Cardboard|Paper,manually_authored
+May tin cans at aluminum cans kami,Taglish,Aluminum|Other_Metals,manually_authored
+Old monitors and cardboard boxes from the office,English,Cardboard|Electronic_Waste,manually_authored
+"May PET bottles, diyaryo, at lata ng softdrinks",Taglish,Aluminum|Paper|Plastic,manually_authored
+"Copper wire, glass bottles, and aluminum foil",English,Aluminum|Glass|Other_Metals,manually_authored
+"Mga magasin, plastik na timba, at sirang cellphone",Taglish,Electronic_Waste|Paper|Plastic,manually_authored
+Steel pots and stainless utensils with plastic handles,English,Other_Metals|Plastic,manually_authored
+May shoe boxes at plastic hangers kami,Taglish,Cardboard|Plastic,manually_authored
+I have some old things but I do not know what they are made of,English,Unknown,manually_authored
+Hindi ko alam kung anong materyal ang mga lumang gamit na ito,Filipino,Unknown,manually_authored
+"Some boxes of assorted items from a relative, please check",English,Unknown,manually_authored
+"May mga sako kami ng kung anu-anong gamit, ipasuri muna",Taglish,Unknown,manually_authored
+Not sure if any of these can be sold,English,Unknown,manually_authored
+Mga lumang gamit sa bodega na hindi namin kilala,Filipino,Unknown,manually_authored

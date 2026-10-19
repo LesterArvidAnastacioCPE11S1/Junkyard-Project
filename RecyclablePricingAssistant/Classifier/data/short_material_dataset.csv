@@ -383,7 +383,6 @@ text,language,materials,source
 "May garapong salamin mula sa kusina",Filipino,Glass,synthetically_generated
 "Tumatanggap ba kayo ng glass bottles?",Taglish,Glass,synthetically_generated
 "May mga garapon ng pasta sauce kami",Taglish,Glass,synthetically_generated
-"May lumang bote ng pabango na salamin",Taglish,Glass,synthetically_generated
 "Ibebenta sana namin ang mga bote ng juice na salamin",Taglish,Glass,synthetically_generated
 "May mga lalagyan na salamin at hindi plastik",Taglish,Glass,synthetically_generated
 "May mga bote ng suka at toyo na salamin",Taglish,Glass,synthetically_generated
@@ -409,8 +408,6 @@ text,language,materials,source
 "These are used earphones with damaged wires",English,Electronic_Waste,synthetically_generated
 "I want to recycle an old power adapter",English,Electronic_Waste,synthetically_generated
 "There are computer components from an upgrade",English,Electronic_Waste,synthetically_generated
-"May sirang charger ng cellphone ako",Filipino,Electronic_Waste,synthetically_generated
-"May mga lumang USB cable sa drawer",Taglish,Electronic_Waste,synthetically_generated
 "Tumatanggap ba kayo ng sirang keyboard?",Taglish,Electronic_Waste,synthetically_generated
 "May lumang router at modem kami",Taglish,Electronic_Waste,synthetically_generated
 "May electronic parts mula sa sirang computer",Taglish,Electronic_Waste,synthetically_generated

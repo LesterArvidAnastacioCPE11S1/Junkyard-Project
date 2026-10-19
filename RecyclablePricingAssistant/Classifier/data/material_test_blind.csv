@@ -1,0 +1,24 @@
+﻿text,language,materials,source
+"Hi, we are selling leftover stuff from our boarding house: empty plastic gallons, stacks of old magazines, and a broken electric fan with a long cord.",English,Electronic_Waste|Paper|Plastic,manually_authored
+"Boss, ibebenta ko po yung mga lumang kaldero na aluminum, tsaka mga bote ng beer na salamin. May ilang kahon din ng pizza na karton.",Taglish,Aluminum|Cardboard|Glass,manually_authored
+"Mayroon po kaming mga lumang diyaryo at magasin sa bahay, pati na rin mga plastik na timba at palanggana.",Filipino,Paper|Plastic,manually_authored
+"We have cardboard boxes and old newspapers to sell, except the glass bottles which we will keep.",English,Cardboard|Paper,manually_authored
+Do you buy copper wire?,English,Other_Metals,manually_authored
+Magkano po ang bilihan ninyo ng plastic bottles?,Taglish,Plastic,manually_authored
+"Hello, I inherited some boxes of old items from my uncle and I have no idea what is inside or what they are made of. Can you check them?",English,Unknown,manually_authored
+Magandang araw po. May mga gamit kaming naiwan sa lumang bahay pero hindi namin alam kung anong klaseng materyales ang mga iyon. Puwede po bang ipatingin muna?,Filipino,Unknown,manually_authored
+"We are renovating our restaurant kitchen. The contractor left behind several stainless steel pots, a pile of empty tin cans from canned goods, and a few cracked plastic food containers. We also have empty wine bottles and cardboard boxes from our suppliers.",English,Cardboard|Glass|Other_Metals|Plastic,manually_authored
+"Kuya, naglinis kami ng opisina. May mga lumang papel at folder, printer cartridges na plastic, sirang calculator, tsaka mga bote ng tubig na plastik.",Taglish,Electronic_Waste|Paper|Plastic,manually_authored
+"Our salon is closing and we have empty shampoo bottles, glass perfume bottles, aluminum foil, and hair dryers that no longer work.",English,Aluminum|Electronic_Waste|Glass|Plastic,manually_authored
+"Ang bahay ng tito ko ay giniba at maraming natirang bakal na tubo, alambreng tanso, at yero. Mayroon ding mga lumang bintana na salamin at mga kahon ng karton na pinaglagyan ng mga gamit.",Filipino,Cardboard|Glass|Other_Metals,manually_authored
+I have a bag of empty beer cans and a few crushed soda cans.,English,Aluminum,manually_authored
+"We want to sell old textbooks and used notebooks, plus some cartons from our deliveries.",English,Cardboard|Paper,manually_authored
+"Gusto kong ibenta ang mga lumang cellphone, power bank, at charger, pati na rin ang mga plastic casing nila.",Taglish,Electronic_Waste|Plastic,manually_authored
+"Good evening! I would like to ask if you do pickups in our area. We live in a subdivision and have around 30 kilos of mixed recyclables consisting of PET bottles, flattened cartons, old newspapers, and some soda cans. Please let me know the price per kilo.",English,Aluminum|Cardboard|Paper|Plastic,manually_authored
+May tansong wire at bakal na rods kami,Taglish,Other_Metals,manually_authored
+"I only have aluminum cans today, no other materials.",English,Aluminum,manually_authored
+"Sa bodega ng pinsan ko may mga lumang computer monitor, keyboard, at CPU, tapos may ilang bakal na cabinet at plastic na upuan, pati mga karton ng appliances.",Taglish,Cardboard|Electronic_Waste|Other_Metals|Plastic,manually_authored
+"Hello po, magkano po ba bilihan ninyo ng mga bote ng salamin at lata ng softdrinks?",Taglish,Aluminum|Glass,manually_authored
+"We have newspapers and cardboard boxes, plus a few odd items we cannot identify.",English,Cardboard|Paper,manually_authored
+"Old circuit boards, a broken laptop charger, and tangled USB cables from the office.",English,Electronic_Waste,manually_authored
+May mga lumang sako ng bigas na plastik at mga bote ng soda na plastik din.,Taglish,Plastic,manually_authored
