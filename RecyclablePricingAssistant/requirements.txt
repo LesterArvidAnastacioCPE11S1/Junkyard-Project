@@ -6,3 +6,4 @@ pillow
 pyarrow
 fastapi
 uvicorn
+python-dotenv

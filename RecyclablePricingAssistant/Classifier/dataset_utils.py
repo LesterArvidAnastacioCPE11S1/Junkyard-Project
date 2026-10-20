@@ -16,6 +16,8 @@ SHORT_PATH = Path("data/short_material_dataset.csv")
 LONG_PATH = Path("data/long_material_dataset.csv")
 VOCAB_PATH = Path("data/vocab_material_dataset.csv")
 
+ITEMS_PATH = Path("data/items_material_dataset.csv")
+
 LONG_TEST_PATH = Path("data/material_test.csv")
 TEST_PATHS = [
     LONG_TEST_PATH,

@@ -1,7 +1,7 @@
 import pandas as pd
 
 from dataset_utils import (
-    LONG_PATH, LONG_TEST_PATH, SHORT_PATH, TEST_PATHS, VOCAB_PATH,
+    ITEMS_PATH, LONG_PATH, LONG_TEST_PATH, SHORT_PATH, TEST_PATHS, VOCAB_PATH,
     find_problems, load_dataset,
 )
 
@@ -12,8 +12,9 @@ DATASET_FILES = {
     "LONG (held-out test)": LONG_TEST_PATH,
     "MIXED (held-out test)": TEST_PATHS[1],
     "BLIND (held-out test)": TEST_PATHS[2],
+    "ITEMS (training)": ITEMS_PATH,
 }
-TRAIN_NAMES = ("SHORT (training)", "LONG (training)", "VOCAB (training)")
+TRAIN_NAMES = ("SHORT (training)", "LONG (training)", "VOCAB (training)", "ITEMS (training)")
 TEST_NAMES = ("LONG (held-out test)", "MIXED (held-out test)", "BLIND (held-out test)")
 
 def main():

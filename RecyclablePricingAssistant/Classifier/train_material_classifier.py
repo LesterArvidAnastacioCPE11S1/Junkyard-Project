@@ -4,14 +4,14 @@ from sklearn.model_selection import KFold
 from sklearn.preprocessing import MultiLabelBinarizer
 
 from dataset_utils import (
-    LONG_PATH, SHORT_PATH, VOCAB_PATH,
+    ITEMS_PATH, LONG_PATH, SHORT_PATH, VOCAB_PATH,
     find_problems, load_all_test_texts, load_dataset, split_labels,
 )
 from material_classifier import (
     MODEL_PATH, build_model, classify_material, labels_or_unknown,
 )
 
-DATASET_PATHS = [SHORT_PATH, LONG_PATH, VOCAB_PATH]
+DATASET_PATHS = [SHORT_PATH, LONG_PATH, VOCAB_PATH, ITEMS_PATH]
 
 
 def load_training_data():
