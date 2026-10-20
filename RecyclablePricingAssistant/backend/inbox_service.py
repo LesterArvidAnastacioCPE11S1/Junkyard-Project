@@ -3,13 +3,13 @@ from backend import inbox_db
 from backend.pipeline import analyze_text
 
 
-def ingest_message(channel, sender, text, external_id=None, received_at=None, subject=None):
-    """Classify and store one message. Returns (record, created)."""
+def ingest_message(shop_id, channel, sender, text, external_id=None, received_at=None, subject=None):
+    """Classify and store one message for a shop. Returns (record, created)."""
     text = (text or "").strip()
     if not text:
         raise ValueError("Message text is empty")
 
-    existing = inbox_db.find_by_external(channel, external_id)
+    existing = inbox_db.find_by_external(shop_id, channel, external_id)
     if existing:
         return existing, False
 
@@ -25,6 +25,7 @@ def ingest_message(channel, sender, text, external_id=None, received_at=None, su
     )
 
     return inbox_db.insert_message(
+        shop_id=shop_id,
         channel=channel,
         sender=sender or "unknown",
         text=text,

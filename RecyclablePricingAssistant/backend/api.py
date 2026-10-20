@@ -3,29 +3,62 @@
 # Run from the project root:  uvicorn backend.api:app --reload
 from backend import config  # noqa: F401  (loads .env first)
 
-from contextlib import asynccontextmanager
+import asyncio
+import os
+from contextlib import asynccontextmanager, suppress
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from backend import inbox_db, pipeline
+from backend import accounts_db, db, email_service, pipeline
+from backend.auth import any_user, bearer  # noqa: F401
+from backend.auth_routes import router as auth_router
+from backend.channel_routes import router as channel_router
+from backend.errors import ApiError
 from backend.inbox_routes import router as inbox_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    pipeline.load_models()    # load both classifiers once at startup
-    inbox_db.init_db()        # create the inbox database if it doesn't exist
+    pipeline.load_models()                 # load both classifiers once at startup
+    db.init_db()                           # create / upgrade the database
+    accounts_db.purge_expired_sessions()
+    accounts_db.purge_old_attempts((datetime.now(timezone.utc) - timedelta(days=1)).isoformat(timespec="seconds"))
+
+    poll_task = None
+    interval = int(os.environ.get("EMAIL_POLL_SECONDS", "60") or 0)
+    if interval > 0:                       # 0 turns automatic email checking off
+        poll_task = asyncio.create_task(email_service.poll_loop(interval))
     yield
+    if poll_task:
+        poll_task.cancel()
+        with suppress(asyncio.CancelledError):
+            await poll_task
     pipeline.state.clear()
 
 
 app = FastAPI(title="Recyclable Pricing Assistant API", lifespan=lifespan)
+
+origins = [o.strip() for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()]
+if origins:                                # only needed for a browser-based app
+    app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"])
+
+
+@app.exception_handler(ApiError)
+async def api_error_handler(request: Request, exc: ApiError):
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail}, headers=exc.headers)
+
+
+app.include_router(auth_router)
 app.include_router(inbox_router)
+app.include_router(channel_router)
 
 
-# Request / response shapes 
+# Request / response shapes
 class MessageRequest(BaseModel):
     text: str = Field(min_length=1, max_length=5000)
 
@@ -53,25 +86,25 @@ class AnalyzeResponse(BaseModel):
     materials: Optional[MaterialsResponse] = None   # None when intent is "Other"
 
 
-# Classification endpoints (no storage) 
+# Classification endpoints (any logged-in user; nothing is stored)
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
 
 @app.post("/classify", response_model=MaterialsResponse)
-def classify(req: MessageRequest):
+def classify(req: MessageRequest, user: dict = Depends(any_user)):
     """Which recyclable materials does this message mention?"""
     return pipeline.run_materials(req.text)
 
 
 @app.post("/intent", response_model=IntentResponse)
-def intent(req: MessageRequest):
+def intent(req: MessageRequest, user: dict = Depends(any_user)):
     """What does the customer want (price, pickup, bulk deal, or unrelated)?"""
     return pipeline.run_intent(req.text)
 
 
 @app.post("/analyze", response_model=AnalyzeResponse)
-def analyze(req: MessageRequest):
+def analyze(req: MessageRequest, user: dict = Depends(any_user)):
     """Full pipeline: intent first, then materials unless the message is unrelated."""
     return pipeline.analyze_text(req.text)

@@ -1,4 +1,6 @@
-  .venv/
-  __pycache__/
 .env
-backend/inbox.db
+.venv/
+__pycache__/
+backend/inbox*.db
+backend/inbox*.db-wal
+backend/inbox*.db-shm
