@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const KEY = 'kalakally_session';
+  const KEY = 'scrapdesk_session';
   const MATERIALS = ['Plastic', 'Paper', 'Cardboard', 'Aluminum', 'Other_Metals', 'Glass', 'Electronic_Waste'];
   const INTENTS = {
     Price_Inquiry: 'Price inquiry',
