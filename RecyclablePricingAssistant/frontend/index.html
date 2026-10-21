@@ -8,80 +8,47 @@
 </head>
 <body>
 <div class="app">
+  <div class="login" id="loginView" hidden>
+  <div class="brand">Kalakally</div>
+  <p class="sub">Log in to your junkshop account</p>
+  <input id="loginEmail" type="email" placeholder="Email" autocomplete="username">
+  <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="btn primary" id="loginBtn">Log in</button>
+  <p class="form-error" id="loginError"></p>
+</div>
   <div class="screens">
 
-    <!-- SCREEN 1: Inquiries -->
-    <section class="screen active" id="inquiries">
-      <div class="topbar">
-        <div><div class="brand">Kalakally</div><div class="sub">Santos Junkshop · Quezon City</div></div>
-        <div class="avatar">JS</div>
-      </div>
-      <div class="metrics">
-        <div class="card metric"><b>24</b><span>Open</span></div>
-        <div class="card metric"><b>8</b><span>Unread</span></div>
-        <div class="card metric hl"><b>3</b><span>Needs review</span></div>
-        <div class="card metric"><b>5</b><span>Scheduled</span></div>
-      </div>
-      <label class="card search">🔍 <input type="search" id="searchInput" placeholder="Search inquiries"></label>
-      <div class="pills" id="pills">
-        <button class="pill active" data-filter="all">All 24</button>
-        <button class="pill" data-filter="review">Needs review 3</button>
-        <button class="pill" data-filter="sched">Pickup 5</button>
-      </div>
-      <div id="inqList">
-        <button class="card inq" data-type="review" data-open="detail">
-          <div class="inq-head"><span class="inq-name"><span class="unread"></span>Elena Santos</span><span class="tag review">Needs review</span></div>
-          <div class="inq-msg">Bulk materials, better rate?</div>
-          <div class="inq-meta">650 kg · Bagumbayan, QC</div>
-        </button>
-        <button class="card inq" data-type="price">
-          <div class="inq-head"><span class="inq-name"><span class="unread"></span>Miguel Tan</span><span class="tag price">Price Inquiry</span></div>
-          <div class="inq-msg">What is the buying price?</div>
-        </button>
-        <button class="card inq" data-type="sched">
-          <div class="inq-head"><span class="inq-name">Luna Mart</span><span class="tag sched">Scheduled</span></div>
-          <div class="inq-msg">Cardboard ready for pickup</div>
-        </button>
-        <button class="card inq" data-type="review">
-          <div class="inq-head"><span class="inq-name"><span class="unread"></span>Ana Mendoza</span><span class="tag review">Needs review</span></div>
-          <div class="inq-msg">Pickup this afternoon?</div>
-        </button>
-      </div>
-    </section>
+   <!-- SCREEN 1: Inquiries (live data) -->
+<section class="screen active" id="inquiries">
+  <div class="topbar">
+    <div><div class="brand">Kalakally</div><div class="sub" id="shopLine">Santos Junkshop</div></div>
+    <button class="avatar" id="avatarBtn" aria-label="Account">JS</button>
+  </div>
+  <div class="metrics">
+    <div class="card metric"><b id="mTotal">-</b><span>Total</span></div>
+    <div class="card metric"><b id="mNew">-</b><span>New</span></div>
+    <div class="card metric hl"><b id="mReview">-</b><span>Needs review</span></div>
+    <div class="card metric"><b id="mPickup">-</b><span>Pickups</span></div>
+  </div>
+  <label class="card search">🔍 <input type="search" id="searchInput" placeholder="Search inquiries"></label>
+  <div class="pills" id="pills">
+    <button class="pill active" data-filter="all">All <span id="cAll"></span></button>
+    <button class="pill" data-filter="review">Needs review <span id="cReview"></span></button>
+    <button class="pill" data-filter="pickup">Pickup <span id="cPickup"></span></button>
+  </div>
+  <p class="list-status" id="listStatus"></p>
+  <div id="inqList"></div>
+</section>
 
-    <!-- SCREEN 2: Inquiry Detail -->
-    <section class="screen" id="detail">
-      <div class="dhead">
-        <button class="back" id="backBtn" aria-label="Back">←</button>
-        <h2>Elena's inquiry</h2>
-        <span class="tag review">Needs review</span>
-      </div>
-      <div class="banner"><b>Price review before pickup</b>Requested rates only. Not approved, not scheduled until you confirm the prices.</div>
-
-      <div class="section-title">Materials</div>
-      <div class="card">
-        <div class="row"><div class="l"><b>Cardboard</b><span>400 kg @ ₱9/kg</span></div><div class="r">₱3,600</div></div>
-        <div class="row"><div class="l"><b>PET bottles</b><span>250 kg @ ₱19/kg</span></div><div class="r">₱4,750</div></div>
-        <div class="row total"><div class="l"><b>Requested total</b></div><div class="r">₱8,350</div></div>
-      </div>
-
-      <div class="section-title">Requested pickup</div>
-      <div class="card">
-        <div class="kv"><i>Date</i><b>Wed, Oct 21, 2026 · 1:00–3:00 PM</b></div>
-        <div class="kv"><i>Address</i><b>18 Industria St., Bagumbayan</b></div>
-        <div class="kv"><i>Vehicle</i><b>Small truck access</b></div>
-      </div>
-
-      <div class="section-title">Conversation</div>
-      <div class="card">
-        <div class="bubble">Hi! We have about 650 kg of cardboard and PET bottles. Can you give us a better rate for bulk? We can have it ready this Wednesday afternoon.<small>Elena Santos · 9:12 AM</small></div>
-      </div>
-
-      <div class="btns">
-        <button class="btn ghost" onclick="alert('Opening price review…')">Review requested prices</button>
-        <button class="btn primary" onclick="alert('Opening reply…')">Send reply</button>
-      </div>
-    </section>
+<!-- SCREEN 2: Inquiry detail (live data) -->
+<section class="screen" id="detail">
+  <div class="dhead">
+    <button class="back" id="backBtn" aria-label="Back">←</button>
+    <h2 id="detailTitle">Inquiry</h2>
+    <span id="detailTag"></span>
+  </div>
+  <div id="detailBody"></div>
+</section>
 
     <!-- SCREEN 3: Pickup Planning -->
     <section class="screen" id="planning">
