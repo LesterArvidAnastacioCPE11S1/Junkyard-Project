@@ -21,6 +21,9 @@ from backend.channel_routes import router as channel_router
 from backend.errors import ApiError
 from backend.inbox_routes import router as inbox_router
 
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -108,3 +111,7 @@ def intent(req: MessageRequest, user: dict = Depends(any_user)):
 def analyze(req: MessageRequest, user: dict = Depends(any_user)):
     """Full pipeline: intent first, then materials unless the message is unrelated."""
     return pipeline.analyze_text(req.text)
+
+# Serves the web app at http://127.0.0.1:8000/  (keep this LAST)
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

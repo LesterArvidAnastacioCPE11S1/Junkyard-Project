@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kalakally</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <div class="screens" id="screens">
+
+    <!-- LOGIN -->
+    <section class="screen active login" id="login">
+      <h1>Kalakally</h1>
+      <p>Log in to your junkshop's inbox.</p>
+      <form id="loginForm">
+        <label class="field">
+          <span>Email</span>
+          <input id="lEmail" type="email" autocomplete="username" required>
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input id="lPass" type="password" autocomplete="current-password" required>
+        </label>
+        <div class="err" id="loginErr"></div>
+        <button class="btn primary" type="submit" style="width:100%">Log in</button>
+      </form>
+      <p style="text-align:center;margin-top:16px">
+        New junkshop?
+        <button class="btn ghost" type="button" id="showSignup">Create an account</button>
+      </p>
+    </section>
+
+    <!-- SIGN UP -->
+    <section class="screen login" id="signup">
+      <h1>Create your account</h1>
+      <p>Register your junkshop to manage customer inquiries.</p>
+      <form id="signupForm">
+        <label class="field">
+          <span>Junkshop name</span>
+          <input id="sShop" type="text" minlength="2" maxlength="100" required>
+        </label>
+        <label class="field">
+          <span>Owner's full name</span>
+          <input id="sName" type="text" minlength="2" maxlength="100"
+                 autocomplete="name" required>
+        </label>
+        <label class="field">
+          <span>Email</span>
+          <input id="sEmail" type="email" autocomplete="email" required>
+        </label>
+        <label class="field">
+          <span>Password (at least 8 characters)</span>
+          <input id="sPass" type="password" minlength="8" maxlength="128"
+                 autocomplete="new-password" required>
+        </label>
+        <div class="err" id="signupErr"></div>
+        <button class="btn primary" type="submit" style="width:100%">Create account</button>
+      </form>
+      <p style="text-align:center;margin-top:16px">
+        Already registered?
+        <button class="btn ghost" type="button" id="showLogin">Back to login</button>
+      </p>
+    </section>
+
+    <!-- INQUIRIES -->
+    <section class="screen" id="inquiries">
+      <div class="topbar">
+        <div>
+          <div class="brand">Kalakally</div>
+          <div class="sub" data-shop></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="avatar" id="addBtn" aria-label="Add message"
+                  style="font-size:20px">+</button>
+          <div class="avatar" data-avatar></div>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="card metric"><b id="mOpen">–</b><span>Open</span></div>
+        <div class="card metric"><b id="mPickup">–</b><span>Pickups</span></div>
+        <div class="card metric hl"><b id="mReview">–</b><span>Needs review</span></div>
+        <div class="card metric"><b id="mBulk">–</b><span>Bulk</span></div>
+      </div>
+
+      <label class="card search">
+        🔍 <input type="search" id="searchInput" placeholder="Search by name or message">
+      </label>
+
+      <div class="pills" id="pills">
+        <button class="pill active" data-filter="all">All <span data-count="all"></span></button>
+        <button class="pill" data-filter="review">Needs review <span data-count="review"></span></button>
+        <button class="pill" data-filter="Price_Inquiry">Price <span data-count="Price_Inquiry"></span></button>
+        <button class="pill" data-filter="Pickup_Request">Pickup <span data-count="Pickup_Request"></span></button>
+        <button class="pill" data-filter="Bulk_Negotiation">Bulk <span data-count="Bulk_Negotiation"></span></button>
+        <button class="pill" data-filter="Other">Other <span data-count="Other"></span></button>
+      </div>
+
+      <div id="inqList"></div>
+    </section>
+
+    <!-- DETAIL -->
+    <section class="screen" id="detail">
+      <div class="dhead">
+        <button class="back" id="backBtn" aria-label="Back">←</button>
+        <h2 id="detailTitle">Inquiry</h2>
+        <span id="detailTag"></span>
+      </div>
+      <div id="detailBody"></div>
+    </section>
+
+    <!-- ADD MESSAGE -->
+    <section class="screen" id="compose">
+      <div class="dhead">
+        <button class="back" id="composeBack" aria-label="Back">←</button>
+        <h2>Add a message</h2>
+      </div>
+      <p class="muted" style="margin-bottom:14px">
+        Type a customer message, such as one taken over the phone.
+        It will be classified like other messages.
+      </p>
+      <form id="composeForm">
+        <label class="field">
+          <span>From</span>
+          <input id="cSender" placeholder="Walk-in / phone number / name">
+        </label>
+        <label class="field">
+          <span>Message</span>
+          <textarea id="cText" required
+            placeholder="Magkano po ang bili ninyo sa karton ngayon?"></textarea>
+        </label>
+        <button class="btn primary" type="submit" style="width:100%">
+          Classify and save
+        </button>
+      </form>
+    </section>
+
+    <!-- IMPORTANT:
+         Restore your original Planning and Collections sections here
+         if you have them saved elsewhere. -->
+
+    <!-- MORE / SETTINGS -->
+    <section class="screen" id="more">
+      <div class="topbar">
+        <div>
+          <div class="brand" style="font-size:20px">More</div>
+          <div class="sub" data-shop></div>
+        </div>
+        <div class="avatar" data-avatar></div>
+      </div>
+      <div id="moreBody"></div>
+    </section>
+
+  </div>
+
+  <!-- BOTTOM NAVIGATION -->
+  <nav id="nav">
+    <button class="active" data-nav="inquiries">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      Inquiries
+      <span class="badge" id="navBadge" style="display:none">0</span>
+    </button>
+
+    <button data-nav="planning">
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <path d="M16 2v4M8 2v4M3 10h18"/>
+      </svg>
+      Planning
+    </button>
+
+    <button data-nav="collections">
+      <svg viewBox="0 0 24 24">
+        <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/>
+        <circle cx="5.5" cy="18.5" r="2"/>
+        <circle cx="18.5" cy="18.5" r="2"/>
+      </svg>
+      Collections
+    </button>
+
+    <button data-nav="more">
+      <svg viewBox="0 0 24 24">
+        <circle cx="5" cy="12" r="1.5"/>
+        <circle cx="12" cy="12" r="1.5"/>
+        <circle cx="19" cy="12" r="1.5"/>
+      </svg>
+      More
+    </button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
