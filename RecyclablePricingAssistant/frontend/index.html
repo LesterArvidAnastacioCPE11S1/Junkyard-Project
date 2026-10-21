@@ -1,14 +1,22 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0ed03af8dba9d4092a394223ba8a7759bb9ca57b
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<<<<<<< HEAD
 <title>Kalakally</title>
+=======
+<title>Kalakally – Santos Junkshop</title>
+>>>>>>> 0ed03af8dba9d4092a394223ba8a7759bb9ca57b
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
+<<<<<<< HEAD
   <div class="screens" id="screens">
 
     <!-- LOGIN -->
@@ -194,8 +202,144 @@
   </nav>
 
   <div class="toast" id="toast"></div>
+=======
+  <div class="login" id="loginView" hidden>
+  <div class="brand">Kalakally</div>
+  <p class="sub">Log in to your junkshop account</p>
+  <input id="loginEmail" type="email" placeholder="Email" autocomplete="username">
+  <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="btn primary" id="loginBtn">Log in</button>
+  <p class="form-error" id="loginError"></p>
+</div>
+  <div class="screens">
+
+   <!-- SCREEN 1: Inquiries (live data) -->
+<section class="screen active" id="inquiries">
+  <div class="topbar">
+    <div><div class="brand">Kalakally</div><div class="sub" id="shopLine">Santos Junkshop</div></div>
+    <button class="avatar" id="avatarBtn" aria-label="Account">JS</button>
+  </div>
+  <div class="metrics">
+    <div class="card metric"><b id="mTotal">-</b><span>Total</span></div>
+    <div class="card metric"><b id="mNew">-</b><span>New</span></div>
+    <div class="card metric hl"><b id="mReview">-</b><span>Needs review</span></div>
+    <div class="card metric"><b id="mPickup">-</b><span>Pickups</span></div>
+  </div>
+  <label class="card search">🔍 <input type="search" id="searchInput" placeholder="Search inquiries"></label>
+  <div class="pills" id="pills">
+    <button class="pill active" data-filter="all">All <span id="cAll"></span></button>
+    <button class="pill" data-filter="review">Needs review <span id="cReview"></span></button>
+    <button class="pill" data-filter="pickup">Pickup <span id="cPickup"></span></button>
+  </div>
+  <p class="list-status" id="listStatus"></p>
+  <div id="inqList"></div>
+</section>
+
+<!-- SCREEN 2: Inquiry detail (live data) -->
+<section class="screen" id="detail">
+  <div class="dhead">
+    <button class="back" id="backBtn" aria-label="Back">←</button>
+    <h2 id="detailTitle">Inquiry</h2>
+    <span id="detailTag"></span>
+  </div>
+  <div id="detailBody"></div>
+</section>
+
+    <!-- SCREEN 3: Pickup Planning -->
+    <section class="screen" id="planning">
+      <div class="topbar"><div><div class="brand" style="font-size:20px">Pickup Planning</div><div class="sub">Santos Junkshop</div></div><div class="avatar">JS</div></div>
+      <div class="card datebar">
+        <button class="arrow">‹</button>
+        <div><b>Wed, Oct 21, 2026</b><span class="today">Today</span></div>
+        <button class="arrow">›</button>
+      </div>
+      <div class="metrics three">
+        <div class="card metric"><b>5</b><span>Pickups</span></div>
+        <div class="card metric"><b>1,220 kg</b><span>To collect</span></div>
+        <div class="card metric"><b>2/2</b><span>Drivers assigned</span></div>
+      </div>
+
+      <div class="section-title">Today's schedule</div>
+      <div class="card timeline">
+        <div class="tl"><div class="time">9:00 AM</div><div class="dot"></div><div class="info"><b>Luna Mart</b><span>180 kg</span></div></div>
+        <div class="tl"><div class="time">9:30 AM</div><div class="dot"></div><div class="info"><b>Choi Eatery</b><span>120 kg</span></div></div>
+        <div class="tl"><div class="time">10:00 AM</div><div class="dot"></div><div class="info"><b>Reyes Hardware</b><span>420 kg</span></div></div>
+        <div class="tl"><div class="time">11:00 AM</div><div class="dot"></div><div class="info"><b>Northside Grocery</b><span>180 kg</span></div></div>
+        <div class="tl"><div class="time">1:00 PM</div><div class="dot"></div><div class="info"><b>Mabini Printing</b><span>320 kg</span></div></div>
+      </div>
+
+      <div class="section-title">Drivers & capacity</div>
+      <div class="card driver">
+        <div class="driver-top"><div><b>Rico M.</b><br><span>SD-01 · Small truck</span></div><b>920 / 1,500 kg</b></div>
+        <div class="bar"><i style="width:61%"></i></div>
+        <div class="driver-foot"><span>61% planned</span><b>580 kg available</b></div>
+      </div>
+      <div class="card driver">
+        <div class="driver-top"><div><b>Liz G.</b><br><span>LG-02 · Light truck</span></div><b>300 / 1,000 kg</b></div>
+        <div class="bar"><i style="width:30%"></i></div>
+        <div class="driver-foot"><span>30% planned</span><b>700 kg available</b></div>
+      </div>
+      <div class="warn"><span>⚠️</span><span>If Elena is assigned to Rico, his load would reach 1,570 kg – 70 kg over capacity.</span></div>
+    </section>
+
+    <!-- SCREEN 4: Rico's Collections -->
+    <section class="screen" id="collections">
+      <div class="topbar"><div><div class="brand" style="font-size:20px">Rico's Collections</div><div class="sub">SD-01 · Small truck</div></div><div class="avatar">RM</div></div>
+      <div class="hero">
+        <div class="state"><span>Confirmed route</span><span>● Not started</span></div>
+        <h2>Today's manifest</h2>
+        <div class="stats">
+          <div><b>3</b><span>Stops</span></div>
+          <div><b>920 kg</b><span>Expected</span></div>
+          <div><b id="collected">0 / 3</b><span>Collected</span></div>
+        </div>
+        <div class="bar"><i style="width:61%"></i></div>
+        <div class="cap">61% of 1,500 kg capacity planned</div>
+      </div>
+      <div class="actionbar">
+        <button class="btn primary" id="startRoute">Start route</button>
+        <button class="btn ghost">🗺 Map</button>
+      </div>
+
+      <div class="section-title">Stops</div>
+      <div class="card stop">
+        <div class="stop-top"><div class="num">01</div><div><b>Luna Mart</b><span>Expected: Cardboard 180 kg</span></div></div>
+        <div class="stop-actions">
+          <button class="btn primary">Record collection</button>
+          <button class="btn icon-btn" aria-label="Call">📞</button>
+          <button class="btn icon-btn" aria-label="Directions">🧭</button>
+        </div>
+      </div>
+      <div class="card stop">
+        <div class="stop-top"><div class="num">02</div><div><b>Reyes Hardware</b><span>Expected: Mixed scrap 420 kg</span></div></div>
+        <div class="stop-actions"><button class="btn ghost">Open stop</button></div>
+      </div>
+      <div class="card stop">
+        <div class="stop-top"><div class="num">03</div><div><b>Mabini Printing</b><span>Expected: Paper / cardboard 320 kg</span></div></div>
+        <div class="stop-actions"><button class="btn ghost">Open stop</button></div>
+      </div>
+      <div class="alert">📸 At each stop: weigh the load, enter the actual kg, and take a photo before leaving.</div>
+    </section>
+  </div>
+
+  <nav>
+    <button class="active" data-nav="inquiries">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Inquiries<span class="badge">8</span>
+    </button>
+    <button data-nav="planning">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Planning
+    </button>
+    <button data-nav="collections">
+      <svg viewBox="0 0 24 24"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg>Collections
+    </button>
+  </nav>
+>>>>>>> 0ed03af8dba9d4092a394223ba8a7759bb9ca57b
 </div>
 
 <script src="app.js"></script>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 0ed03af8dba9d4092a394223ba8a7759bb9ca57b

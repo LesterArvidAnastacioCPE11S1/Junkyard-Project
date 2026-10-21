@@ -60,6 +60,12 @@ app.include_router(auth_router)
 app.include_router(inbox_router)
 app.include_router(channel_router)
 
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+if FRONTEND_DIR.exists():
+    app.mount("/app", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
 # Request / response shapes
 class MessageRequest(BaseModel):
