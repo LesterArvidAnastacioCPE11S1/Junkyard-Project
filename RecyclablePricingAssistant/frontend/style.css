@@ -164,3 +164,192 @@ nav button.active{color:var(--green);background:var(--green-tint)}
 .toast.show{opacity:1}
 #pills{overflow-x:auto;white-space:nowrap}
 #pills .pill{flex:none}
+
+/* ----- Channel setup help buttons ----- */
+
+.channel-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  margin-bottom: 10px;
+}
+
+.channel-heading h3 {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+
+.channel-help {
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+/* circular ? icon */
+.channel-help > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  list-style: none;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.channel-help > summary::-webkit-details-marker {
+  display: none;
+}
+
+.channel-help > summary::marker {
+  content: "";
+}
+
+.channel-help > summary:hover,
+.channel-help[open] > summary {
+  background: var(--green-tint);
+  color: var(--green);
+}
+
+/* When opened, let the help panel use the full row width */
+.channel-help[open] {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Fixed-height, scrollable instructions */
+.channel-help-content {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: 280px;
+  max-height: 45vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.channel-help-content ol {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.channel-help-content li {
+  margin: 7px 0;
+  overflow-wrap: anywhere;
+}
+
+.channel-help-content p {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
+.channel-help-content a {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Smaller mobile screens */
+@media (max-width: 480px) {
+  .channel-heading {
+    align-items: center;
+  }
+
+  .channel-help-content {
+    height: 240px;
+    max-height: 40vh;
+    padding: 10px;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+}
+
+/* ----- Optional staff review ----- */
+
+.optional-review {
+  margin-top: 16px;
+  padding: 14px;
+}
+
+.optional-review > summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1.5;
+}
+
+.optional-review[open] > summary {
+  margin-bottom: 14px;
+}
+
+.optional-review .chips {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.optional-review .btns {
+  flex-wrap: wrap;
+}
+
+.optional-review button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* ----- Twilio SMS settings ----- */
+
+#twilioSmsSettingsForm .btn {
+  width: 100%;
+}
+
+#twilioSmsSettingsForm input {
+  max-width: 100%;
+}
+
+
+/* ----- Small-screen layout improvements ------ */
+
+@media (max-width: 360px) {
+  .channel-heading {
+    align-items: flex-start;
+  }
+
+  .channel-heading h3 {
+    font-size: 15px;
+  }
+
+  .optional-review .btns {
+    flex-direction: column;
+  }
+}

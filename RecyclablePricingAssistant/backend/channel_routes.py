@@ -1,16 +1,17 @@
-# channel_routes.py - each shop connects its own email / SMS / Messenger, plus the
-# public webhooks that phones and Facebook call.
+# channel_routes.py - email, SMS, Twilio, and Facebook Messenger routes.
+
 import hmac
 import json
 import os
 from typing import Optional
+from urllib.parse import parse_qs
 
 from fastapi import APIRouter, Depends, Header, Query, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 
-from backend import channel_service, email_service
+from backend import accounts_db, channel_service, email_service, security
 from backend.auth import inbox_staff, owner_only
 from backend.channel_parsers import (
     normalize_sms_payload,
@@ -24,28 +25,73 @@ router = APIRouter()
 
 
 class EmailConnectRequest(BaseModel):
-    imap_host: str = Field(default="imap.gmail.com", max_length=200)
-    imap_user: str = Field(min_length=3, max_length=200)
-    imap_password: str = Field(min_length=1, max_length=200)
-    folder: str = Field(default="INBOX", max_length=100)
+    imap_host: str = Field(
+        default="imap.gmail.com",
+        max_length=200,
+    )
+    imap_user: str = Field(
+        min_length=3,
+        max_length=200,
+    )
+    imap_password: str = Field(
+        min_length=1,
+        max_length=200,
+    )
+    folder: str = Field(
+        default="INBOX",
+        max_length=100,
+    )
 
 
 class MessengerConnectRequest(BaseModel):
-    page_id: str = Field(min_length=3, max_length=100)
+    page_id: str = Field(
+        min_length=3,
+        max_length=100,
+    )
 
 
-#  connection settings (owner)
+class TwilioSMSConnectRequest(BaseModel):
+    account_sid: str = Field(
+        min_length=34,
+        max_length=34,
+    )
+    auth_token: str = Field(
+        min_length=1,
+        max_length=200,
+    )
+    phone_number: str = Field(
+        min_length=9,
+        max_length=16,
+    )
+
+
+# ---------------------------------------------------------------------
+# CHANNEL SETTINGS
+# ---------------------------------------------------------------------
+
 @router.get("/channels")
 def channel_status(owner: dict = Depends(owner_only)):
-    """What this shop has connected. Passwords and full keys are never returned."""
+    """Return this shop's channel status without returning secrets."""
     return channel_service.get_status(owner["shop_id"])
 
 
+# ---------------------------------------------------------------------
+# EMAIL CONNECTION
+# ---------------------------------------------------------------------
+
 @router.put("/channels/email")
-def connect_email(body: EmailConnectRequest, owner: dict = Depends(owner_only)):
-    """Connect the shop's mailbox. The login is tested first and the password is saved encrypted."""
-    channel_service.set_email(owner["shop_id"], body.imap_host, body.imap_user,
-                              body.imap_password, body.folder)
+def connect_email(
+    body: EmailConnectRequest,
+    owner: dict = Depends(owner_only),
+):
+    channel_service.set_email(
+        owner["shop_id"],
+        body.imap_host,
+        body.imap_user,
+        body.imap_password,
+        body.folder,
+    )
+
     return channel_service.get_status(owner["shop_id"])["email"]
 
 
@@ -57,18 +103,26 @@ def disconnect_email(owner: dict = Depends(owner_only)):
 
 @router.post("/channels/email/poll-now")
 def poll_email_now(user: dict = Depends(inbox_staff)):
-    """Check the mailbox right now instead of waiting for the next automatic check."""
+    """Check the connected mailbox immediately."""
     return email_service.poll_shop(user["shop_id"])
 
 
+# ---------------------------------------------------------------------
+# SMS PHONE-FORWARDING CONNECTION
+# ---------------------------------------------------------------------
+
 @router.post("/channels/sms/key")
 def create_sms_key(owner: dict = Depends(owner_only)):
-    """Create (or replace) the key for this shop's SMS-forwarder app. It is shown only once."""
+    """Create or replace the key used by a phone-forwarding app."""
     key = channel_service.regenerate_sms_key(owner["shop_id"])
+
     return {
         "sms_key": key,
         "webhook_path": f"/webhooks/sms/{owner['shop_id']}",
-        "note": "Copy this key now. Send it in an X-API-Key header (or ?key=...) from the forwarder app.",
+        "note": (
+            "Copy this key now. Send it in an X-API-Key header "
+            "(or ?key=...) from the forwarding app."
+        ),
     }
 
 
@@ -78,10 +132,46 @@ def disable_sms(owner: dict = Depends(owner_only)):
     return {"ok": True}
 
 
+# ---------------------------------------------------------------------
+# SMS TWILIO CONNECTION
+# ---------------------------------------------------------------------
+
+@router.put("/channels/sms/twilio")
+def connect_twilio_sms(
+    body: TwilioSMSConnectRequest,
+    owner: dict = Depends(owner_only),
+):
+    """Save Twilio configuration for this shop."""
+    channel_service.set_twilio_sms(
+        owner["shop_id"],
+        body.account_sid,
+        body.auth_token,
+        body.phone_number,
+    )
+
+    return channel_service.get_status(owner["shop_id"])["sms_twilio"]
+
+
+@router.delete("/channels/sms/twilio")
+def disconnect_twilio_sms(owner: dict = Depends(owner_only)):
+    channel_service.remove(owner["shop_id"], "sms_twilio")
+    return {"ok": True}
+
+
+# ---------------------------------------------------------------------
+# FACEBOOK MESSENGER CONNECTION
+# ---------------------------------------------------------------------
+
 @router.put("/channels/messenger")
-def connect_messenger(body: MessengerConnectRequest, owner: dict = Depends(owner_only)):
-    """Tell the system which Facebook Page belongs to this shop."""
-    channel_service.set_messenger(owner["shop_id"], body.page_id)
+def connect_messenger(
+    body: MessengerConnectRequest,
+    owner: dict = Depends(owner_only),
+):
+    channel_service.set_messenger(
+        owner["shop_id"],
+        body.page_id,
+    )
+
     return channel_service.get_status(owner["shop_id"])["messenger"]
 
 
@@ -91,7 +181,10 @@ def disconnect_messenger(owner: dict = Depends(owner_only)):
     return {"ok": True}
 
 
-#  SMS webhook (called by a phone)
+# ---------------------------------------------------------------------
+# SMS PHONE-FORWARDING WEBHOOK
+# ---------------------------------------------------------------------
+
 @router.post("/webhooks/sms/{shop_id}", status_code=201)
 async def sms_webhook(
     shop_id: int,
@@ -99,47 +192,199 @@ async def sms_webhook(
     x_api_key: Optional[str] = Header(default=None),
     key: Optional[str] = Query(default=None),
 ):
-    """An SMS-forwarder app POSTs JSON like {"sender": "+63917...", "text": "message"} here.
-    The shop's SMS key goes in the X-API-Key header (or ?key= if the app can't set headers)."""
-    if not await run_in_threadpool(channel_service.verify_sms_key, shop_id, x_api_key or key):
+    """
+    Receive JSON sent by a phone SMS-forwarding app.
+
+    Example JSON:
+        {
+            "sender": "+639171234567",
+            "text": "Magkano po ang karton?"
+        }
+    """
+    valid_key = await run_in_threadpool(
+        channel_service.verify_sms_key,
+        shop_id,
+        x_api_key or key,
+    )
+
+    if not valid_key:
         raise ApiError(401, "Invalid SMS key.")
+
     try:
         payload = await request.json()
     except Exception:
         raise ApiError(400, "Body must be JSON.")
+
     if not isinstance(payload, dict):
         raise ApiError(400, "Body must be a JSON object.")
+
     try:
         parsed = normalize_sms_payload(payload)
     except ValueError as error:
         raise ApiError(422, str(error))
 
-    record, created = await run_in_threadpool(ingest_message, shop_id, "sms", **parsed)
-    return {"created": created, "message": record}
+    record, created = await run_in_threadpool(
+        ingest_message,
+        shop_id,
+        "sms",
+        **parsed,
+    )
+
+    return {
+        "created": created,
+        "message": record,
+    }
 
 
-#  Messenger webhook (called by Meta)
-@router.get("/webhooks/messenger", response_class=PlainTextResponse)
+# ---------------------------------------------------------------------
+# TWILIO INCOMING SMS WEBHOOK
+# ---------------------------------------------------------------------
+
+@router.post(
+    "/webhooks/twilio/sms",
+    response_class=PlainTextResponse,
+)
+async def twilio_sms_webhook(request: Request):
+    """
+    Receive an incoming SMS from Twilio.
+
+    Configure this endpoint in Twilio as an incoming-message webhook
+    using HTTP POST. The server must be publicly reachable over HTTPS.
+    """
+    from twilio.request_validator import RequestValidator
+
+    raw = await request.body()
+
+    try:
+        decoded = raw.decode("utf-8")
+        parsed_form = parse_qs(
+            decoded,
+            keep_blank_values=True,
+        )
+        params = {
+            key: values[-1]
+            for key, values in parsed_form.items()
+            if values
+        }
+    except (UnicodeDecodeError, ValueError):
+        raise ApiError(400, "Invalid Twilio form data.")
+
+    phone_number = params.get("To", "").strip()
+    sender = params.get("From", "").strip()
+    text = params.get("Body", "").strip()
+    message_sid = params.get("MessageSid", "").strip()
+
+    if not phone_number or not sender or not text:
+        raise ApiError(
+            400,
+            "Missing required Twilio fields: To, From, or Body.",
+        )
+
+    connection = await run_in_threadpool(
+        accounts_db.find_connection_by_ref,
+        "sms_twilio",
+        phone_number,
+    )
+
+    if not connection or not connection.get("secret_enc"):
+        raise ApiError(
+            403,
+            "No Twilio connection is configured for this number.",
+        )
+
+    try:
+        auth_token = security.decrypt_secret(
+            connection["secret_enc"]
+        )
+    except Exception:
+        raise ApiError(
+            503,
+            "Unable to read the saved Twilio credentials.",
+        )
+
+    signature = request.headers.get(
+        "X-Twilio-Signature",
+        "",
+    )
+
+    validator = RequestValidator(auth_token)
+
+    # The URL must match the public webhook URL Twilio calls.
+    if not validator.validate(
+        str(request.url),
+        params,
+        signature,
+    ):
+        raise ApiError(
+            403,
+            "Twilio signature verification failed.",
+        )
+
+    await run_in_threadpool(
+        ingest_message,
+        connection["shop_id"],
+        "sms",
+        sender,
+        text[:4000],
+        message_sid or None,
+    )
+
+    # Twilio expects a valid TwiML response.
+    return PlainTextResponse(
+        '<?xml version="1.0" encoding="UTF-8"?><Response></Response>',
+        media_type="application/xml",
+        status_code=200,
+    )
+
+
+# ---------------------------------------------------------------------
+# FACEBOOK MESSENGER WEBHOOK VERIFICATION
+# ---------------------------------------------------------------------
+
+@router.get(
+    "/webhooks/messenger",
+    response_class=PlainTextResponse,
+)
 def messenger_verify(
     mode: Optional[str] = Query(default=None, alias="hub.mode"),
     token: Optional[str] = Query(default=None, alias="hub.verify_token"),
     challenge: Optional[str] = Query(default=None, alias="hub.challenge"),
 ):
-    """Meta calls this once when you register the webhook."""
+    """Meta calls this endpoint when registering the webhook."""
     expected = os.environ.get("FB_VERIFY_TOKEN")
-    if mode == "subscribe" and expected and token and hmac.compare_digest(token, expected):
+
+    if (
+        mode == "subscribe"
+        and expected
+        and token
+        and hmac.compare_digest(token, expected)
+    ):
         return challenge or ""
+
     raise ApiError(403, "Verification failed.")
 
 
-@router.post("/webhooks/messenger", response_class=PlainTextResponse)
+# ---------------------------------------------------------------------
+# FACEBOOK MESSENGER WEBHOOK
+# ---------------------------------------------------------------------
+
+@router.post(
+    "/webhooks/messenger",
+    response_class=PlainTextResponse,
+)
 async def messenger_webhook(
     request: Request,
     x_hub_signature_256: Optional[str] = Header(default=None),
 ):
     raw = await request.body()
-    if not verify_messenger_signature(raw, x_hub_signature_256, os.environ.get("FB_APP_SECRET")):
+
+    if not verify_messenger_signature(
+        raw,
+        x_hub_signature_256,
+        os.environ.get("FB_APP_SECRET"),
+    ):
         raise ApiError(403, "Bad signature.")
+
     try:
         payload = json.loads(raw)
     except ValueError:
@@ -147,8 +392,21 @@ async def messenger_webhook(
 
     for item in parse_messenger_payload(payload):
         page_id = item.pop("page_id", None)
-        shop_id = await run_in_threadpool(channel_service.shop_for_page, page_id)
+
+        shop_id = await run_in_threadpool(
+            channel_service.shop_for_page,
+            page_id,
+        )
+
         if shop_id is None:
-            continue                       # a Page that no shop has connected: ignore it
-        await run_in_threadpool(ingest_message, shop_id, "messenger", **item)
-    return "EVENT_RECEIVED"                # Meta expects a quick 200
+            # Ignore Pages that are not connected to a shop.
+            continue
+
+        await run_in_threadpool(
+            ingest_message,
+            shop_id,
+            "messenger",
+            **item,
+        )
+
+    return "EVENT_RECEIVED"

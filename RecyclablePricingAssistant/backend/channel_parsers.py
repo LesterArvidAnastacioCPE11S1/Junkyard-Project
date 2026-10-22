@@ -1,5 +1,4 @@
-# channel_parsers.py - turns raw SMS / Messenger / email data into clean text.
-# Plain Python (standard library only), so it can be tested without a server.
+# channel_parsers.py - normalize incoming SMS, Messenger, and email messages.
 import hashlib
 import hmac
 import re
@@ -9,29 +8,63 @@ from email.parser import BytesParser
 from email.utils import parseaddr, parsedate_to_datetime
 from html.parser import HTMLParser
 
-MAX_TEXT_CHARS = 4000   # the API accepts up to 5000
+MAX_TEXT_CHARS = 4000
 
 
+# ---------------------------------------------------------------------
 # SMS
-_SENDER_KEYS = ("sender", "from", "phone", "number", "address", "msisdn")
-_TEXT_KEYS = ("text", "message", "body", "content", "sms", "msg")
-_ID_KEYS = ("id", "message_id", "messageid", "sid", "uuid")
+# ---------------------------------------------------------------------
+
+_SENDER_KEYS = (
+    "sender",
+    "from",
+    "phone",
+    "number",
+    "address",
+    "msisdn",
+)
+
+_TEXT_KEYS = (
+    "text",
+    "message",
+    "body",
+    "content",
+    "sms",
+    "msg",
+)
+
+_ID_KEYS = (
+    "id",
+    "message_id",
+    "messageid",
+    "sid",
+    "uuid",
+)
 
 
 def normalize_sms_payload(payload: dict) -> dict:
-    """Accept the field names that common SMS-forwarder apps and gateways use."""
-    lowered = {str(k).lower(): v for k, v in payload.items()}
+    """Accept common field names used by SMS-forwarding apps and gateways."""
+    lowered = {
+        str(key).lower(): value
+        for key, value in payload.items()
+    }
 
     def pick(keys):
         for key in keys:
             value = lowered.get(key)
+
             if value not in (None, ""):
                 return str(value).strip()
+
         return None
 
     text = pick(_TEXT_KEYS)
+
     if not text:
-        raise ValueError("No message text found. Send a JSON field named 'text' or 'message'.")
+        raise ValueError(
+            "No message text found. Send a JSON field named 'text' or 'message'."
+        )
+
     return {
         "sender": pick(_SENDER_KEYS) or "unknown",
         "text": text[:MAX_TEXT_CHARS],
@@ -39,50 +72,99 @@ def normalize_sms_payload(payload: dict) -> dict:
     }
 
 
-# Messenger
-def verify_messenger_signature(raw_body: bytes, header, app_secret) -> bool:
-    """Check Meta's X-Hub-Signature-256 header. Skipped when no secret is set (dev only)."""
+# ---------------------------------------------------------------------
+# FACEBOOK MESSENGER
+# ---------------------------------------------------------------------
+
+def verify_messenger_signature(
+    raw_body: bytes,
+    header,
+    app_secret,
+) -> bool:
+    """
+    Verify Meta's X-Hub-Signature-256 header.
+
+    As in the original project, signature verification is bypassed if
+    FB_APP_SECRET is not configured. Configure it for production use.
+    """
     if not app_secret:
         return True
+
     if not header or not header.startswith("sha256="):
         return False
-    expected = hmac.new(app_secret.encode(), raw_body, hashlib.sha256).hexdigest()
-    return hmac.compare_digest(expected, header.split("=", 1)[1])
+
+    expected = hmac.new(
+        app_secret.encode(),
+        raw_body,
+        hashlib.sha256,
+    ).hexdigest()
+
+    return hmac.compare_digest(
+        expected,
+        header.split("=", 1)[1],
+    )
 
 
 def parse_messenger_payload(payload: dict) -> list:
-    """Return one dict per customer text message in a Messenger webhook payload."""
+    """Return one record per customer text message in a Messenger webhook."""
     items = []
+
     if not isinstance(payload, dict) or payload.get("object") != "page":
         return items
+
     for entry in payload.get("entry", []):
         for event in entry.get("messaging", []):
             message = event.get("message") or {}
             text = message.get("text")
-            if not text or message.get("is_echo"):   # skip stickers, images, our own replies
+
+            # Ignore stickers, non-text messages, and messages sent by the Page.
+            if not text or message.get("is_echo"):
                 continue
+
             received_at = None
+
             if isinstance(event.get("timestamp"), (int, float)):
                 received_at = datetime.fromtimestamp(
-                    event["timestamp"] / 1000, tz=timezone.utc
+                    event["timestamp"] / 1000,
+                    tz=timezone.utc,
                 ).isoformat(timespec="seconds")
+
             items.append({
                 "page_id": entry.get("id"),
-                "sender": (event.get("sender") or {}).get("id", "unknown"),
+                "sender": (event.get("sender") or {}).get(
+                    "id",
+                    "unknown",
+                ),
                 "text": text.strip()[:MAX_TEXT_CHARS],
                 "external_id": message.get("mid"),
                 "received_at": received_at,
             })
+
     return items
 
 
-# Email
+# ---------------------------------------------------------------------
+# EMAIL HTML CLEANING
+# ---------------------------------------------------------------------
+
 class _HTMLToText(HTMLParser):
-    _BLOCKS = {"p", "div", "br", "tr", "li", "h1", "h2", "h3", "h4", "table"}
+    _BLOCKS = {
+        "p",
+        "div",
+        "br",
+        "tr",
+        "li",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "table",
+    }
 
     def __init__(self):
         super().__init__()
-        self.parts, self._skip = [], 0
+        self.parts = []
+        self._skip = 0
 
     def handle_starttag(self, tag, attrs):
         if tag in ("script", "style"):
@@ -111,46 +193,102 @@ _CUT_LINE = re.compile(
     r"^(on .{5,200} wrote:?|-{2,}\s*(original|forwarded) message\s*-{2,}|_{5,}|from:\s.+)$",
     re.IGNORECASE,
 )
-_SIGN_OFF = re.compile(r"^sent from my .+", re.IGNORECASE)
-_SUBJECT_PREFIX = re.compile(r"^(?:\s*(?:re|fwd?|fw)\s*:\s*)+", re.IGNORECASE)
+
+_SIGN_OFF = re.compile(
+    r"^sent from my .+",
+    re.IGNORECASE,
+)
+
+_SUBJECT_PREFIX = re.compile(
+    r"^(?:\s*(?:re|fwd?|fw)\s*:\s*)+",
+    re.IGNORECASE,
+)
 
 
 def clean_email_body(text: str) -> str:
-    """Drop quoted replies, signatures and 'Sent from my phone' lines."""
+    """Remove quoted replies, signatures, and common phone sign-offs."""
     kept = []
+
     for line in text.replace("\r\n", "\n").split("\n"):
         stripped = line.strip()
+
         if stripped in ("--", "-- ") or _CUT_LINE.match(stripped):
-            break                         # everything after this is quoted/signature
+            break
+
         if stripped.startswith(">") or _SIGN_OFF.match(stripped):
             continue
-        kept.append(stripped)
-    return re.sub(r"\n{3,}", "\n\n", "\n".join(kept)).strip()
 
+        kept.append(stripped)
+
+    return re.sub(
+        r"\n{3,}",
+        "\n\n",
+        "\n".join(kept),
+    ).strip()
+
+
+# ---------------------------------------------------------------------
+# EMAIL PARSING
+# ---------------------------------------------------------------------
 
 def parse_email_bytes(raw: bytes) -> dict:
+    """
+    Parse a raw email into a message record.
+
+    Privacy change:
+    - Show the sender's display name when available.
+    - Never use the sender's raw email address as the inbox display name.
+    - If no display name exists, use the generic label "Email customer".
+    """
     message = BytesParser(policy=policy.default).parsebytes(raw)
 
-    subject = _SUBJECT_PREFIX.sub("", str(message.get("subject") or "")).strip()
-    name, address = parseaddr(str(message.get("from") or ""))
-    sender = address or name or "unknown"
-    message_id = str(message.get("message-id") or "").strip() or None
+    subject = _SUBJECT_PREFIX.sub(
+        "",
+        str(message.get("subject") or ""),
+    ).strip()
+
+    name, _address = parseaddr(
+        str(message.get("from") or "")
+    )
+
+    sender = (
+        name.strip()
+        if name and name.strip()
+        else "Email customer"
+    )
+
+    message_id = str(
+        message.get("message-id") or ""
+    ).strip() or None
 
     received_at = None
+
     try:
-        received_at = (parsedate_to_datetime(str(message["date"]))
-                       .astimezone(timezone.utc).isoformat(timespec="seconds"))
+        received_at = (
+            parsedate_to_datetime(str(message["date"]))
+            .astimezone(timezone.utc)
+            .isoformat(timespec="seconds")
+        )
     except (TypeError, ValueError, KeyError):
         pass
 
     body = ""
-    part = message.get_body(preferencelist=("plain", "html"))
+    part = message.get_body(
+        preferencelist=("plain", "html")
+    )
+
     if part is not None:
         content = part.get_content()
-        body = html_to_text(content) if part.get_content_type() == "text/html" else content
+
+        if part.get_content_type() == "text/html":
+            body = html_to_text(content)
+        else:
+            body = content
+
     body = clean_email_body(body)
 
     text = f"{subject}\n{body}".strip() if subject else body
+
     return {
         "sender": sender,
         "subject": subject or None,

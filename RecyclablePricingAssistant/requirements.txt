@@ -8,3 +8,4 @@ fastapi
 uvicorn
 python-dotenv
 cryptography
+twilio>=9.0,<10.0
