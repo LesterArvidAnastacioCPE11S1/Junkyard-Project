@@ -1,0 +1,113 @@
+junkshop_name,location,raw_item_label,standardized_material_name,category,unit_price_php,unit
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,A,Copper Class A (Tanzo),Metal - Copper,820,kg
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,B,Copper Class B,Metal - Copper,810,kg
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,C,Copper Class C,Metal - Copper,750,kg
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,D,Copper Class D,Metal - Copper,490,kg
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,JEA,JEA (Panta / Hard Plastic),Plastic,170,kg
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,PANTA,Panta (Hard Plastic / Container),Plastic,100,kg
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,ALUM,Aluminum (Assorted),Metal - Aluminum,110,kg
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,CONDR,Condenser (Copper/Alum),Metal - Mixed,290,kg
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,HARDISH,Hard Drive / Hardisk,E-Waste,45,unit
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,RAD-L,Radiator Large,Metal - Mixed,360,kg
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,TINGGA,Tingga (Lead),Metal - Lead,80,kg
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,ZINC,Zinc,Metal - Zinc,90,kg
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,BAKAL,Bakal (Scrap Iron / Steel),Metal - Iron,8,kg
+BJS Scrap Trading,511 Litex Road Commonwealth District 2 Quezon City,TV-B,TV Board / Motherboard,E-Waste,40,unit
+Bultron Junk Shop,Payatas Quezon City,Bakal Ass,Bakal Assorted (Scrap Iron),Metal - Iron,7,kg
+Bultron Junk Shop,Payatas Quezon City,Bakal sld,Bakal Solid (Heavy Iron),Metal - Iron,10,kg
+Bultron Junk Shop,Payatas Quezon City,Alum,Aluminum (Assorted),Metal - Aluminum,100,kg
+Bultron Junk Shop,Payatas Quezon City,Panta,Panta (Hard Plastic),Plastic,90,kg
+Bultron Junk Shop,Payatas Quezon City,Pantalum,Pantalum / Aluminum Plastic,Mixed Plastic/Metal,75,kg
+Bultron Junk Shop,Payatas Quezon City,Kaldero,Kaldero (Cast Aluminum Cookware),Metal - Aluminum,70,kg
+Bultron Junk Shop,Payatas Quezon City,Taslas,Taslas / Iron Sheet,Metal - Iron,8,kg
+Bultron Junk Shop,Payatas Quezon City,IC/TVB,IC Board / TV Board,E-Waste,30,unit
+Bultron Junk Shop,Payatas Quezon City,MCB,MCB / Circuit Breaker,E-Waste,35,unit
+Bultron Junk Shop,Payatas Quezon City,Radiator,Radiator,Metal - Mixed,360,kg
+Bultron Junk Shop,Payatas Quezon City,condenser,Condenser,Metal - Mixed,290,kg
+Charmen Junkshop,Commonwealth Area Quezon City,Funta,Panta / PET Plastic,Plastic,95,kg
+Charmen Junkshop,Commonwealth Area Quezon City,Alum,Aluminum,Metal - Aluminum,100,kg
+Charmen Junkshop,Commonwealth Area Quezon City,Condenser,Condenser,Metal - Mixed,290,kg
+Charmen Junkshop,Commonwealth Area Quezon City,Hardis,Hard Drive / Hardisk,E-Waste,80,unit
+Charmen Junkshop,Commonwealth Area Quezon City,Bakal Assorted,Bakal Assorted,Metal - Iron,7,kg
+Charmen Junkshop,Commonwealth Area Quezon City,Bakal Solid,Bakal Solid,Metal - Iron,10,kg
+Charmen Junkshop,Commonwealth Area Quezon City,MB,Motherboard,E-Waste,300,unit
+Angela Junkshop,Commonwealth Area Quezon City,TANZO A,Copper Class A (Tanzo),Metal - Copper,820,kg
+Angela Junkshop,Commonwealth Area Quezon City,TANZO B,Copper Class B,Metal - Copper,810,kg
+Angela Junkshop,Commonwealth Area Quezon City,TANZO C,Copper Class C,Metal - Copper,730,kg
+Angela Junkshop,Commonwealth Area Quezon City,DILAW,Dilaw (Brass / Yellow Copper),Metal - Brass,450,kg
+Angela Junkshop,Commonwealth Area Quezon City,ZINC,Zinc,Metal - Zinc,75,kg
+Angela Junkshop,Commonwealth Area Quezon City,ALUM,Aluminum,Metal - Aluminum,105,kg
+Angela Junkshop,Commonwealth Area Quezon City,FANTA,Panta / Plastic Containers,Plastic,95,kg
+Angela Junkshop,Commonwealth Area Quezon City,KALDERO,Kaldero (Aluminum Pots),Metal - Aluminum,85,kg
+Angela Junkshop,Commonwealth Area Quezon City,BAKAL ASSORTED,Bakal Assorted (Light Scrap Iron),Metal - Iron,7,kg
+Angela Junkshop,Commonwealth Area Quezon City,BAKAL SOLID,Bakal Solid (Heavy Scrap Iron),Metal - Iron,10,kg
+Barcelon Junk Shop,Payatas Quezon City,1-A,Copper Class A (Tanzo),Metal - Copper,825,kg
+Barcelon Junk Shop,Payatas Quezon City,2-B,Copper Class B,Metal - Copper,805,kg
+Barcelon Junk Shop,Payatas Quezon City,3-C,Copper Class C,Metal - Copper,755,kg
+Barcelon Junk Shop,Payatas Quezon City,4-D,Copper Class D,Metal - Copper,510,kg
+Barcelon Junk Shop,Payatas Quezon City,5-C3,Copper Class C3,Metal - Copper,735,kg
+Barcelon Junk Shop,Payatas Quezon City,7-BALA SHELL,Bullet Shell / Brass,Metal - Brass,315,kg
+Barcelon Junk Shop,Payatas Quezon City,8-ALLUM,Aluminum (Assorted),Metal - Aluminum,115,kg
+Barcelon Junk Shop,Payatas Quezon City,9-ALH,Aluminum Hard,Metal - Aluminum,115,kg
+Barcelon Junk Shop,Payatas Quezon City,10-JAL,Jal (Jalousie Aluminum),Metal - Aluminum,135,kg
+Barcelon Junk Shop,Payatas Quezon City,10-ZINC,Zinc,Metal - Zinc,105,kg
+Barcelon Junk Shop,Payatas Quezon City,1-FANTA,Panta / Hard Plastic Container,Plastic,110,kg
+Barcelon Junk Shop,Payatas Quezon City,2-KALTAS,Kaltas (Scrap Plastic),Plastic,70,kg
+Barcelon Junk Shop,Payatas Quezon City,3-TINGGA,Tingga (Lead),Metal - Lead,80,kg
+Barcelon Junk Shop,Payatas Quezon City,4-RAD-H,Radiator Heavy / Copper Radiator,Metal - Mixed,410,kg
+Barcelon Junk Shop,Payatas Quezon City,5-RAD-L,Radiator Light,Metal - Mixed,400,kg
+Barcelon Junk Shop,Payatas Quezon City,6-CONDENSER,Condenser (Copper/Aluminum),Metal - Mixed,330,kg
+Barcelon Junk Shop,Payatas Quezon City,7-PLANTSA,Plantsa (Flat Iron),E-Waste / Appliance,45,unit
+Barcelon Junk Shop,Payatas Quezon City,8-STAINLESS,Stainless Steel,Metal - Steel,25,kg
+Barcelon Junk Shop,Payatas Quezon City,9-BAKAL-L,Bakal Light (Assorted Light Iron),Metal - Iron,8,kg
+Barcelon Junk Shop,Payatas Quezon City,10-BAKAL-S,Bakal Solid (Heavy Scrap Iron),Metal - Iron,10,kg
+Barcelon Junk Shop,Payatas Quezon City,11-YERO,Yero (Corrugated Galvanized Iron Sheet),Metal - Iron,5,kg
+Barcelon Junk Shop,Payatas Quezon City,1-LATA,Lata (Tin Cans),Metal - Iron,4,kg
+Barcelon Junk Shop,Payatas Quezon City,2-CPB,Cellion Board / Smartphone Motherboard,E-Waste,1500,kg
+Barcelon Junk Shop,Payatas Quezon City,3-IC,IC Chips / Integrated Circuit Board,E-Waste,400,kg
+Barcelon Junk Shop,Payatas Quezon City,4-TVB,TV Board,E-Waste,45,unit
+Barcelon Junk Shop,Payatas Quezon City,5-CD,CD/DVD Drive,E-Waste,13,unit
+Barcelon Junk Shop,Payatas Quezon City,6-SINGLE,Single Board / Electric Fan Board,E-Waste,400,kg
+Barcelon Junk Shop,Payatas Quezon City,7-M2,M2 Computer Motherboard,E-Waste,300,kg
+Barcelon Junk Shop,Payatas Quezon City,8-MODEM,Modem / Router Board,E-Waste,250,kg
+Barcelon Junk Shop,Payatas Quezon City,9-MB,Computer Motherboard,E-Waste,800,kg
+Barcelon Junk Shop,Payatas Quezon City,10-HDB,Hard Drive Board,E-Waste,150,kg
+Barcelon Junk Shop,Payatas Quezon City,11-AIRCON COMP,Aircon Compressor,E-Waste / Appliance,35,unit
+Barcelon Junk Shop,Payatas Quezon City,1-MCM,MC Mainboard,E-Waste,30,unit
+Barcelon Junk Shop,Payatas Quezon City,2-NS 40,Car Battery NS40,Battery,350,unit
+Barcelon Junk Shop,Payatas Quezon City,3-NS 60,Car Battery NS60,Battery,450,unit
+Barcelon Junk Shop,Payatas Quezon City,4-ML7,Motorcycle Battery ML7,Battery,450,unit
+Barcelon Junk Shop,Payatas Quezon City,5-1SM,Battery 1SM,Battery,580,unit
+Barcelon Junk Shop,Payatas Quezon City,6-2SM,Battery 2SM,Battery,600,unit
+Barcelon Junk Shop,Payatas Quezon City,7-3SM,Battery 3SM,Battery,780,unit
+Barcelon Junk Shop,Payatas Quezon City,10-4D,Industrial Battery 4D,Battery,1650,unit
+Barcelon Junk Shop,Payatas Quezon City,11-8D,Industrial Battery 8D,Battery,2000,unit
+Manila Gravel Pit Junkshop,Payatas Quezon City,A,Copper Class A (Tanzo),Metal - Copper,680,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,B,Copper Class B,Metal - Copper,650,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,C,Copper Class C,Metal - Copper,600,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,D,Copper Class D,Metal - Copper,450,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,ALUM,Aluminum (Assorted),Metal - Aluminum,90,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,JAL,Jalousie Aluminum,Metal - Aluminum,95,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,ZINC,Zinc,Metal - Zinc,80,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,PANTA,Panta (Hard Plastic),Plastic,90,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,FANTA,Panta / Plastic Containers,Plastic,95,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,BAKAL,Bakal (Scrap Iron),Metal - Iron,8,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,BAKAL SOLID,Bakal Solid (Heavy Iron),Metal - Iron,12,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,SIBAK,Sibak (Hard Plastic),Plastic,8,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,PET,PET Plastic Bottles,Plastic,12,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,KARTON,Karton (Cardboard),Paper,3,kg
+Manila Gravel Pit Junkshop,Payatas Quezon City,BOTE,Glass Bottles,Glass,2,unit
+M.A.B Junk Shop,Payatas Area Quezon City,A,Copper Class A (Tanzo),Metal - Copper,650,kg
+M.A.B Junk Shop,Payatas Area Quezon City,B,Copper Class B,Metal - Copper,620,kg
+M.A.B Junk Shop,Payatas Area Quezon City,C,Copper Class C,Metal - Copper,560,kg
+M.A.B Junk Shop,Payatas Area Quezon City,D,Copper Class D,Metal - Copper,350,kg
+M.A.B Junk Shop,Payatas Area Quezon City,ALUM,Aluminum (Assorted),Metal - Aluminum,70,kg
+M.A.B Junk Shop,Payatas Area Quezon City,Jal,Jalousie Aluminum,Metal - Aluminum,100,kg
+M.A.B Junk Shop,Payatas Area Quezon City,Yyerro,Yero (Galvanized Iron Sheet),Metal - Iron,65,kg
+M.A.B Junk Shop,Payatas Area Quezon City,Bakal Solid,Bakal Solid (Heavy Iron),Metal - Iron,15,kg
+M.A.B Junk Shop,Payatas Area Quezon City,Bakal Assort,Bakal Assorted (Light Iron),Metal - Iron,11,kg
+M.A.B Junk Shop,Payatas Area Quezon City,YERO,Yero (Sheet Iron),Metal - Iron,8,kg
+M.A.B Junk Shop,Payatas Area Quezon City,Lata,Tin Cans,Metal - Iron,7,kg
+M.A.B Junk Shop,Payatas Area Quezon City,MCB,MCB / Circuit Breaker,E-Waste,35,unit
+M.A.B Junk Shop,Payatas Area Quezon City,TV Board,TV Board,E-Waste,20,unit
+M.A.B Junk Shop,Payatas Area Quezon City,CD,CD Drive,E-Waste,20,unit

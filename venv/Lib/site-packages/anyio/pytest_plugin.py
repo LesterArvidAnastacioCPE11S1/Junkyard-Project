@@ -1,15 +1,17 @@
 from __future__ import annotations
 
+import dataclasses
 import socket
 import sys
 from collections.abc import Callable, Generator, Iterator
 from contextlib import ExitStack, contextmanager
 from inspect import isasyncgenfunction, iscoroutinefunction, ismethod
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import pytest
-from _pytest.fixtures import SubRequest
+from _pytest.fixtures import FuncFixtureInfo, SubRequest
 from _pytest.outcomes import Exit
+from _pytest.scope import Scope
 
 from . import get_available_backends
 from ._core._eventloop import (
@@ -19,10 +21,23 @@ from ._core._eventloop import (
     set_current_async_library,
 )
 from ._core._exceptions import iterate_exceptions
-from .abc import TestRunner
+
+if TYPE_CHECKING:
+    from .abc import TestRunner
 
 if sys.version_info < (3, 11):
     from exceptiongroup import ExceptionGroup
+
+if TYPE_CHECKING:
+    # pytest >= 9.2 keeps CallSpec2 as a TYPE_CHECKING-only alias of CallSpec
+    from _pytest.python import CallSpec2 as CallSpec
+else:
+    try:
+        # c.f. https://github.com/pytest-dev/pytest/pull/14742
+        # pytest >= 9.2
+        from _pytest.python import CallSpec
+    except ImportError:
+        from _pytest.python import CallSpec2 as CallSpec
 
 _current_runner: TestRunner | None = None
 _runner_stack: ExitStack | None = None
@@ -70,10 +85,27 @@ def get_runner(
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
+    group = parser.getgroup("anyio")
     parser.addini(
         "anyio_mode",
         default="strict",
         help='AnyIO plugin mode (either "strict" or "auto")',
+    )
+    group.addoption(
+        "--anyio-mode",
+        default=None,
+        dest="anyio_mode",
+        help="""
+        'auto'   - All async test functions will be handled by AnyIO pytest plugin
+        'strict' - Disabling autoprocessing(useful when anyio tests
+            need to coexist with other async test plugins)
+        """,
+    )
+
+
+def _is_auto_mode(config: pytest.Config, mode: str) -> bool:
+    return (
+        config.getoption(mode, default=None) == "auto" or config.getini(mode) == "auto"
     )
 
 
@@ -83,9 +115,9 @@ def pytest_configure(config: pytest.Config) -> None:
         "anyio: mark the (coroutine function) test to be run asynchronously via anyio.",
     )
     if (
-        config.getini("anyio_mode") == "auto"
+        _is_auto_mode(config, "anyio_mode")
         and config.pluginmanager.has_plugin("asyncio")
-        and config.getini("asyncio_mode") == "auto"
+        and _is_auto_mode(config, "asyncio_mode")
     ):
         config.issue_config_time_warning(
             pytest.PytestConfigWarning(
@@ -117,6 +149,18 @@ def pytest_fixture_setup(fixturedef: Any, request: Any) -> Generator[Any]:
             kwargs["request"] = request
 
         with get_runner(backend_name, backend_options) as runner:
+            # re-entrant call into the test runner detected. this happens when an async fixture
+            # is dynamically requested via request.getfixturevalue() from inside a running async
+            # test or fixture. on asyncio this raises RuntimeError: This event loop is already
+            # running, on trio the runner deadlocks - the host loop blocks waiting for the
+            # coroutine to return, but the coroutine is waiting for the host loop. raising here
+            # prevents the hang and gives a consistent error across backends.
+            if runner.is_running():
+                raise RuntimeError(
+                    "Cannot schedule a coroutine in the test runner while another is already running; "
+                    "likely caused by request.getfixturevalue() on an async fixture."
+                )
+
             if isasyncgenfunction(local_func):
                 yield from runner.run_asyncgen_fixture(local_func, kwargs)
             else:
@@ -152,7 +196,7 @@ def pytest_pycollect_makeitem(
     if collector.istestfunction(obj, name):
         inner_func = obj.hypothesis.inner_test if hasattr(obj, "hypothesis") else obj
         if iscoroutinefunction(inner_func):
-            anyio_auto_mode = collector.config.getini("anyio_mode") == "auto"
+            anyio_auto_mode = _is_auto_mode(collector.config, "anyio_mode")
             marker = collector.get_closest_marker("anyio")
             own_markers = getattr(obj, "pytestmark", ())
             if (
@@ -161,6 +205,64 @@ def pytest_pycollect_makeitem(
                 or any(marker.name == "anyio" for marker in own_markers)
             ):
                 pytest.mark.usefixtures("anyio_backend")(obj)
+
+
+def pytest_collection_finish(session: pytest.Session) -> None:
+    for i, item in reversed(list(enumerate(session.items))):
+        if (
+            isinstance(item, pytest.Function)
+            and iscoroutinefunction(item.function)
+            and item.get_closest_marker("anyio") is not None
+            and "anyio_backend" not in item.fixturenames
+        ):
+            new_items = []
+            try:
+                cs_fields = {f.name for f in dataclasses.fields(CallSpec)}
+            except TypeError:
+                cs_fields = set()
+
+            for param_index, backend in enumerate(get_available_backends()):
+                if "_arg2scope" in cs_fields:  # pytest >= 8
+                    callspec = CallSpec(
+                        params={"anyio_backend": backend},
+                        indices={"anyio_backend": param_index},
+                        _arg2scope={"anyio_backend": Scope.Module},
+                        _idlist=[backend],
+                        marks=[],
+                    )
+                else:  # pytest 7.x
+                    callspec = CallSpec(  # type: ignore[call-arg]
+                        funcargs={},
+                        params={"anyio_backend": backend},
+                        indices={"anyio_backend": param_index},
+                        arg2scope={"anyio_backend": Scope.Module},
+                        idlist=[backend],
+                        marks=[],
+                    )
+
+                fi = item._fixtureinfo
+                new_names_closure = list(fi.names_closure)
+                if "anyio_backend" not in new_names_closure:
+                    new_names_closure.append("anyio_backend")
+
+                new_fixtureinfo = FuncFixtureInfo(
+                    argnames=fi.argnames,
+                    initialnames=fi.initialnames,
+                    names_closure=new_names_closure,
+                    name2fixturedefs=fi.name2fixturedefs,
+                )
+                new_item = pytest.Function.from_parent(
+                    item.parent,
+                    name=f"{item.originalname}[{backend}]",
+                    callspec=callspec,
+                    callobj=item.obj,
+                    fixtureinfo=new_fixtureinfo,
+                    keywords=item.keywords,
+                    originalname=item.originalname,
+                )
+                new_items.append(new_item)
+
+            session.items[i : i + 1] = new_items
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -266,9 +368,9 @@ class FreePortFactory:
         while True:
             port = 0
             with ExitStack() as stack:
-                for family in families:
-                    sock = stack.enter_context(socket.socket(family, self._kind))
-                    addr = "::1" if family == socket.AF_INET6 else "127.0.0.1"
+                for fam in families:
+                    sock = stack.enter_context(socket.socket(fam, self._kind))
+                    addr = "::1" if fam == socket.AF_INET6 else "127.0.0.1"
                     try:
                         sock.bind((addr, port))
                     except OSError:
