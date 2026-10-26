@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS trucks (
     code        TEXT NOT NULL,                       -- e.g. SD-01
     label       TEXT NOT NULL,                       -- e.g. Small truck
     capacity_kg REAL NOT NULL CHECK (capacity_kg > 0),
+    vehicle_type TEXT NOT NULL DEFAULT 'small_truck', -- tricycle | multicab | pickup | small_truck | large_truck
     driver_id   INTEGER REFERENCES users(id),        -- a user whose role is 'driver'
     is_active   INTEGER NOT NULL DEFAULT 1,
     created_at  TEXT NOT NULL,
@@ -36,6 +37,9 @@ CREATE TABLE IF NOT EXISTS pickups (
     collected_by   INTEGER REFERENCES users(id),
     collected_at   TEXT,
     photo_ref      TEXT,
+    auto_filled    INTEGER NOT NULL DEFAULT 0,       -- 1 = details were read from the customer's message
+    auto_notes     TEXT,                             -- JSON list: what still needs the dispatcher's eyes
+    assign_note    TEXT,                             -- why this driver was suggested (or why none was)
     created_at     TEXT NOT NULL,
     updated_at     TEXT NOT NULL
 );
@@ -65,4 +69,25 @@ CREATE TABLE IF NOT EXISTS route_runs (
     completed_at TEXT,
     UNIQUE (truck_id, run_date)
 );
+
+CREATE TABLE IF NOT EXISTS driver_availability (
+    shop_id     INTEGER NOT NULL REFERENCES shops(id),
+    driver_id   INTEGER NOT NULL REFERENCES users(id),
+    shift_start TEXT NOT NULL DEFAULT '08:00',       -- HH:MM (24h)
+    shift_end   TEXT NOT NULL DEFAULT '17:00',
+    work_days   TEXT NOT NULL DEFAULT '1,2,3,4,5,6,7', -- ISO weekdays: 1 = Monday ... 7 = Sunday
+    PRIMARY KEY (shop_id, driver_id)
+);
+
+CREATE TABLE IF NOT EXISTS driver_time_off (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_id    INTEGER NOT NULL REFERENCES shops(id),
+    driver_id  INTEGER NOT NULL REFERENCES users(id),
+    off_date   TEXT NOT NULL,                        -- YYYY-MM-DD
+    start_time TEXT,                                 -- NULL = the whole day
+    end_time   TEXT,
+    note       TEXT,
+    created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_timeoff ON driver_time_off(shop_id, driver_id, off_date);
 """

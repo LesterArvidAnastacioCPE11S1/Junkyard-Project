@@ -1,5 +1,6 @@
 # channel_service.py - each shop's own email / SMS / Messenger connections.
 import hmac
+import os
 import re
 
 from backend import accounts_db, email_service, security
@@ -32,6 +33,7 @@ def get_status(shop_id: int) -> dict:
                 "imap_host": config.get("imap_host"),
                 "imap_user": config.get("imap_user"),
                 "folder": config.get("folder", "INBOX"),
+                "smtp_host": config.get("smtp_host") or "",
                 "last_checked_at": connection["last_checked_at"],
                 "last_error": connection["last_error"],
             }
@@ -53,6 +55,7 @@ def get_status(shop_id: int) -> dict:
             status["messenger"] = {
                 "connected": True,
                 "page_id": connection["external_ref"],
+                "can_reply": bool(connection["secret_enc"]) or bool(os.environ.get("FB_PAGE_ACCESS_TOKEN")),
             }
 
     return status
@@ -68,6 +71,7 @@ def set_email(
     imap_user,
     imap_password,
     folder="INBOX",
+    smtp_host=None,
 ):
     host = (imap_host or "").strip()
     user = (imap_user or "").strip()
@@ -98,6 +102,7 @@ def set_email(
                 "imap_host": host,
                 "imap_user": user,
                 "folder": folder,
+                "smtp_host": smtp_host.strip() or None,
             },
             secret_enc=encrypted,
         )
@@ -201,17 +206,31 @@ def set_twilio_sms(
 # FACEBOOK MESSENGER
 # ---------------------------------------------------------------------
 
-def set_messenger(shop_id, page_id):
+def set_messenger(shop_id, page_id, page_access_token=None):
     page_id = (page_id or "").strip()
+    page_access_token = (page_access_token or "").strip()
 
     if not page_id:
         raise ApiError(400, "Enter a Facebook Page ID.")
+
+    encrypted = None
+    if page_access_token:
+        # The token lets the app answer customers on Messenger. It is stored encrypted.
+        try:
+            encrypted = security.encrypt_secret(page_access_token)
+        except RuntimeError as error:
+            raise ApiError(503, str(error))
+    else:
+        # Saving the Page ID again without a token must not wipe a token saved earlier.
+        previous = accounts_db.get_connection(shop_id, "messenger")
+        encrypted = previous["secret_enc"] if previous else None
 
     try:
         accounts_db.upsert_connection(
             shop_id,
             "messenger",
             external_ref=page_id,
+            secret_enc=encrypted,
         )
     except accounts_db.ChannelRefTaken:
         raise ApiError(

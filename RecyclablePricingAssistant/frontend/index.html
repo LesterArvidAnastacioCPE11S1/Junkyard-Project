@@ -1,40 +1,87 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ScrapDesk</title>
+<link rel="icon" type="image/png" href="assets/scrapdesk-logo.png">
+<script>
+  try { var t = localStorage.getItem('scrapdesk_theme'); if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- Icon sprite: used everywhere with <svg class="ic"><use href="#i-name"/></svg> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+    <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+    <symbol id="i-arrow-r" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M3 13h5l1.5 3h5L16 13h5M5 5h14l2 8v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6z"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M16 2.5v4M8 2.5v4M3 10h18"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24"><path d="M1.5 5h12v11h-12zM13.5 9h4.5l3.5 3.5V16h-8"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+    <symbol id="i-nav" viewBox="0 0 24 24"><path d="m3 11 18-8-8 18-2-8z"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3.5 3.5 0 0 0 6 0zM19 7l-3 7a3.5 3.5 0 0 0 6 0z"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20zM12 10v4.5M12 17.5v.01"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2.2"/><circle cx="18" cy="19" r="2.2"/><path d="M8.2 5H15a3.5 3.5 0 0 1 0 7H9a3.5 3.5 0 0 0 0 7h6.8"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-messenger" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.2-.6L3 21l1.8-5.2A8.4 8.4 0 1 1 21 11.5zM8 13l3-3 2 2 3-3"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></symbol>
+    <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></symbol>
+  </defs>
+</svg>
+
 <div class="app">
   <div class="screens" id="screens">
 
     <!-- LOGIN -->
-    <section class="screen active login" id="login">
-      <h1>ScrapDesk</h1>
-      <p>Log in to your junkshop's inbox.</p>
+    <section class="screen active auth" id="login">
+      <div class="auth-logo"><img src="assets/scrapdesk-logo.png" alt="ScrapDesk Junkshop"></div>
+      <div class="auth-sub">Inquiries, pickups, and pricing in one place.</div>
+      <h1>Welcome back</h1>
+      <p>Sign in to manage your inquiries, collections, and pricing.</p>
       <form id="loginForm">
         <label class="field">
-          <span>Email</span>
-          <input id="lEmail" type="email" autocomplete="username" required>
+          <span>Email address</span>
+          <input id="lEmail" type="email" autocomplete="username" placeholder="you@example.com" required>
         </label>
         <label class="field">
           <span>Password</span>
           <input id="lPass" type="password" autocomplete="current-password" required>
         </label>
         <div class="err" id="loginErr"></div>
-        <button class="btn primary" type="submit" style="width:100%">Log in</button>
+        <button class="btn primary" type="submit" style="width:100%">Sign in</button>
       </form>
-      <p style="text-align:center;margin-top:16px">
-        New junkshop?
-        <button class="btn ghost" type="button" id="showSignup">Create an account</button>
+      <p class="auth-switch">
+        Don't have an account?
+        <button class="linkbtn" type="button" id="showSignup">Sign up</button>
       </p>
     </section>
 
     <!-- SIGN UP -->
-    <section class="screen login" id="signup">
+    <section class="screen auth" id="signup">
+      <div class="auth-logo"><img src="assets/scrapdesk-logo.png" alt="ScrapDesk Junkshop"></div>
+      <div class="auth-sub">Inquiries, pickups, and pricing in one place.</div>
       <h1>Create your account</h1>
       <p>Register your junkshop to manage customer inquiries.</p>
       <form id="signupForm">
@@ -44,55 +91,57 @@
         </label>
         <label class="field">
           <span>Owner's full name</span>
-          <input id="sName" type="text" minlength="2" maxlength="100"
-                 autocomplete="name" required>
+          <input id="sName" type="text" minlength="2" maxlength="100" autocomplete="name" required>
         </label>
         <label class="field">
-          <span>Email</span>
+          <span>Email address</span>
           <input id="sEmail" type="email" autocomplete="email" required>
         </label>
         <label class="field">
           <span>Password (at least 8 characters)</span>
-          <input id="sPass" type="password" minlength="8" maxlength="128"
-                 autocomplete="new-password" required>
+          <input id="sPass" type="password" minlength="8" maxlength="128" autocomplete="new-password" required>
         </label>
         <div class="err" id="signupErr"></div>
         <button class="btn primary" type="submit" style="width:100%">Create account</button>
       </form>
-      <p style="text-align:center;margin-top:16px">
+      <p class="auth-switch">
         Already registered?
-        <button class="btn ghost" type="button" id="showLogin">Back to login</button>
+        <button class="linkbtn" type="button" id="showLogin">Back to sign in</button>
       </p>
     </section>
 
     <!-- INQUIRIES -->
     <section class="screen" id="inquiries">
-      <div class="topbar">
-        <div>
-          <div class="brand">ScrapDesk</div>
-          <div class="sub" data-shop></div>
+      <header class="topbar">
+        <div class="brandrow">
+          <div class="logo"><img src="assets/scrapdesk-logo.png" alt="ScrapDesk"></div>
+          <div><div class="brand">ScrapDesk</div><div class="sub" data-shop></div></div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button class="avatar" id="addBtn" aria-label="Add message"
-                  style="font-size:20px">+</button>
-          <div class="avatar" data-avatar></div>
-        </div>
-      </div>
+        <div class="avatar" data-avatar></div>
+      </header>
 
-      <div class="metrics">
-        <div class="card metric"><b id="mOpen">–</b><span>Open</span></div>
-        <div class="card metric"><b id="mPickup">–</b><span>Pickups</span></div>
-        <div class="card metric hl"><b id="mReview">–</b><span>Review flags</span></div>
-        <div class="card metric"><b id="mBulk">–</b><span>Bulk</span></div>
+      <div class="eyebrow" data-today></div>
+      <div class="titlerow">
+        <h1 class="h1">Inquiries</h1>
+        <button class="iconbtn" id="selectBtn" type="button" aria-label="Select messages to delete" title="Delete messages"><svg class="ic"><use href="#i-trash"/></svg></button>
+      </div>
+      <p class="lede">Messages, prices, and pickups — all in one place.</p>
+
+      <div class="hero hero-metrics">
+        <div><b id="mOpen">–</b><span>Open</span></div>
+        <div><b id="mUnread">–</b><span>Unread</span></div>
+        <div><b id="mReview">–</b><span>Needs review</span></div>
+        <div><b id="mSched">–</b><span>Scheduled</span></div>
       </div>
 
       <label class="card search">
-        🔍 <input type="search" id="searchInput" placeholder="Search by name or message">
+        <svg class="ic"><use href="#i-search"/></svg>
+        <input type="search" id="searchInput" placeholder="Search by name or message">
       </label>
 
       <div class="pills" id="pills">
         <button class="pill active" data-filter="all">All <span data-count="all"></span></button>
-        <button class="pill" data-filter="review">Review flags <span data-count="review"></span></button>
+        <button class="pill" data-filter="review">Needs review <span data-count="review"></span></button>
         <button class="pill" data-filter="Price_Inquiry">Price <span data-count="Price_Inquiry"></span></button>
         <button class="pill" data-filter="Pickup_Request">Pickup <span data-count="Pickup_Request"></span></button>
         <button class="pill" data-filter="Bulk_Negotiation">Bulk <span data-count="Bulk_Negotiation"></span></button>
@@ -100,57 +149,80 @@
       </div>
 
       <div id="inqList"></div>
+      <button class="viewall" id="viewAll" style="display:none"></button>
+
+      <div class="selbar" id="selBar" style="display:none">
+        <span id="selCount">Tap messages to select</span>
+        <button class="linkbtn" id="selAll" type="button">Select all</button>
+        <button class="btn danger sm" id="selDelete" type="button" disabled><svg class="ic"><use href="#i-trash"/></svg>Delete</button>
+      </div>
     </section>
 
-    <!-- DETAIL -->
+    <!-- INQUIRY DETAIL -->
     <section class="screen" id="detail">
-      <div class="dhead">
-        <button class="back" id="backBtn" aria-label="Back">←</button>
-        <h2 id="detailTitle">Inquiry</h2>
-        <span id="detailTag"></span>
-      </div>
+      <header class="topbar">
+        <div class="brandrow">
+          <button class="back" id="backBtn" aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button>
+          <div class="logo"><img src="assets/scrapdesk-logo.png" alt="ScrapDesk"></div>
+          <div><div class="brand">ScrapDesk</div><div class="sub" data-shop></div></div>
+        </div>
+        <div class="avatar" data-avatar></div>
+      </header>
       <div id="detailBody"></div>
     </section>
 
-    <!-- ADD MESSAGE -->
-    <section class="screen" id="compose">
-      <div class="dhead">
-        <button class="back" id="composeBack" aria-label="Back">←</button>
-        <h2>Add a message</h2>
-      </div>
-      <p class="muted" style="margin-bottom:14px">
-        Type a customer message, such as one taken over the phone.
-        It will be classified like other messages.
-      </p>
-      <form id="composeForm">
-        <label class="field">
-          <span>From</span>
-          <input id="cSender" placeholder="Walk-in / phone number / name">
-        </label>
-        <label class="field">
-          <span>Message</span>
-          <textarea id="cText" required
-            placeholder="Magkano po ang bili ninyo sa karton ngayon?"></textarea>
-        </label>
-        <button class="btn primary" type="submit" style="width:100%">
-          Classify and save
-        </button>
-      </form>
+    <!-- PRICE REVIEW / APPROVE -->
+    <section class="screen" id="review">
+      <header class="topbar">
+        <div class="brandrow">
+          <button class="back" id="reviewBack" aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button>
+          <div class="logo"><img src="assets/scrapdesk-logo.png" alt="ScrapDesk"></div>
+          <div><div class="brand">ScrapDesk</div><div class="sub" data-shop></div></div>
+        </div>
+        <div class="avatar" data-avatar></div>
+      </header>
+      <div id="reviewBody"></div>
     </section>
 
-    <!-- IMPORTANT:
-         Restore your original Planning and Collections sections here
-         if you have them saved elsewhere. -->
+    <!-- PLANNING -->
+    <section class="screen" id="planning">
+      <header class="topbar">
+        <div class="brandrow">
+          <div class="logo"><img src="assets/scrapdesk-logo.png" alt="ScrapDesk"></div>
+          <div><div class="brand">ScrapDesk</div><div class="sub" data-shop></div></div>
+        </div>
+        <div class="avatar" data-avatar></div>
+      </header>
+      <div class="eyebrow">Collection operations</div>
+      <div class="titlerow">
+        <h1 class="h1">Pickup planning</h1>
+      </div>
+      <p class="lede">Drafts from your messages, ready to review and approve.</p>
+      <div id="planBody"></div>
+    </section>
+
+    <!-- COLLECTIONS -->
+    <section class="screen" id="collections">
+      <header class="topbar">
+        <div class="brandrow">
+          <div class="logo"><img src="assets/scrapdesk-logo.png" alt="ScrapDesk"></div>
+          <div><div class="brand">ScrapDesk</div><div class="sub" data-shop></div></div>
+        </div>
+        <div class="avatar" data-avatar></div>
+      </header>
+      <div id="colBody"></div>
+    </section>
 
     <!-- MORE / SETTINGS -->
     <section class="screen" id="more">
-      <div class="topbar">
-        <div>
-          <div class="brand" style="font-size:20px">More</div>
-          <div class="sub" data-shop></div>
+      <header class="topbar">
+        <div class="brandrow">
+          <div class="logo"><img src="assets/scrapdesk-logo.png" alt="ScrapDesk"></div>
+          <div><div class="brand">ScrapDesk</div><div class="sub" data-shop></div></div>
         </div>
         <div class="avatar" data-avatar></div>
-      </div>
+      </header>
+      <h1 class="h1" style="margin-bottom:14px">More</h1>
       <div id="moreBody"></div>
     </section>
 
@@ -159,39 +231,27 @@
   <!-- BOTTOM NAVIGATION -->
   <nav id="nav">
     <button class="active" data-nav="inquiries">
-      <svg viewBox="0 0 24 24">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-      </svg>
+      <svg class="ic"><use href="#i-inbox"/></svg>
       Inquiries
       <span class="badge" id="navBadge" style="display:none">0</span>
     </button>
-
     <button data-nav="planning">
-      <svg viewBox="0 0 24 24">
-        <rect x="3" y="4" width="18" height="18" rx="2"/>
-        <path d="M16 2v4M8 2v4M3 10h18"/>
-      </svg>
+      <svg class="ic"><use href="#i-cal"/></svg>
       Planning
     </button>
-
     <button data-nav="collections">
-      <svg viewBox="0 0 24 24">
-        <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/>
-        <circle cx="5.5" cy="18.5" r="2"/>
-        <circle cx="18.5" cy="18.5" r="2"/>
-      </svg>
+      <svg class="ic"><use href="#i-truck"/></svg>
       Collections
     </button>
-
     <button data-nav="more">
-      <svg viewBox="0 0 24 24">
-        <circle cx="5" cy="12" r="1.5"/>
-        <circle cx="12" cy="12" r="1.5"/>
-        <circle cx="19" cy="12" r="1.5"/>
-      </svg>
+      <svg class="ic"><use href="#i-menu"/></svg>
       More
     </button>
   </nav>
+
+  <!-- Bottom sheet used for "Record collection" -->
+  <div class="sheet-bg" id="sheetBg"></div>
+  <div class="sheet" id="sheet"></div>
 
   <div class="toast" id="toast"></div>
 </div>

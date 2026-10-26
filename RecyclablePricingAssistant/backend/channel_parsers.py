@@ -250,6 +250,9 @@ def parse_email_bytes(raw: bytes) -> dict:
     name, _address = parseaddr(
         str(message.get("from") or "")
     )
+    
+    _reply_name, reply_address = parseaddr(str(message.get("reply-to") or ""))
+    reply_address = (reply_address or _address or "").strip().lower() or None
 
     sender = (
         name.strip()
@@ -295,4 +298,5 @@ def parse_email_bytes(raw: bytes) -> dict:
         "text": text[:MAX_TEXT_CHARS],
         "external_id": message_id,
         "received_at": received_at,
+        "reply_address": reply_address,
     }

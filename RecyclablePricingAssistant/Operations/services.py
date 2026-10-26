@@ -1,5 +1,5 @@
-# services.py - the rules for planning and collecting pickups. Routes call these functions;
-# problems are raised as ApiError (same as the rest of the backend).
+# services.py - the rules for planning and collecting pickups.
+
 import re
 import sqlite3
 from datetime import date as _date, datetime, timedelta, timezone
@@ -7,7 +7,7 @@ from datetime import date as _date, datetime, timedelta, timezone
 from backend import accounts_db, inbox_db
 from backend.db import now_iso
 from backend.errors import ApiError
-from Operations import capacity, ops_db
+from Operations import auto_assign, capacity, extractor, ops_db, vehicles
 from Operations.request_parser import parse_request
 from Prices import price_catalog
 
@@ -92,16 +92,26 @@ def _driver_check(shop_id, driver_id):
         raise ApiError(422, "driver_id must be an active driver of this shop.")
 
 
-def create_truck(shop_id, code, label, capacity_kg, driver_id=None):
+def _check_vehicle_type(value):
+    if value is not None and value not in vehicles.VEHICLE_TYPES:
+        raise ApiError(422, "vehicle_type must be one of: " + ", ".join(vehicles.VEHICLE_TYPES))
+    return value
+
+
+def create_truck(shop_id, code, label, capacity_kg, driver_id=None, vehicle_type=None):
     _driver_check(shop_id, driver_id)
+    _check_vehicle_type(vehicle_type)
     try:
-        return ops_db.create_truck(shop_id, code.strip().upper(), label.strip(), capacity_kg, driver_id)
+        return ops_db.create_truck(shop_id, code.strip().upper(), label.strip(), capacity_kg, driver_id,
+                                   vehicle_type)
     except sqlite3.IntegrityError:
         raise ApiError(409, "You already have a truck with that code.")
 
 
 def update_truck(shop_id, truck_id, fields):
     _need_truck_any(shop_id, truck_id)
+    if "vehicle_type" in fields:
+        _check_vehicle_type(fields["vehicle_type"])
     if "driver_id" in fields:
         _driver_check(shop_id, fields["driver_id"])
     if "code" in fields:
@@ -119,12 +129,28 @@ def _need_truck_any(shop_id, truck_id):
     return t
 
 
-def _truck_card(t, day_pickups):
+def driver_status(shop_id, truck, day):
+    """Is this truck's driver working on `day`? -> {working, label} (label = shift hours or the reason)."""
+    if not truck.get("driver_id"):
+        return {"working": False, "label": "No driver"}
+    avail = ops_db.get_availability(shop_id, truck["driver_id"])
+    intervals = auto_assign.working_intervals(day, avail, ops_db.list_time_off(shop_id, truck["driver_id"], day))
+    if not intervals:
+        return {"working": False, "label": "Off duty"}
+    lo, hi = intervals[0][0], intervals[-1][1]
+    return {"working": True, "label": f"{capacity.fmt_time(auto_assign._hhmm(lo))}-"
+                                       f"{capacity.fmt_time(auto_assign._hhmm(hi))}"}
+
+
+def _truck_card(t, day_pickups, shop_id=None, day=None):
     mine = [p for p in day_pickups if p["truck_id"] == t["id"]]
     load = capacity.day_load_kg(mine)
+    status = driver_status(shop_id, t, day) if shop_id is not None else {"working": True, "label": ""}
     return {"id": t["id"], "code": t["code"], "label": t["label"],
+            "vehicle_type": t.get("vehicle_type"), "vehicle_label": t.get("vehicle_label"),
             "driver_id": t["driver_id"], "driver_name": t["driver_name"],
             "driver_short": short_name(t["driver_name"]),
+            "working": status["working"], "shift_label": status["label"],
             "capacity_kg": t["capacity_kg"], "load_kg": load,
             "available_kg": max(0, t["capacity_kg"] - load),
             "load_percent": round(load / t["capacity_kg"] * 100), "stops": len(mine)}
@@ -151,8 +177,45 @@ def create_pickup(shop_id, fields, items):
     return ops_db.create_pickup(shop_id, fields, _clean_items(items))
 
 
+PICKUP_WORDS = re.compile(r"\b(pick\s?-?up|pa-?pickup|collect|kuha(?:in)?|hakot|kunin|come (?:get|by))\b", re.I)
+
+
+def wants_pickup(intent, text):
+    """Should a message become a draft pickup on its own?"""
+    if intent == "Pickup_Request":
+        return True
+    return intent == "Bulk_Negotiation" and bool(PICKUP_WORDS.search(text or ""))
+
+
+def _vehicle_limit(shop_id, p):
+    """Biggest vehicle rank the customer's access allows (None = no limit) and why."""
+    parts = [p.get("access_note") or "", p.get("stop_note") or ""]
+    if p.get("message_id"):
+        msg = inbox_db.get_message(shop_id, p["message_id"])
+        if msg:
+            parts.append(msg["text"])
+    return extractor.find_vehicle_limit(" ".join(parts))
+
+
+def _suggestion(shop_id, p, rank_limit, time_hint=None, today=None):
+    """Ask the assignment engine which driver/vehicle and time suit this pickup."""
+    today = today or datetime.now(PH).date()
+    trucks = ops_db.list_trucks(shop_id)
+    availability = {t["driver_id"]: ops_db.get_availability(shop_id, t["driver_id"])
+                    for t in trucks if t["driver_id"]}
+    time_off = ops_db.list_time_off(shop_id, from_date=today.isoformat())
+
+    def stops_for_day(day):
+        rows = ops_db.list_pickups(shop_id, date=day, statuses=("confirmed", "collected", "pending_approval"))
+        return [r for r in rows if r["status"] != "pending_approval" or r["truck_id"]]
+
+    return auto_assign.suggest(p, trucks, stops_for_day, availability.__getitem__, time_off, today,
+                               rank_limit, time_hint)
+
+
 def create_from_message(shop_id, message_id):
-    """Turn an inquiry into a draft pickup that waits for price approval."""
+    """Turn an inquiry into a draft pickup: read the details from the text, suggest a driver,
+    and leave it waiting for the dispatcher to review and approve."""
     msg = inbox_db.get_message(shop_id, message_id)
     if msg is None:
         raise ApiError(404, "Message not found.")
@@ -161,24 +224,88 @@ def create_from_message(shop_id, message_id):
         return existing, False
 
     today = datetime.now(PH).date()
-    parsed = parse_request(msg["text"], today)
+    text = msg["text"]
+    parsed = parse_request(text, today)
+    details = extractor.extract_details(text, msg.get("sender"), msg.get("channel") or "manual", msg.get("subject"))
     items = parsed["items"]
-    notes = list(parsed["notes"])
+    notes = []                                       # what the dispatcher should double-check
     if not items:                                    # fall back to what the classifier saw
         labels = (msg.get("corrected_materials")
                   or (msg["materials"]["labels"] if msg.get("materials") else []))
         items = [{"material": l.replace("_", " "), "expected_kg": 0, "requested_rate": None}
                  for l in labels if l not in NON_MATERIALS]
-    sender = (msg.get("sender") or "").strip()
-    fields = {"customer_name": sender or "Unknown customer",
-              "pickup_date": parsed["pickup_date"], "window_start": parsed["window_start"],
-              "window_end": parsed["window_end"]}
+        notes.append("No weights found in the message - enter the kg for each material.")
+    else:
+        for line in parsed["notes"]:
+            if line.startswith("Found"):
+                notes.append(line)
+        if any(not i["requested_rate"] for i in items):
+            notes.append("The customer did not name a rate for every material - check the suggested rates.")
+    if not details["address"]:
+        notes.append("No street address found - confirm it with the customer.")
+    if not details["phone"]:
+        notes.append("No phone number found.")
+    if details["vehicle_note"]:
+        notes.append(f"Customer limit: {details['vehicle_note']}.")
+
+    fields = {"customer_name": details["customer_name"], "organization": details["organization"],
+              "phone": details["phone"], "address": details["address"], "area": details["area"],
+              "access_note": details["access_note"], "pickup_date": parsed["pickup_date"],
+              "window_start": parsed["window_start"], "window_end": parsed["window_end"],
+              "auto_filled": True, "auto_notes": notes}
     try:
         pickup = ops_db.create_pickup(shop_id, fields, _clean_items(items), message_id=message_id)
     except sqlite3.IntegrityError:
         return ops_db.find_by_message(shop_id, message_id), False
-    pickup["parse_notes"] = notes
+
+    pickup = _apply_suggestion(shop_id, pickup, details["max_vehicle_rank"], parsed.get("time_hint"), today)
     return pickup, True
+
+
+def _apply_suggestion(shop_id, pickup, rank_limit, time_hint, today):
+    if pickup["expected_kg"] <= 0:
+        note = "Driver not suggested yet: the weight is unknown. Enter the kg, then tap Suggest driver."
+        return ops_db.update_pickup(shop_id, pickup["id"], assign_note=note)
+    result = _suggestion(shop_id, pickup, rank_limit, time_hint, today)
+    changes = {"assign_note": result["note"]}
+    if result.get("truck_id"):
+        changes.update(truck_id=result["truck_id"], pickup_date=result["pickup_date"],
+                       window_start=result["window_start"])
+    return ops_db.update_pickup(shop_id, pickup["id"], **changes)
+
+
+def auto_draft_if_needed(shop_id, message):
+    """Called for every new (or re-labelled) message. Never raises: a failure here must not lose a message."""
+    try:
+        intent = message.get("corrected_intent") or message["intent"]
+        if wants_pickup(intent, message["text"]) and ops_db.find_by_message(shop_id, message["id"]) is None:
+            pickup, created = create_from_message(shop_id, message["id"])
+            return pickup if created else None
+    except Exception as error:                       # noqa: BLE001
+        print(f"[auto-draft] message {message.get('id')}: {type(error).__name__}: {error}")
+    return None
+
+
+def suggest_driver(shop_id, pickup_id, date=None, start=None, end=None, total_kg=None):
+    """What the 'Suggest driver' button shows. Uses the form's current date/time/weight but saves nothing."""
+    p = _need_pickup(shop_id, pickup_id)
+    if p["status"] != "pending_approval":
+        raise ApiError(409, "Only requests waiting for approval can be re-assigned.")
+    check_time(start, "Start time"), check_time(end, "End time")
+    item = dict(p)
+    if date:
+        item["pickup_date"] = check_date(date)
+    if start:
+        item["window_start"], item["window_end"] = start, end
+    if total_kg is not None:
+        item["expected_kg"] = total_kg
+    if item["expected_kg"] <= 0:
+        raise ApiError(422, "Enter the weight first so a vehicle with enough room can be chosen.")
+    rank, _ = _vehicle_limit(shop_id, p)
+    result = _suggestion(shop_id, item, rank, time_hint=None)
+    truck = ops_db.get_truck(shop_id, result["truck_id"]) if result.get("truck_id") else None
+    return {**result, "driver_short": short_name(truck["driver_name"]) if truck else None,
+            "truck_code": truck["code"] if truck else None}
 
 
 def edit_pickup(shop_id, pickup_id, fields, items=None):
@@ -208,6 +335,21 @@ def _recheck_confirmed(shop_id, p, fields):
     if not result["ok"]:
         raise ApiError(409, capacity.describe(result))
 
+# deleting inquiries
+def delete_inquiries(shop_id, ids):
+    """Delete inquiries and the replies sent for them. A draft pickup made from one is cancelled; a pickup that
+    is already scheduled blocks the deletion (cancel the pickup first); collected pickups are kept as records."""
+    deleted, blocked = [], []
+    for message_id in dict.fromkeys(ids):
+        if inbox_db.get_message(shop_id, message_id) is None:
+            continue
+        if "confirmed" in ops_db.statuses_for_message(shop_id, message_id):
+            blocked.append({"id": message_id, "reason": "It has a scheduled pickup. Cancel the pickup first."})
+            continue
+        ops_db.detach_message(shop_id, message_id)
+        if inbox_db.delete_message(shop_id, message_id):
+            deleted.append(message_id)
+    return {"deleted": len(deleted), "deleted_ids": deleted, "blocked": blocked}
 
 # price review
 def price_review(shop_id, pickup_id):
@@ -220,8 +362,10 @@ def price_review(shop_id, pickup_id):
             review = price_catalog.compare(i["catalog_key"], rate)
         elif rate:
             review = {"verdict": "no_reference", "message": "No matching material in the price survey."}
+        survey = price_catalog.stats(i["catalog_key"]) if i["catalog_key"] else None
         lines.append({"item_id": i["id"], "material": i["material"], "expected_kg": i["expected_kg"],
                       "requested_rate": i["requested_rate"], "approved_rate": i["approved_rate"],
+                      "suggested_rate": survey["median"] if survey else None,
                       "line_total": round(i["expected_kg"] * rate, 2) if rate else None,
                       "review": review})
     flagged = [l for l in lines if l["review"] and l["review"]["verdict"] in ("above_market", "below_market")]
@@ -231,15 +375,47 @@ def price_review(shop_id, pickup_id):
 
 
 # planning a day
+def _full_check(shop_id, p, truck, day, start=None, end=None):
+    """Capacity and overlapping stops (capacity.py) plus: is the driver working then, and is the
+    vehicle small enough for the customer's access?"""
+    others = ops_db.list_pickups(shop_id, date=day, statuses=capacity.COUNTED, truck_id=truck["id"])
+    result = capacity.check_assignment(p, truck, others, start, end)
+    extra = []
+
+    if not truck.get("driver_id"):
+        extra.append(f"{truck['code']} has no driver assigned.")
+    else:
+        name = short_name(truck["driver_name"]) or truck["code"]
+        avail = ops_db.get_availability(shop_id, truck["driver_id"])
+        intervals = auto_assign.working_intervals(day, avail, ops_db.list_time_off(shop_id, truck["driver_id"], day))
+        s_time = start or p.get("window_start")
+        if not intervals:
+            extra.append(f"{name} is off duty on that day.")
+        elif s_time:
+            a = capacity.to_minutes(s_time)
+            e_time = end if start else p.get("window_end")
+            b = capacity.to_minutes(e_time) if e_time else a + capacity.DEFAULT_SLOT_MINUTES
+            if not any(lo <= a and b <= hi for lo, hi in intervals):
+                extra.append(f"{name} is not available at {capacity.fmt_time(s_time)} "
+                             f"(works {capacity.fmt_time(avail['shift_start'])}-{capacity.fmt_time(avail['shift_end'])}).")
+
+    rank, reason = _vehicle_limit(shop_id, p)
+    if rank is not None and vehicles.rank(truck.get("vehicle_type")) > rank:
+        extra.append(f"The customer mentioned {reason}, but {truck['code']} is a "
+                     f"{vehicles.type_label(truck.get('vehicle_type')).lower()}.")
+
+    result["availability_issues"] = extra
+    result["ok"] = result["ok"] and not extra
+    result["message"] = " ".join(x for x in [capacity.describe(result), *extra] if x)
+    return result
+
+
 def check_for_truck(shop_id, pickup_id, truck_id, date=None, start=None, end=None):
     p = _need_pickup(shop_id, pickup_id)
     truck = _need_truck(shop_id, truck_id)
     day = check_date(date or p["pickup_date"])
     check_time(start, "Start time"), check_time(end, "End time")
-    others = ops_db.list_pickups(shop_id, date=day, statuses=capacity.COUNTED, truck_id=truck_id)
-    result = capacity.check_assignment(p, truck, others, start, end)
-    result["message"] = capacity.describe(result)
-    return result
+    return _full_check(shop_id, p, truck, day, start, end)
 
 
 def day_overview(shop_id, date):
@@ -290,10 +466,29 @@ def day_overview(shop_id, date):
                     "drivers_assigned": sum(1 for t in trucks if t["driver_id"]),
                     "drivers_total": len(trucks)},
         "schedule": schedule,
-        "trucks": [_truck_card(t, day) for t in trucks],
+        "trucks": [_truck_card(t, day, shop_id, date) for t in trucks],
         "pending": pending_cards,
+        "review_queue": _review_queue(shop_id, by_truck),
         "warnings": warnings,
     }
+
+
+def _review_queue(shop_id, by_truck):
+    """Every request waiting for approval (any date), drafts first - the dispatcher's to-do list."""
+    queue = ops_db.list_pickups(shop_id, statuses=("pending_approval",), limit=100)
+    queue.sort(key=lambda p: (p["pickup_date"] or "9999-99-99", p["window_start"] or "99:99", p["id"]))
+    out = []
+    for p in queue:
+        t = by_truck.get(p["truck_id"])
+        out.append({
+            "id": p["id"], "message_id": p["message_id"], "customer_name": p["customer_name"],
+            "area": p["area"], "expected_kg": p["expected_kg"], "materials": _materials_label(p),
+            "pickup_date": p["pickup_date"], "window_label": _window_label(p),
+            "requested_total": p["requested_total"], "auto_filled": p["auto_filled"],
+            "truck_id": p["truck_id"], "truck_code": t["code"] if t else None,
+            "driver_short": short_name(t["driver_name"]) if t else None,
+            "assign_note": p["assign_note"], "check_count": len(p["auto_notes"])})
+    return out
 
 
 # approve / cancel
@@ -325,10 +520,9 @@ def approve(shop_id, user, pickup_id, truck_id, date, start, end, rates, force=F
             raise ApiError(422, "Rates must be above 0.")
         final[i["id"]] = rate
 
-    others = ops_db.list_pickups(shop_id, date=date, statuses=capacity.COUNTED, truck_id=truck_id)
-    result = capacity.check_assignment(p, truck, others, start, end)
+    result = _full_check(shop_id, p, truck, date, start, end)
     if not result["ok"] and not force:
-        raise ApiError(409, capacity.describe(result) + " Send force=true to confirm anyway.")
+        raise ApiError(409, result["message"] + " Send force=true to confirm anyway.")
 
     ops_db.set_item_rates(p["id"], final)
     ops_db.update_pickup(shop_id, p["id"], status="confirmed", truck_id=truck_id, pickup_date=date,
@@ -462,3 +656,54 @@ def record_collection(shop_id, user, pickup_id, items=None, total_kg=None, photo
     return {"pickup": done, "variance_kg": variance,
             "variance_percent": round(variance / done["expected_kg"] * 100) if done["expected_kg"] else None,
             "amount_due": done["amount_due"], "route_complete": not remaining}
+
+
+# driver availability (shift hours, working days, time off)
+def _driver_for(shop_id, driver_id):
+    u = accounts_db.get_user(driver_id)
+    if u is None or u["shop_id"] != shop_id or u["role"] != "driver":
+        raise ApiError(404, "Driver not found.")
+    return u
+
+
+def list_availability(shop_id):
+    today = today_ph()
+    trucks = {t["driver_id"]: t for t in ops_db.list_trucks(shop_id) if t["driver_id"]}
+    off = ops_db.list_time_off(shop_id, from_date=today)
+    out = []
+    for u in accounts_db.list_users(shop_id):
+        if u["role"] != "driver" or not u["is_active"]:
+            continue
+        truck = trucks.get(u["id"])
+        out.append({**ops_db.get_availability(shop_id, u["id"]),
+                    "driver_name": u["full_name"], "driver_short": short_name(u["full_name"]),
+                    "truck_code": truck["code"] if truck else None,
+                    "time_off": [o for o in off if o["driver_id"] == u["id"]],
+                    "off_today": bool(truck) and not driver_status(shop_id, truck, today)["working"]})
+    return out
+
+
+def set_availability(shop_id, driver_id, shift_start, shift_end, work_days):
+    _driver_for(shop_id, driver_id)
+    check_time(shift_start, "Shift start"), check_time(shift_end, "Shift end")
+    if shift_end <= shift_start:
+        raise ApiError(422, "The shift must end after it starts.")
+    if not work_days or any(d not in range(1, 8) for d in work_days):
+        raise ApiError(422, "Choose at least one working day (1 = Monday ... 7 = Sunday).")
+    return ops_db.set_availability(shop_id, driver_id, shift_start, shift_end, work_days)
+
+
+def add_time_off(shop_id, driver_id, off_date, start_time=None, end_time=None, note=None):
+    _driver_for(shop_id, driver_id)
+    day = check_date(off_date)
+    check_time(start_time, "Start time"), check_time(end_time, "End time")
+    if bool(start_time) != bool(end_time):
+        raise ApiError(422, "Give both a start and an end time, or leave both empty for the whole day.")
+    if start_time and end_time <= start_time:
+        raise ApiError(422, "The end time must be after the start time.")
+    return ops_db.add_time_off(shop_id, driver_id, day, start_time, end_time, (note or "").strip() or None)
+
+
+def remove_time_off(shop_id, time_off_id):
+    if not ops_db.delete_time_off(shop_id, time_off_id):
+        raise ApiError(404, "Time-off entry not found.")

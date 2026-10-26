@@ -41,12 +41,20 @@ class EmailConnectRequest(BaseModel):
         default="INBOX",
         max_length=100,
     )
+    smtp_host: Optional[str] = Field(      # for sending replies; empty = worked out from the IMAP server
+        default=None,
+        max_length=200,
+    )
 
 
 class MessengerConnectRequest(BaseModel):
     page_id: str = Field(
         min_length=3,
         max_length=100,
+    )
+    page_access_token: Optional[str] = Field(   # needed to reply to customers on Messenger
+        default=None,
+        max_length=1000,
     )
 
 
@@ -90,6 +98,7 @@ def connect_email(
         body.imap_user,
         body.imap_password,
         body.folder,
+        body.smtp_host,
     )
 
     return channel_service.get_status(owner["shop_id"])["email"]
@@ -170,6 +179,7 @@ def connect_messenger(
     channel_service.set_messenger(
         owner["shop_id"],
         body.page_id,
+        body.page_access_token,
     )
 
     return channel_service.get_status(owner["shop_id"])["messenger"]

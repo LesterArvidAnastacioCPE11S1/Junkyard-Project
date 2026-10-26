@@ -47,7 +47,7 @@ CREATE INDEX IF NOT EXISTS ix_attempts ON login_attempts(email, at);
 CREATE TABLE IF NOT EXISTS channel_connections (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     shop_id         INTEGER NOT NULL REFERENCES shops(id),
-    channel         TEXT NOT NULL CHECK (channel IN ('email', 'sms', 'messenger')),
+    channel         TEXT NOT NULL CHECK (channel IN ('email', 'sms', 'sms_twilio', 'messenger')),
     external_ref    TEXT,     -- mailbox address or Messenger Page ID (one shop per value)
     config_json     TEXT,     -- non-secret settings
     secret_enc      TEXT,     -- encrypted mailbox password
@@ -79,11 +79,28 @@ CREATE TABLE IF NOT EXISTS messages (
     corrected_intent         TEXT,
     corrected_materials_json TEXT,
     reviewed_at              TEXT,
-    reviewed_by              INTEGER REFERENCES users(id)
+    reviewed_by              INTEGER REFERENCES users(id),
+    reply_address            TEXT,     -- where a reply goes (email address / phone / Messenger id); never shown in full
+    replied_at               TEXT
 );
 CREATE UNIQUE INDEX IF NOT EXISTS ux_msg_external
     ON messages(shop_id, channel, external_id) WHERE external_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS ix_msg_shop ON messages(shop_id, id);
+
+CREATE TABLE IF NOT EXISTS message_replies (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_id    INTEGER NOT NULL REFERENCES shops(id),
+    message_id INTEGER NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+    channel    TEXT    NOT NULL,
+    to_hint    TEXT,                   -- masked recipient, e.g. ma***@gmail.com
+    subject    TEXT,
+    body       TEXT    NOT NULL,
+    status     TEXT    NOT NULL CHECK (status IN ('sent', 'failed')),
+    error      TEXT,
+    sent_by    INTEGER REFERENCES users(id),
+    sent_at    TEXT    NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_reply_msg ON message_replies(shop_id, message_id);
 """
 
 
@@ -132,8 +149,36 @@ def _move_old_inbox_aside():
         print(f"[db] Old inbox saved as {backup.name}; created a new database with accounts.")
 
 
+def _add_column_if_missing(conn, table, column, definition):
+    existing = [row[1] for row in conn.execute(f"PRAGMA table_info({table})")]
+    if existing and column not in existing:
+        conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
+
+
+def _allow_twilio_channel(conn):
+    """Older databases only allowed email / sms / messenger, so saving Twilio settings failed.
+    SQLite cannot change a CHECK rule in place, so rebuild the table once and keep every row."""
+    row = conn.execute(
+        "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'channel_connections'").fetchone()
+    if row is None or "sms_twilio" in (row[0] or ""):
+        return
+    conn.execute("ALTER TABLE channel_connections RENAME TO channel_connections_old")
+    conn.execute("DROP INDEX IF EXISTS ux_channel_ref")
+    conn.executescript(SCHEMA)          # creates the new table + indexes (other tables already exist)
+    conn.execute("""INSERT INTO channel_connections
+                    (id, shop_id, channel, external_ref, config_json, secret_enc, secret_hash,
+                     secret_hint, last_checked_at, last_error, created_at)
+                    SELECT id, shop_id, channel, external_ref, config_json, secret_enc, secret_hash,
+                           secret_hint, last_checked_at, last_error, created_at
+                    FROM channel_connections_old""")
+    conn.execute("DROP TABLE channel_connections_old")
+
 def init_db():
     _move_old_inbox_aside()
     with connect() as conn:
         conn.execute("PRAGMA journal_mode = WAL")   # lets the email checker and API share the file
+        _allow_twilio_channel(conn)
         conn.executescript(SCHEMA)
+        # Upgrades for databases created by earlier versions
+        _add_column_if_missing(conn, "messages", "reply_address", "TEXT")
+        _add_column_if_missing(conn, "messages", "replied_at", "TEXT")

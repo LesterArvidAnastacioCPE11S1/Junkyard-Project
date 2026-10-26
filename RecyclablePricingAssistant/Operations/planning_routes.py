@@ -8,6 +8,8 @@ from pydantic import BaseModel, Field
 from backend.auth import inbox_staff, owner_only
 from Operations import ops_db, services
 
+VehicleType = Literal["tricycle", "multicab", "pickup", "small_truck", "large_truck"]
+
 router = APIRouter()
 
 def _set_fields(model):
@@ -21,6 +23,7 @@ class TruckCreate(BaseModel):
     code: str = Field(min_length=1, max_length=20)                 # e.g. SD-01
     label: str = Field(min_length=1, max_length=60)                # e.g. Small truck
     capacity_kg: float = Field(gt=0, le=100000)
+    vehicle_type: Optional[VehicleType] = None                     # guessed from the label when empty
     driver_id: Optional[int] = None
 
 
@@ -28,6 +31,7 @@ class TruckUpdate(BaseModel):
     code: Optional[str] = Field(default=None, min_length=1, max_length=20)
     label: Optional[str] = Field(default=None, min_length=1, max_length=60)
     capacity_kg: Optional[float] = Field(default=None, gt=0, le=100000)
+    vehicle_type: Optional[VehicleType] = None
     driver_id: Optional[int] = None
     is_active: Optional[bool] = None
 
@@ -85,6 +89,27 @@ class CancelRequest(BaseModel):
     reason: Optional[str] = Field(default=None, max_length=300)
 
 
+class SuggestRequest(BaseModel):
+    """What the review screen currently shows; nothing here is saved."""
+    pickup_date: Optional[str] = None
+    window_start: Optional[str] = None
+    window_end: Optional[str] = None
+    total_kg: Optional[float] = Field(default=None, ge=0, le=100000)
+
+
+class AvailabilityIn(BaseModel):
+    shift_start: str = "08:00"
+    shift_end: str = "17:00"
+    work_days: list[int] = Field(default=[1, 2, 3, 4, 5, 6, 7], max_length=7)   # 1 = Monday ... 7 = Sunday
+
+
+class TimeOffIn(BaseModel):
+    off_date: str
+    start_time: Optional[str] = None       # leave both times empty for the whole day
+    end_time: Optional[str] = None
+    note: Optional[str] = Field(default=None, max_length=200)
+
+
 # planning
 @router.get("/planning/day")
 def planning_day(date: Optional[str] = None, user: dict = Depends(inbox_staff)):
@@ -99,12 +124,35 @@ def list_trucks(include_inactive: bool = False, user: dict = Depends(inbox_staff
 
 @router.post("/planning/trucks", status_code=201)
 def create_truck(body: TruckCreate, user: dict = Depends(owner_only)):
-    return services.create_truck(user["shop_id"], body.code, body.label, body.capacity_kg, body.driver_id)
+    return services.create_truck(user["shop_id"], body.code, body.label, body.capacity_kg, body.driver_id,
+                                 body.vehicle_type)
 
 
 @router.patch("/planning/trucks/{truck_id}")
 def update_truck(truck_id: int, body: TruckUpdate, user: dict = Depends(owner_only)):
     return services.update_truck(user["shop_id"], truck_id, _set_fields(body))
+
+
+# driver availability (dispatchers need this too: they handle sick days and day-offs)
+@router.get("/planning/availability")
+def list_availability(user: dict = Depends(inbox_staff)):
+    return {"drivers": services.list_availability(user["shop_id"])}
+
+
+@router.put("/planning/availability/{driver_id}")
+def set_availability(driver_id: int, body: AvailabilityIn, user: dict = Depends(inbox_staff)):
+    return services.set_availability(user["shop_id"], driver_id, body.shift_start, body.shift_end, body.work_days)
+
+
+@router.post("/planning/availability/{driver_id}/time-off", status_code=201)
+def add_time_off(driver_id: int, body: TimeOffIn, user: dict = Depends(inbox_staff)):
+    return services.add_time_off(user["shop_id"], driver_id, body.off_date, body.start_time, body.end_time, body.note)
+
+
+@router.delete("/planning/time-off/{time_off_id}")
+def remove_time_off(time_off_id: int, user: dict = Depends(inbox_staff)):
+    services.remove_time_off(user["shop_id"], time_off_id)
+    return {"ok": True}
 
 
 # pickups
@@ -164,6 +212,13 @@ def check_truck(
 ):
     """Would this pickup fit on that truck at that time? (capacity and overlapping stops)"""
     return services.check_for_truck(user["shop_id"], pickup_id, truck_id, date, start, end)
+
+
+@router.post("/pickups/{pickup_id}/suggest-driver")
+def suggest_driver(pickup_id: int, body: SuggestRequest, user: dict = Depends(inbox_staff)):
+    """Which driver and vehicle fit this load, date and time? (nothing is saved until approval)"""
+    return services.suggest_driver(user["shop_id"], pickup_id, body.pickup_date, body.window_start,
+                                   body.window_end, body.total_kg)
 
 
 @router.post("/pickups/{pickup_id}/approve")

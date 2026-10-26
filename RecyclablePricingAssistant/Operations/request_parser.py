@@ -22,6 +22,19 @@ TIME_RANGE = re.compile(
 SINGLE_TIME = re.compile(r"(?P<h>\d{1,2})(?::(?P<m>\d{2}))?\s*(?P<ap>am|pm)\b", re.I)
 MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 MONTH_DAY = re.compile(r"\b(" + "|".join(MONTHS) + r")[a-z]*\.?\s+(\d{1,2})\b", re.I)
+CLOCK_24H = re.compile(r"(?<![\d:/])(?P<h>[01]?\d|2[0-3]):(?P<m>[0-5]\d)(?!\s*(?:am|pm)|\d)", re.I)
+WEEKDAYS = {                       # English and Filipino, Monday = 0
+    "monday": 0, "lunes": 0, "tuesday": 1, "martes": 1, "wednesday": 2, "miyerkules": 2,
+    "thursday": 3, "huwebes": 3, "friday": 4, "biyernes": 4, "saturday": 5, "sabado": 5,
+    "sunday": 6, "linggo": 6,
+}
+WEEKDAY_RE = re.compile(r"\b(" + "|".join(WEEKDAYS) + r")\b", re.I)
+# "morning" is a preference, not an exact time, so it is returned as a hint.
+TIME_HINTS = [
+    (re.compile(r"\b(?:morning|umaga|madaling araw)\b", re.I), ("08:00", "12:00")),
+    (re.compile(r"\b(?:noon|tanghali|lunch ?time)\b", re.I), ("11:00", "13:00")),
+    (re.compile(r"\b(?:afternoon|hapon)\b", re.I), ("13:00", "17:00")),
+]
 
 
 def _material(text: Optional[str]):
@@ -54,7 +67,19 @@ def _parse_time(text):
             start = _to_24h(m["h1"], m["m1"], "am")
         return start, end
     m = SINGLE_TIME.search(text)
-    return (_to_24h(m["h"], m["m"], m["ap"]), None) if m else (None, None)
+    if m:
+        return _to_24h(m["h"], m["m"], m["ap"]), None
+    m = CLOCK_24H.search(text)                          # "15:30"
+    if m:
+        return f"{int(m['h']):02d}:{m['m']}", None
+    return None, None
+
+
+def _time_hint(text):
+    for pattern, window in TIME_HINTS:
+        if pattern.search(text):
+            return window
+    return None
 
 
 def _parse_date(text, today: date):
@@ -69,6 +94,12 @@ def _parse_date(text, today: date):
             return date(today.year, MONTHS.index(m[1][:3].lower()) + 1, int(m[2])).isoformat()
         except ValueError:
             return None
+    m = WEEKDAY_RE.search(low)
+    if m:                                               # the next time that weekday comes round
+        ahead = (WEEKDAYS[m[1].lower()] - today.weekday()) % 7 or 7
+        return (today + timedelta(days=ahead)).isoformat()
+    if re.search(r"\b(?:this|the|ngayong)\s+(?:coming\s+)?(?:weekend|sabado)\b|\bweekend\b", low):
+        return (today + timedelta(days=(5 - today.weekday()) % 7 or 7)).isoformat()
     return None
 
 
@@ -105,12 +136,13 @@ def parse_request(text: str, today: Optional[date] = None) -> dict:
         notes.append("A requested rate could not be matched to a material.")
 
     start, end = _parse_time(text)
+    hint = _time_hint(text) if start is None else None
     pickup_date = _parse_date(text, today)
     if not items:
         notes.append("No weights found in the message.")
-    if start is None:
+    if start is None and hint is None:
         notes.append("No pickup time found.")
     if pickup_date is None:
         notes.append("No pickup date found.")
     return {"items": items, "pickup_date": pickup_date, "window_start": start,
-            "window_end": end, "notes": notes}
+            "window_end": end, "time_hint": hint, "notes": notes}
