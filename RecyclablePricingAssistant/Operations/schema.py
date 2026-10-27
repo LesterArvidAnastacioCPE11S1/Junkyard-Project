@@ -90,4 +90,17 @@ CREATE TABLE IF NOT EXISTS driver_time_off (
     created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS ix_timeoff ON driver_time_off(shop_id, driver_id, off_date);
+
+CREATE TABLE IF NOT EXISTS driver_notices (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_id    INTEGER NOT NULL REFERENCES shops(id),
+    pickup_id  INTEGER NOT NULL REFERENCES pickups(id) ON DELETE CASCADE,
+    driver_id  INTEGER REFERENCES users(id),
+    to_address TEXT,
+    kind       TEXT NOT NULL,                        -- assigned | updated | cancelled
+    status     TEXT NOT NULL CHECK (status IN ('sent', 'failed')),
+    error      TEXT,                                 -- why it could not be sent
+    created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_notices_pickup ON driver_notices(pickup_id);
 """

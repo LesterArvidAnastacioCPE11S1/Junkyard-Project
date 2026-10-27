@@ -24,7 +24,8 @@ from backend.inbox_routes import router as inbox_router
 from Operations import ops_db
 from Operations.collection_routes import router as collections_router
 from Operations.planning_routes import router as planning_router
-from Prices import price_catalog
+from Prices import inventory, price_catalog
+from Prices.inventory_routes import router as inventory_router
 from Prices.price_routes import router as price_router
 
 from pathlib import Path
@@ -37,6 +38,7 @@ async def lifespan(app: FastAPI):
     db.init_db()                           # create / upgrade the database
     ops_db.init_ops_db()                   # trucks, pickups, routes tables
     price_catalog.load()                   # Junkshop price survery
+    inventory.init_inventory_db()          # the shop's own price list                      # Shop's price list
     accounts_db.purge_expired_sessions()
     accounts_db.purge_old_attempts((datetime.now(timezone.utc) - timedelta(days=1)).isoformat(timespec="seconds"))
 
@@ -63,6 +65,13 @@ if origins:                                # only needed for a browser-based app
 async def api_error_handler(request: Request, exc: ApiError):
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail}, headers=exc.headers)
 
+@app.middleware("http")
+async def revalidate_frontend_files(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    if path == "/" or path.endswith((".js", ".css", ".html")):
+        response.headers["Cache-Control"] = "no-cache"      # the browser re-checks, so edits show up on refresh
+    return response
 
 app.include_router(auth_router)
 app.include_router(inbox_router)
@@ -70,6 +79,7 @@ app.include_router(channel_router)
 app.include_router(planning_router)
 app.include_router(collections_router)
 app.include_router(price_router)
+app.include_router(inventory_router)
 
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles

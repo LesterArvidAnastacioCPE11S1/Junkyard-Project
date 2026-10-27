@@ -94,15 +94,20 @@ def _send_email(shop_id, message, address, subject, body):
         mail["References"] = original
     mail.set_content(body)
 
+    _deliver(config, user, password, mail)
+
+
+def _deliver(config, user, password, mail, timeout=TIMEOUT):
+    """Log in to the shop mailbox's SMTP server and send `mail`. Raises RuntimeError with a plain-language reason."""
     host = _smtp_host(config)
     context = ssl.create_default_context()
     try:
         try:
-            with smtplib.SMTP_SSL(host, 465, timeout=TIMEOUT, context=context) as smtp:
+            with smtplib.SMTP_SSL(host, 465, timeout=timeout, context=context) as smtp:
                 smtp.login(user, password)
                 smtp.send_message(mail)
         except (ConnectionError, TimeoutError, ssl.SSLError, smtplib.SMTPConnectError):
-            with smtplib.SMTP(host, 587, timeout=TIMEOUT) as smtp:      # many providers use STARTTLS here
+            with smtplib.SMTP(host, 587, timeout=timeout) as smtp:      # many providers use STARTTLS here
                 smtp.starttls(context=context)
                 smtp.login(user, password)
                 smtp.send_message(mail)
@@ -111,6 +116,26 @@ def _send_email(shop_id, message, address, subject, body):
                            "(Gmail needs an App Password).")
     except (smtplib.SMTPException, OSError) as error:
         raise RuntimeError(f"Could not send the email through {host}: {error}")
+
+
+def send_plain_email(shop_id, to_address, subject, body, timeout=TIMEOUT):
+    """Send a one-off email from the shop's own mailbox (used for driver notices).
+    Raises RuntimeError with a plain-language reason when it can't be sent."""
+    connection = accounts_db.get_connection(shop_id, "email")
+    if connection is None:
+        raise RuntimeError("Connect the shop mailbox in More to email drivers.")
+    config = connection["config"]
+    user = config["imap_user"]
+    password = security.decrypt_secret(connection["secret_enc"])
+    shop = accounts_db.get_shop(shop_id) or {}
+    mail = EmailMessage()
+    mail["From"] = f"{shop.get('name') or 'ScrapDesk'} <{user}>"
+    mail["To"] = to_address
+    mail["Subject"] = subject
+    mail["Date"] = formatdate(localtime=True)
+    mail["Message-ID"] = make_msgid(domain=user.split("@")[-1])
+    mail.set_content(body)
+    _deliver(config, user, password, mail, timeout)
 
 
 def _post(url, data, headers):

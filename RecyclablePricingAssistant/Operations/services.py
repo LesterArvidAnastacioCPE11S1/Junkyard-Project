@@ -7,9 +7,9 @@ from datetime import date as _date, datetime, timedelta, timezone
 from backend import accounts_db, inbox_db
 from backend.db import now_iso
 from backend.errors import ApiError
-from Operations import auto_assign, capacity, extractor, ops_db, vehicles
+from Operations import auto_assign, capacity, driver_notify, extractor, ops_db, vehicles
 from Operations.request_parser import parse_request
-from Prices import price_catalog
+from Prices import inventory, price_catalog
 
 PH = timezone(timedelta(hours=8))          # Philippine time (no daylight saving)
 _HHMM = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
@@ -321,9 +321,13 @@ def edit_pickup(shop_id, pickup_id, fields, items=None):
         fields["pickup_date"] = check_date(fields["pickup_date"])
     if p["status"] == "confirmed" and ({"pickup_date", "window_start", "window_end"} & set(fields)):
         _recheck_confirmed(shop_id, p, fields)
-    return ops_db.update_pickup(shop_id, pickup_id,
-                                items=_clean_items(items) if items is not None else None, **fields)
-
+    updated = ops_db.update_pickup(shop_id, pickup_id,
+                                   items=_clean_items(items) if items is not None else None, **fields)
+    if p["status"] == "confirmed":                      # the driver already has this pickup: tell them what changed
+        changes = driver_notify.changed_fields(p, updated)
+        if changes:
+            updated["driver_notice"] = driver_notify.notify(shop_id, updated, "updated", changes=changes)
+    return updated
 
 def _recheck_confirmed(shop_id, p, fields):
     truck = _need_truck(shop_id, p["truck_id"])
@@ -363,9 +367,11 @@ def price_review(shop_id, pickup_id):
         elif rate:
             review = {"verdict": "no_reference", "message": "No matching material in the price survey."}
         survey = price_catalog.stats(i["catalog_key"]) if i["catalog_key"] else None
+        own = inventory.rate_for(shop_id, i["catalog_key"], i["material"])        # the shop's own price list first
         lines.append({"item_id": i["id"], "material": i["material"], "expected_kg": i["expected_kg"],
                       "requested_rate": i["requested_rate"], "approved_rate": i["approved_rate"],
-                      "suggested_rate": survey["median"] if survey else None,
+                      "suggested_rate": own if own is not None else (survey["median"] if survey else None),
+                      "suggested_source": "price_list" if own is not None else ("survey" if survey else None),
                       "line_total": round(i["expected_kg"] * rate, 2) if rate else None,
                       "review": review})
     flagged = [l for l in lines if l["review"] and l["review"]["verdict"] in ("above_market", "below_market")]
@@ -528,14 +534,27 @@ def approve(shop_id, user, pickup_id, truck_id, date, start, end, rates, force=F
     ops_db.update_pickup(shop_id, p["id"], status="confirmed", truck_id=truck_id, pickup_date=date,
                          window_start=start, window_end=end, approved_by=user["id"],
                          approved_at=now_iso())
-    return ops_db.get_pickup(shop_id, p["id"])
+    approved = ops_db.get_pickup(shop_id, p["id"])
+    approved["driver_notice"] = driver_notify.notify(shop_id, approved, "assigned")   # email the driver
+    return approved
 
 
 def cancel(shop_id, pickup_id, reason=None):
     p = _need_pickup(shop_id, pickup_id)
     if p["status"] in ("collected", "cancelled"):
         raise ApiError(409, f"This pickup is already {p['status']}.")
-    return ops_db.update_pickup(shop_id, pickup_id, status="cancelled", cancel_reason=reason)
+    cancelled = ops_db.update_pickup(shop_id, pickup_id, status="cancelled", cancel_reason=reason)
+    if p["status"] == "confirmed":                      # the driver was told about it, so tell them it's off
+        cancelled["driver_notice"] = driver_notify.notify(shop_id, cancelled, "cancelled")
+    return cancelled
+
+
+def resend_driver_notice(shop_id, pickup_id):
+    """Email the driver the current details again (e.g. after a failed send or a new mail login)."""
+    p = _need_pickup(shop_id, pickup_id)
+    if p["status"] != "confirmed":
+        raise ApiError(409, "Only scheduled pickups can be sent to a driver.")
+    return driver_notify.notify(shop_id, p, "assigned")
 
 
 # collections (the driver's day)

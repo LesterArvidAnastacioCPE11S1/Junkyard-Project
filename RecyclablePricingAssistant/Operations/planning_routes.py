@@ -227,6 +227,10 @@ def approve_pickup(pickup_id: int, body: ApproveRequest, user: dict = Depends(in
     return services.approve(user["shop_id"], user, pickup_id, body.truck_id, body.pickup_date,
                             body.window_start, body.window_end, rates, body.force)
 
+@router.post("/pickups/{pickup_id}/notify-driver")
+def notify_driver(pickup_id: int, user: dict = Depends(inbox_staff)):
+    """Email the assigned driver this pickup's details again."""
+    return services.resend_driver_notice(user["shop_id"], pickup_id)
 
 @router.post("/pickups/{pickup_id}/cancel")
 def cancel_pickup(pickup_id: int, body: CancelRequest, user: dict = Depends(inbox_staff)):
