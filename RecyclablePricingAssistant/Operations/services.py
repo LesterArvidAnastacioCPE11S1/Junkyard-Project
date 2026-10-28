@@ -286,6 +286,29 @@ def auto_draft_if_needed(shop_id, message):
     return None
 
 
+def sync_draft_materials(shop_id, message):
+    """Staff re-labelled the materials of a message that already has a draft pickup: carry them over.
+
+    Only an untouched draft is refreshed (waiting for approval, made automatically, and every line is still a
+    placeholder with no weight or rate). Anything the dispatcher has typed in is never overwritten.
+    Never raises: a failure here must not lose the staff correction."""
+    try:
+        corrected = message.get("corrected_materials")
+        if corrected is None:
+            return None
+        pickup = ops_db.find_by_message(shop_id, message["id"])
+        if pickup is None or pickup["status"] != "pending_approval" or not pickup["auto_filled"]:
+            return None
+        if any(i["expected_kg"] or i["requested_rate"] is not None for i in pickup["items"]):
+            return None
+        items = [{"material": l.replace("_", " "), "expected_kg": 0, "requested_rate": None}
+                 for l in corrected if l not in NON_MATERIALS]
+        return ops_db.update_pickup(shop_id, pickup["id"], items=_clean_items(items))
+    except Exception as error:                       # noqa: BLE001
+        print(f"[sync-draft] message {message.get('id')}: {type(error).__name__}: {error}")
+    return None
+
+
 def suggest_driver(shop_id, pickup_id, date=None, start=None, end=None, total_kg=None):
     """What the 'Suggest driver' button shows. Uses the form's current date/time/weight but saves nothing."""
     p = _need_pickup(shop_id, pickup_id)
@@ -347,12 +370,14 @@ def delete_inquiries(shop_id, ids):
     for message_id in dict.fromkeys(ids):
         if inbox_db.get_message(shop_id, message_id) is None:
             continue
-        if "confirmed" in ops_db.statuses_for_message(shop_id, message_id):
+        family = [message_id, *inbox_db.child_ids(shop_id, message_id)]      # the customer's answers go with it
+        if any("confirmed" in ops_db.statuses_for_message(shop_id, m) for m in family):
             blocked.append({"id": message_id, "reason": "It has a scheduled pickup. Cancel the pickup first."})
             continue
-        ops_db.detach_message(shop_id, message_id)
-        if inbox_db.delete_message(shop_id, message_id):
-            deleted.append(message_id)
+        for member in family:
+            ops_db.detach_message(shop_id, member)
+            inbox_db.delete_message(shop_id, member)
+        deleted.append(message_id)
     return {"deleted": len(deleted), "deleted_ids": deleted, "blocked": blocked}
 
 # price review

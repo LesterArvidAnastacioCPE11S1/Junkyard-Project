@@ -205,11 +205,24 @@ _SUBJECT_PREFIX = re.compile(
 )
 
 
+# Gmail and others wrap the quote header ("On Wed, Oct 28, 2026 at 11:32 AM Name <a@b.com>" / "wrote:")
+# across two or three lines, so it has to be found across line breaks too.
+_WRAPPED_QUOTE_HEADER = re.compile(
+    r"^[ \t]*on\b[^\n]*(?:\n[^\n]*){0,2}?\bwrote:?[ \t]*$",
+    re.IGNORECASE | re.MULTILINE,
+)
+
+
 def clean_email_body(text: str) -> str:
     """Remove quoted replies, signatures, and common phone sign-offs."""
     kept = []
 
-    for line in text.replace("\r\n", "\n").split("\n"):
+    text = text.replace("\r\n", "\n")
+    header = _WRAPPED_QUOTE_HEADER.search(text)
+    if header:
+        text = text[:header.start()]
+
+    for line in text.split("\n"):
         stripped = line.strip()
 
         if stripped in ("--", "-- ") or _CUT_LINE.match(stripped):
@@ -292,6 +305,10 @@ def parse_email_bytes(raw: bytes) -> dict:
 
     text = f"{subject}\n{body}".strip() if subject else body
 
+    # the messages this email answers, so a reply joins the original inquiry instead of starting a new one
+    references = list(dict.fromkeys(
+        re.findall(r"<[^<>\s]+>", f"{message.get('references') or ''} {message.get('in-reply-to') or ''}")))
+
     return {
         "sender": sender,
         "subject": subject or None,
@@ -299,4 +316,5 @@ def parse_email_bytes(raw: bytes) -> dict:
         "external_id": message_id,
         "received_at": received_at,
         "reply_address": reply_address,
+        "references": references,
     }

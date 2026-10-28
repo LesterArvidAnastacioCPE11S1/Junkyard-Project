@@ -74,11 +74,19 @@ def inbox_stats(user: dict = Depends(inbox_staff)):
 
 @router.get("/inbox/{message_id}")
 def get_inbox_message(message_id: int, user: dict = Depends(inbox_staff)):
-    record = inbox_db.get_message(user["shop_id"], message_id)
-    if record is None:
+    shop_id = user["shop_id"]
+    root = inbox_db.root_id(shop_id, message_id)         # a follow-up opens the inquiry it belongs to
+    if root is None:
         raise ApiError(404, "Message not found.")
-    record["reply"] = reply_service.reply_options(user["shop_id"], record)
-    record["replies"] = inbox_db.list_replies(user["shop_id"], message_id)
+    record = inbox_db.get_message(shop_id, root)
+    record["followups"] = inbox_db.list_followups(shop_id, root)
+    family = [root, *[f["id"] for f in record["followups"]]]
+    record["reply"] = reply_service.reply_options(shop_id, record)
+    record["replies"] = inbox_db.list_thread_replies(shop_id, family)
+    if record["followup_unread"]:                         # they are seeing the answer now; the flag stays in this response
+        inbox_db.clear_followup_unread(shop_id, root)
+    from Prices import subscriptions
+    record["price_updates"] = subscriptions.message_status(user["shop_id"], record)
     return record
 
 @router.post("/inbox/{message_id}/reply", status_code=201)
@@ -112,4 +120,6 @@ def review(message_id: int, body: ReviewRequest, user: dict = Depends(inbox_staf
     # If the operator re-labelled it as a pickup request, prepare the draft pickup now.
     from Operations import services
     services.auto_draft_if_needed(user["shop_id"], record)
+    # ...and if a draft already exists, carry the corrected materials over to it.
+    services.sync_draft_materials(user["shop_id"], record)
     return record

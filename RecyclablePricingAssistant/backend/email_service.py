@@ -67,7 +67,7 @@ def _fetch_and_ingest(shop_id, host, user, password, folder):
             _, created = ingest_message(
                 shop_id, "email", item["sender"], item["text"], external_id=external_id,
                 received_at=item["received_at"], subject=item["subject"],
-                reply_to=item.get("reply_address"),
+                reply_to=item.get("reply_address"), references=item.get("references"),
             )
             imap.uid("store", uid, "+FLAGS", "\\Seen")  # only after it was stored
             handled += int(created)

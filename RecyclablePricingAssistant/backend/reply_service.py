@@ -182,6 +182,41 @@ def _send_messenger(shop_id, address, body):
                            "(Messenger only allows replies within 24 hours of the customer's message.)"[:400])
 
 
+# sending without an inquiry on screen (price-update confirmations and forecasts)
+def channel_ready(shop_id, channel):
+    """(True, None) when the shop can send over this channel, otherwise (False, plain-language reason)."""
+    if channel == "email":
+        ok = accounts_db.get_connection(shop_id, "email") is not None
+        return (ok, None if ok else "The shop mailbox is not connected.")
+    if channel == "sms":
+        ok = accounts_db.get_connection(shop_id, "sms_twilio") is not None
+        return (ok, None if ok else "Twilio is not connected, so texts cannot be sent from the app.")
+    if channel == "messenger":
+        ok = bool(_messenger_token(shop_id))
+        return (ok, None if ok else "The Facebook Page access token is not saved.")
+    return False, "This channel cannot be replied to."
+
+
+def deliver(shop_id, channel, address, subject, body, message=None):
+    """Send `body` to `address` over `channel`. Raises RuntimeError with a plain-language reason."""
+    ok, reason = channel_ready(shop_id, channel)
+    if not ok:
+        raise RuntimeError(reason)
+    try:
+        if channel == "email":
+            _send_email(shop_id, message or {}, address, subject, body)
+        elif channel == "sms":
+            _send_sms(shop_id, address, body)
+        else:
+            _send_messenger(shop_id, address, body)
+    except RuntimeError:
+        raise
+    except Exception as error:                              # noqa: BLE001 (e.g. an unreadable saved password)
+        name = type(error).__name__
+        raise RuntimeError("The saved login can't be read (APP_SECRET changed?). Reconnect the channel in More."
+                           if name == "InvalidToken" else f"Could not send ({name}).")
+
+
 # the one entry point
 def send_reply(shop_id, user, message_id, text, subject=None):
     """Send `text` to the customer who wrote message `message_id`. Returns the saved reply record."""
@@ -219,5 +254,15 @@ def send_reply(shop_id, user, message_id, text, subject=None):
                            reason, user["id"])
         raise ApiError(502, reason)
 
-    return inbox_db.add_reply(shop_id, message_id, channel, options["to_hint"], subject, body, "sent",
-                              None, user["id"])
+    saved = inbox_db.add_reply(shop_id, message_id, channel, options["to_hint"], subject, body, "sent",
+                               None, user["id"])
+
+    # If the reply carried the price-update invitation, remember it, so that a later "YES" from
+    # this customer counts as their consent (and a YES with no invitation never does).
+    try:
+        from Prices import subscriptions
+        if subscriptions.contains_offer(body):
+            subscriptions.record_invite(shop_id, message["channel"], address, message.get("sender"), message_id)
+    except Exception as error:                              # noqa: BLE001 (never lose a sent reply)
+        print(f"[price-updates] could not record the invitation for message {message_id}: {error}")
+    return saved

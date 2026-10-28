@@ -34,7 +34,7 @@
   const peso = n => '₱' + Number(n || 0).toLocaleString('en-PH', { maximumFractionDigits: 2 });
   const kgText = n => Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 1 }) + ' kg';
 
-  // ---------- dates and times (the shop works in Philippine time) ----------
+  // dates and times
   const todayStr = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
   function addDays(iso, n) {
     const d = new Date(iso + 'T00:00:00Z');
@@ -79,7 +79,7 @@
   let rv = null;                 // state of the price-review screen
   let backTo = 'inquiries';      // where the back arrow on the review screen goes
 
-  // ---------- helpers ----------
+  // helpers
   let toastTimer;
   function toast(msg) {
     const t = $('toast');
@@ -124,7 +124,7 @@
     return data;
   }
 
-  // ---------- navigation ----------
+  // navigation
   const TAB_OF = { detail: 'inquiries', review: 'inquiries' };
 
   function show(id) {
@@ -147,7 +147,7 @@
   $('backBtn').addEventListener('click', () => show('inquiries'));
   $('reviewBack').addEventListener('click', () => show(backTo));
 
-  // ---------- login / logout / sign up ----------
+  // login / logout / sign up 
   function logoutLocal() {
     session = null;
     localStorage.removeItem(KEY);
@@ -222,9 +222,7 @@
     }
   });
 
-  // =====================================================================
   //  INQUIRIES
-  // =====================================================================
   function itagHtml(intent) {
     return `<span class="itag ${ITAG[intent] || 'other'}">${esc(INTENTS[intent] || intent)}</span>`;
   }
@@ -247,6 +245,8 @@
   }
 
   function tagFor(m) {
+    if (m.handled_note) return `<span class="tag next">${esc(m.handled_note)}</span>`;   // answered by the app itself
+    if (m.followup_unread) return '<span class="tag review">Customer replied</span>';   // they answered one of our replies
     const p = pickupMap[m.id];
     if (p && p.status === 'collected') return '<span class="tag sched">Collected</span>';
     if (p && p.status === 'confirmed') return '<span class="tag sched">Scheduled</span>';
@@ -279,10 +279,10 @@
         ${selecting ? `<span class="pick">${picked.has(m.id) ? '✓' : ''}</span>` : ''}
         <span class="ava">${esc(initials(m.sender))}</span>
         <span class="inq-name">${esc(m.sender || 'Customer')}</span>
-        <span class="inq-time">${esc(when(m.received_at))}${m.status === 'new' ? '<span class="unread"></span>' : ''}</span>
+        <span class="inq-time">${esc(when(m.followup_unread && m.last_followup_at ? m.last_followup_at : m.received_at))}${(m.status === 'new' && !m.handled_note) || m.followup_unread ? '<span class="unread"></span>' : ''}</span>
       </div>
       <div class="inq-title">${esc(shorten(title, 60))}</div>
-      <div class="inq-msg">${esc(m.text)}</div>
+      <div class="inq-msg">${esc(m.followup_unread && m.last_followup_text ? 'Reply: ' + m.last_followup_text : m.text)}</div>
       <div class="inq-foot">${tagFor(m)}<span class="inq-meta">${esc(metaFor(m))}</span></div>
     </button>`;
   }
@@ -422,9 +422,7 @@
     if (session && !document.hidden && $('inquiries').classList.contains('active')) loadInbox();
   }, 10000);
 
-  // =====================================================================
   //  INQUIRY DETAIL
-  // =====================================================================
   async function openDetail(id) {
     show('detail');
     $('detailBody').innerHTML = '<div class="empty">Loading…</div>';
@@ -432,7 +430,7 @@
       const [msg, pm] = await Promise.all([api('/inbox/' + id), loadPickupMap()]);
       current = msg;
       pickupMap = pm.map;
-      currentPickup = pm.map[msg.id] || null;
+      currentPickup = pm.map[msg.id] || (msg.followups || []).map(f => pm.map[f.id]).find(Boolean) || null;
       renderDetail();
     } catch (e) {
       $('detailBody').innerHTML = `<div class="empty">${esc(e.message)}</div>`;
@@ -449,16 +447,17 @@
     return `- ${i.name}: ${parts.join(', ')}${i.note ? ' (' + i.note + ')' : ''}`;
   }
 
-  function quoteDraft(name, items) {
+  function quoteDraft(name, items, offer) {
     const head = `Hi ${name}, thank you for your message. Here are our current prices:`;
     const foot = `Prices can change, and the final amount depends on the weighed material. Let us know if you'd like us to pick it up.`;
+    const tail = offer ? [foot, '', offer] : [foot];          // the price-update invitation closes the reply
     const lines = [];
     for (const i of items) {
       const next = [...lines, quoteLine(i)];
-      if ([head, ...next, foot].join('\n').length > 1400) break;
+      if ([head, ...next, ...tail].join('\n').length > 1400) break;
       lines.push(quoteLine(i));
     }
-    return [head, ...lines, foot].join('\n');
+    return [head, ...lines, ...tail].join('\n');
   }
 
   function priceListHtml() {
@@ -478,6 +477,7 @@
   }
 
   function replyDraft(m, p) {
+    if (m.handled_note) return '';                       // the app already answered it (e.g. a YES to price updates)
     const name = firstName(m.sender);
     if (p && p.status === 'confirmed') {
       const t = trucks.find(x => x.id === p.truck_id);
@@ -488,7 +488,13 @@
       return `Hi ${name}, thank you. We'll review the requested rates first. We'll confirm pickup once the price is approved.`;
     }
     if (effIntent(m) === 'Other') return `Hi ${name}, thank you for your message. How can we help you today?`;
-    if (effIntent(m) === 'Price_Inquiry' && currentQuote.items.length) return quoteDraft(name, currentQuote.items);
+    if (effIntent(m) === 'Price_Inquiry' && currentQuote.items.length) {
+      // Offer price updates only when the customer can be answered from the app and has not been asked,
+      // or answered, already. They only get updates if they reply YES.
+      const pu = m.price_updates || {};
+      const offer = pu.can_offer && (m.reply || {}).can_reply ? pu.offer_line : '';
+      return quoteDraft(name, currentQuote.items, offer);
+    }
 
   }
 
@@ -541,26 +547,17 @@
   }
 
   function threadHtml(m) {
-    return (m.replies || []).map(r => `<div class="card convo mine ${r.status === 'failed' ? 'failed' : ''}">
-      <div class="who">${esc(r.sent_by_name || 'You')}<span>${esc(when(r.sent_at))} · ${r.status === 'sent' ? 'sent via ' + esc(r.channel) : 'not sent'}</span></div>
-      <p>${esc(r.body)}</p>${r.error ? `<div class="err">${esc(r.error)}</div>` : ''}</div>`).join('');
-  }
-
-  async function surveyHtml(m) {
-    const labels = effMaterials(m).filter(l => l !== 'Unknown');
-    if (!labels.length) return '';
-    try {
-      const q = labels.map(l => 'labels=' + encodeURIComponent(l)).join('&');
-      const r = await api('/prices/by-classifier?' + q);
-      const list = (r.materials || []).filter(x => x.unit === 'kg').slice(0, 6);
-      if (!list.length) return '';
-      return `<div class="sect-h">Survey prices <small>per kg · surveyed junkshops</small></div>
-        <div class="card pad">${list.map(x => `
-          <div class="price-line">
-            <div><b>${esc(x.name)}</b><span>${x.shops} shop${x.shops === 1 ? '' : 's'} surveyed</span></div>
-            <div class="r">${peso(x.min)}–${peso(x.max)}<br><span>median ${peso(x.median)}</span></div>
-          </div>`).join('')}</div>`;
-    } catch (e) { return ''; }
+    const items = [
+      ...(m.followups || []).map(f => ({ at: f.created_at, f })),      // what the customer wrote back
+      ...(m.replies || []).map(r => ({ at: r.sent_at, r })),           // what the shop sent
+    ].sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
+    return items.map(({ f, r }) => f
+      ? `<div class="card convo">
+          <div class="who">${esc(f.sender || 'Customer')}<span>${esc(when(f.received_at))}${f.intent && f.intent !== 'Other' ? ' · ' + esc(INTENTS[f.intent] || f.intent) : ''}</span></div>
+          <p>${esc(f.text)}</p>${f.handled_note ? `<div class="muted" style="margin-top:6px;font-size:12.5px">${esc(f.handled_note)}</div>` : ''}</div>`
+      : `<div class="card convo mine ${r.status === 'failed' ? 'failed' : ''}">
+          <div class="who">${esc(r.sent_by_name || 'You')}<span>${esc(when(r.sent_at))} · ${r.status === 'sent' ? 'sent via ' + esc(r.channel) : 'not sent'}</span></div>
+          <p>${esc(r.body)}</p>${r.error ? `<div class="err">${esc(r.error)}</div>` : ''}</div>`).join('');
   }
 
   async function renderDetail() {
@@ -581,8 +578,17 @@
 
     // Once a reply has been sent, start with an empty box instead of offering the same text again.
     const lastSent = [...(m.replies || [])].reverse().find(r => r.status === 'sent');
-    const startText = lastSent && lastSent.body.trim() === draft.trim() ? '' : draft;
+    // (the sent text may also carry the price-update invitation, which the draft no longer offers once it is sent)
+    const startText = lastSent && lastSent.body.trim().startsWith((draft || '').trim()) ? '' : draft;
     const canPickup = intent === 'Pickup_Request' || intent === 'Bulk_Negotiation';
+    const pu = m.price_updates || { status: 'none', can_offer: false };
+    const puBanner = {
+      subscribed: `<div class="banner ok"><b>${icon('send')}Gets your price updates</b>They replied YES, so they receive your forecasts.</div>`,
+      invited: `<div class="banner"><b>${icon('clock')}Price-update invitation sent</b>Waiting for them to reply YES. Nothing is sent to them until they do.</div>`,
+    }[pu.status] || '';
+    const offerNote = pu.can_offer && rep.can_reply
+      ? `<div class="muted" style="margin:0 0 10px;font-size:12.5px">They only get price updates if they reply YES to the invitation.</div>
+         <button class="btn ghost" data-act="addoffer" style="width:100%;margin-bottom:10px">${icon('send')}Add price-update invitation to the reply</button>` : '';
 
     let banner = '';
     if (p && p.status === 'pending_approval') {
@@ -612,7 +618,7 @@
       const chipsHtml = labels.length
         ? labels.map(l => `<span class="itag other">${esc(pretty(l))}</span>`).join(' ')
         : '<span class="muted">No recyclable material recognised.</span>';
-      middle = `<div class="sect-h">Materials</div><div class="card pad">${chipsHtml}</div>` + priceListHtml() + await surveyHtml(m);
+      middle = `<div class="sect-h">Materials</div><div class="card pad">${chipsHtml}</div>` + priceListHtml();
     }
 
     let action = '';
@@ -643,6 +649,9 @@
       <div class="dsub">${esc(m.sender || 'Customer')}${p && p.organization ? ' · ' + esc(p.organization) : ''}</div>
       <div class="dsubject">${esc(m.subject || INTENTS[intent] || '')}</div>
       ${banner}
+      ${m.handled_note ? `<div class="banner ok"><b>${icon('send')}${esc(m.handled_note)}</b>The app handled this reply automatically. No action needed.</div>` : ''}
+      ${m.followup_unread ? `<div class="banner"><b>${icon('clock')}New reply from the customer</b>Their answer is in the conversation below.</div>` : ''}
+      ${puBanner}
       ${middle}
 
       <div class="sect-h">Conversation <small>${esc(when(m.received_at))} · ${esc(m.channel)}</small></div>
@@ -659,6 +668,7 @@
         <textarea id="replyText" maxlength="1500" placeholder="Write a reply…">${esc(startText)}</textarea>
         <div class="foot"><span>${rep.can_reply ? 'The customer receives this exactly as written.' : esc(rep.reason || 'Copy and send it yourself.')}</span></div>
       </div>
+      ${offerNote}
       <div class="btns" style="margin:0 0 14px">
         ${rep.can_reply ? `<button class="btn primary" data-act="sendreply">${icon('send')}Send reply</button>` : ''}
         <button class="btn ${rep.can_reply ? 'ghost' : 'primary'}" data-act="copyreply">${icon('copy')}Copy</button>
@@ -744,6 +754,17 @@
       return;
     }
 
+    if (act === 'addoffer') {
+      const box = $('replyText');
+      const line = (current.price_updates || {}).offer_line || '';
+      if (/reply\s+yes/i.test(box.value)) return toast('The invitation is already in the reply.');
+      const next = (box.value.trim() ? box.value.trim() + '\n\n' : '') + line;
+      if (next.length > 1500) return toast('That would make the reply too long. Shorten it first.');
+      box.value = next;
+      box.focus();
+      return toast('Invitation added. They only get updates if they reply YES.');
+    }
+
     if (act === 'addprices') {
       const box = $('replyText');
       const add = currentQuote.items.slice(0, 8).map(quoteLine).join('\n');
@@ -773,9 +794,7 @@
     }
   });
 
-  // =====================================================================
-  //  PRICE REVIEW  (requested prices -> approve with a truck and time)
-  // =====================================================================
+  //  PRICE REVIEW
   const verdictClass = v => v === 'within_market' ? 'good' : (v === 'no_reference' ? 'warn' : 'bad');
 
   async function openReview(pickupId, from) {
@@ -1071,9 +1090,7 @@
     }
   });
 
-  // =====================================================================
   //  PICKUP PLANNING
-  // =====================================================================
   async function loadPlan() {
     if (!session || isDriver()) return;
     try {
@@ -1170,9 +1187,7 @@
     if (a === 'inq') openDetail(b.dataset.mid);
   });
 
-  // =====================================================================
-  //  COLLECTIONS  (the driver's day)
-  // =====================================================================
+  //  COLLECTIONS
   async function loadCollections() {
     if (!session) return;
     const body = $('colBody');
@@ -1310,7 +1325,7 @@
     if (a === 'record') openRecord(parseInt(b.dataset.id, 10));
   });
 
-  // ---------- record a collection (bottom sheet) ----------
+  //  record a collection (bottom sheet)
   function openSheet(html) {
     $('sheet').innerHTML = html;
     $('sheet').classList.add('show');
@@ -1362,9 +1377,7 @@
     }
   });
 
-  // =====================================================================
   //  MORE / SETTINGS
-  // =====================================================================
   function helpHtml(title, steps, note = '') {
     return `
       <details class="channel-help">
@@ -1381,7 +1394,7 @@
   let moreView = null;                       // null = the menu; otherwise the key of the open section
   const THEME_KEY = 'scrapdesk_theme';
   const MORE_TITLES = {
-    trucks: 'Trucks', availability: 'Driver availability', prices: 'Price list', staff: 'Staff',
+    trucks: 'Trucks', availability: 'Driver availability', prices: 'Price list', updates: 'Price updates', staff: 'Staff',
     email: 'Email inbox', sms: 'SMS · phone forwarding', twilio: 'SMS · Twilio', messenger: 'Facebook Messenger',
   };
   const OWNER_ONLY = ['trucks', 'staff', 'email', 'sms', 'twilio', 'messenger'];
@@ -1410,22 +1423,18 @@
     ? `<div class="section-title">${esc(title)}</div><div class="mlist">${rows.map(moreRow).join('')}</div>` : '';
   const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
-  // Price list: the prices the shop quotes, with the survey average beside each
+  // Price list: the prices the shop quotes 
   let priceOpenId = null;                          // the item left open after a save
   const unitSuffix = u => (u === 'unit' ? ' each' : '/kg');
   const priceText = (n, u) => peso(n) + unitSuffix(u);
+  const numOrNull = v => { const n = parseFloat(v); return Number.isFinite(n) ? n : null; };
 
-  function priceSub(i) {
-    const parts = [];
-    if (i.survey) {
-      parts.push(`Survey avg ${peso(i.survey.average)} · ${plural(i.survey.shops, 'shop')}`);
-      if (i.buy_price) {
-        const pct = Math.round((i.buy_price - i.survey.average) / i.survey.average * 100);
-        parts.push(pct === 0 ? 'at average' : `${pct > 0 ? '+' : ''}${pct}%`);
-      }
-    } else parts.push('No survey match');
-    if (i.last_change && i.last_change.old != null) parts.push(`was ${peso(i.last_change.old)}`);
-    return parts.join(' · ');
+  // the small grey line under an item's name: how it compares with the survey
+  function priceHint(i) {
+    if (!i.survey) return 'No survey match';
+    const pct = i.buy_price ? Math.round((i.buy_price - i.survey.average) / i.survey.average * 100) : 0;
+    const diff = pct ? ` <em class="pl-diff ${pct > 0 ? 'up' : 'down'}">${pct > 0 ? '+' : ''}${pct}%</em>` : '';
+    return `Survey ${esc(peso(i.survey.average))}${diff}`;
   }
 
   function surveyOptions(materials, selected, withAuto) {
@@ -1435,86 +1444,104 @@
   }
 
   function priceItemHtml(i, materials) {
-    const searchText = [i.name, i.category, i.aliases].join(' ').toLowerCase();
-    return `<details class="pitem ${i.is_active ? '' : 'off'}" data-search="${esc(searchText)}" data-id="${i.id}" ${priceOpenId === i.id ? 'open' : ''}>
+    const search = [i.name, i.category, i.aliases].join(' ').toLowerCase();
+    return `<details class="pl-item ${i.is_active ? '' : 'off'}" data-search="${esc(search)}" ${priceOpenId === i.id ? 'open' : ''}>
       <summary>
-        <div class="l"><b>${esc(i.name)}${i.is_active ? '' : ' · hidden'}</b><span>${esc(priceSub(i))}</span></div>
-        <div class="r">${i.buy_price != null ? esc(priceText(i.buy_price, i.unit)) : '—'}
-          <small>${i.sell_price != null ? 'sell ' + esc(priceText(i.sell_price, i.unit)) : 'buy price'}</small></div>
+        <span class="pl-name">${esc(i.name)}${i.is_active ? '' : ' <em>hidden</em>'}</span>
+        <span class="pl-price">${i.buy_price != null ? esc(peso(i.buy_price)) + '<small>' + unitSuffix(i.unit) + '</small>' : '—'}</span>
+        <span class="pl-sub">${priceHint(i)}</span>
+        <span class="pl-sub r">${i.sell_price != null ? 'sell ' + esc(priceText(i.sell_price, i.unit)) : ''}</span>
       </summary>
-      <form class="pbody" data-form="priceedit" data-id="${i.id}">
-        <label class="field"><span>Name</span><input class="p-name" maxlength="100" value="${esc(i.name)}" required></label>
+      <form class="pl-edit" data-form="priceedit" data-id="${i.id}">
         <div class="two">
           <label class="field"><span>We buy at (₱)</span><input class="p-buy" type="number" min="0.01" step="any" value="${i.buy_price ?? ''}"></label>
-          <label class="field"><span>We sell at (₱, optional)</span><input class="p-sell" type="number" min="0.01" step="any" value="${i.sell_price ?? ''}"></label>
+          <label class="field"><span>We sell at (₱)</span><input class="p-sell" type="number" min="0.01" step="any" placeholder="optional" value="${i.sell_price ?? ''}"></label>
         </div>
-        <div class="two">
-          <label class="field"><span>Priced per</span><select class="p-unit"><option value="kg" ${i.unit === 'kg' ? 'selected' : ''}>kilogram</option><option value="unit" ${i.unit === 'unit' ? 'selected' : ''}>piece</option></select></label>
-          <label class="field"><span>Category</span><input class="p-cat" maxlength="60" value="${esc(i.category || '')}"></label>
-        </div>
-        <label class="field"><span>Other names customers use</span><input class="p-alias" maxlength="300" placeholder="karton, carton" value="${esc(i.aliases || '')}"></label>
-        <label class="field"><span>Compare with survey</span><select class="p-key">${surveyOptions(materials, i.catalog_key, true)}</select></label>
-        <label class="field"><span>Note (optional)</span><input class="p-note" maxlength="200" placeholder="e.g. clean and dry only" value="${esc(i.note || '')}"></label>
-        <button class="btn primary" type="submit" style="width:100%">Save changes</button>
-        <div class="btns" style="margin-top:8px">
-          <button type="button" class="btn ghost" data-act="price-history" data-id="${i.id}">Price history</button>
-          <button type="button" class="btn ghost" data-act="price-toggle" data-id="${i.id}" data-active="${i.is_active ? 1 : 0}">${i.is_active ? 'Hide' : 'Show'}</button>
-          <button type="button" class="btn danger" data-act="price-del" data-id="${i.id}">Delete</button>
+        <details class="pl-more">
+          <summary>More options</summary>
+          <label class="field"><span>Name</span><input class="p-name" maxlength="100" value="${esc(i.name)}" required></label>
+          <div class="two">
+            <label class="field"><span>Priced per</span><select class="p-unit"><option value="kg" ${i.unit === 'kg' ? 'selected' : ''}>kilogram</option><option value="unit" ${i.unit === 'unit' ? 'selected' : ''}>piece</option></select></label>
+            <label class="field"><span>Category</span><input class="p-cat" maxlength="60" value="${esc(i.category || '')}"></label>
+          </div>
+          <label class="field"><span>Other names customers use</span><input class="p-alias" maxlength="300" placeholder="karton, carton" value="${esc(i.aliases || '')}"></label>
+          <label class="field"><span>Compare with survey</span><select class="p-key">${surveyOptions(materials, i.catalog_key, true)}</select></label>
+          <label class="field"><span>Note</span><input class="p-note" maxlength="200" placeholder="e.g. clean and dry only" value="${esc(i.note || '')}"></label>
+        </details>
+        <button class="btn primary" type="submit" style="width:100%">Save</button>
+        <div class="pl-actions">
+          <button type="button" class="linkbtn" data-act="price-history" data-id="${i.id}">History</button>
+          <button type="button" class="linkbtn" data-act="price-toggle" data-id="${i.id}" data-active="${i.is_active ? 1 : 0}">${i.is_active ? 'Hide' : 'Show'}</button>
+          <button type="button" class="linkbtn danger" data-act="price-del" data-id="${i.id}">Delete</button>
         </div>
         <div class="phist" id="phist-${i.id}"></div>
       </form>
     </details>`;
   }
 
-  function pricesHtml(items, materials) {
-    const active = items.filter(i => i.is_active).length;
-    const importBtn = label => `<button class="btn ${items.length ? 'ghost' : 'primary'}" data-act="price-import" style="width:100%">${label}</button>`;
-    const groups = {};
-    items.forEach(i => { (groups[i.category || 'Other'] = groups[i.category || 'Other'] || []).push(i); });
-    const list = Object.keys(groups).sort().map(cat => `
-      <div class="pgroup"><div class="section-title">${esc(cat)}</div>
-        <div class="card">${groups[cat].map(i => priceItemHtml(i, materials)).join('')}</div></div>`).join('');
-
-    const intro = items.length
-      ? `<div class="card pad"><b>${plural(active, 'item')} on your price list</b>
-          <p class="muted" style="margin:4px 0 10px">These are the prices you quote to customers. Tap an item to change its price. The survey average is shown for comparison.</p>
-          <label class="card search" style="margin:0 0 8px"><svg class="ic"><use href="#i-search"/></svg><input type="search" id="priceSearch" placeholder="Search items"></label>
-          <button class="linkbtn" data-act="price-import">Add missing survey items</button></div>`
-      : `<div class="card pad"><b>Your price list is empty</b>
-          <p class="muted" style="margin:4px 0 12px">Start with the ${materials.length} materials from the junkshop price survey, priced at the survey average. Then change any price to what you actually pay. Or add items one by one below.</p>
-          ${importBtn(`Start from survey prices (${materials.length} items)`)}</div>`;
-
-    return `${intro}
-      <details class="card pad" style="margin-top:12px" ${items.length ? '' : 'open'}>
-        <summary style="cursor:pointer;font-weight:700">Add an item</summary>
-        <form id="priceForm" style="margin-top:12px">
-          <label class="field"><span>Name</span><input id="pName" maxlength="100" placeholder="Cardboard" required></label>
-          <div class="two">
-            <label class="field"><span>We buy at (₱)</span><input id="pBuy" type="number" min="0.01" step="any"></label>
-            <label class="field"><span>We sell at (₱, optional)</span><input id="pSell" type="number" min="0.01" step="any"></label>
-          </div>
+  function priceAddForm(materials, open) {
+    return `<details class="card pl-add" ${open ? 'open' : ''}>
+      <summary>＋ Add an item</summary>
+      <form id="priceForm">
+        <label class="field"><span>Name</span><input id="pName" maxlength="100" placeholder="Cardboard" required></label>
+        <div class="two">
+          <label class="field"><span>We buy at (₱)</span><input id="pBuy" type="number" min="0.01" step="any"></label>
+          <label class="field"><span>We sell at (₱)</span><input id="pSell" type="number" min="0.01" step="any" placeholder="optional"></label>
+        </div>
+        <details class="pl-more">
+          <summary>More options</summary>
           <div class="two">
             <label class="field"><span>Priced per</span><select id="pUnit"><option value="kg">kilogram</option><option value="unit">piece</option></select></label>
             <label class="field"><span>Category</span><input id="pCat" maxlength="60" placeholder="Paper"></label>
           </div>
           <label class="field"><span>Other names customers use</span><input id="pAlias" maxlength="300" placeholder="karton, carton"></label>
           <label class="field"><span>Compare with survey</span><select id="pKey">${surveyOptions(materials, null, true)}</select></label>
-          <label class="field"><span>Note (optional)</span><input id="pNote" maxlength="200"></label>
-          <button class="btn primary" type="submit" style="width:100%">Add to price list</button>
-        </form>
-      </details>
-      <div id="priceList">${list}</div>`;
+          <label class="field"><span>Note</span><input id="pNote" maxlength="200"></label>
+        </details>
+        <button class="btn primary" type="submit" style="width:100%">Add to price list</button>
+      </form>
+    </details>`;
   }
 
+  function pricesHtml(items, materials) {
+    if (!items.length) {
+      return `<div class="card pad"><b>Your price list is empty</b>
+          <p class="muted" style="margin:4px 0 12px">Start with the ${materials.length} materials from the junkshop price survey, priced at the survey average. Then change any price to what you actually pay.</p>
+          <button class="btn primary" data-act="price-import" style="width:100%">Start from survey prices</button></div>
+        <div style="margin-top:12px">${priceAddForm(materials, false)}</div>`;
+    }
+    const groups = {};
+    items.forEach(i => { (groups[i.category || 'Other'] = groups[i.category || 'Other'] || []).push(i); });
+    const names = Object.keys(groups).sort();
+    const active = items.filter(i => i.is_active).length;
+    const cats = names.map(cat => {
+      const open = items.length <= 12 || groups[cat].some(i => i.id === priceOpenId);
+      return `<details class="card pl-cat" data-open="${open ? 1 : 0}" ${open ? 'open' : ''}>
+        <summary><span>${esc(cat)}</span><span class="pl-count">${groups[cat].length}</span></summary>
+        ${groups[cat].map(i => priceItemHtml(i, materials)).join('')}
+      </details>`;
+    }).join('');
+    return `<label class="card search pl-search"><svg class="ic"><use href="#i-search"/></svg><input type="search" id="priceSearch" placeholder="Search ${items.length} items"></label>
+      <div class="pl-meta"><span>${plural(active, 'item')} · ${names.length} ${names.length === 1 ? 'category' : 'categories'}</span>
+        <button class="linkbtn" data-act="price-import">Add missing survey items</button></div>
+      ${priceAddForm(materials, false)}
+      <div id="priceList">${cats}</div>`;
+  }
+
+  // typing in the search box: show matching items and open the categories that have them
   function filterPriceList(q) {
     q = q.trim().toLowerCase();
-    document.querySelectorAll('#priceList .pitem').forEach(el => { el.style.display = !q || el.dataset.search.includes(q) ? '' : 'none'; });
-    document.querySelectorAll('#priceList .pgroup').forEach(g => {
-      g.style.display = [...g.querySelectorAll('.pitem')].some(el => el.style.display !== 'none') ? '' : 'none';
+    document.querySelectorAll('#priceList .pl-cat').forEach(cat => {
+      let shown = 0;
+      cat.querySelectorAll('.pl-item').forEach(el => {
+        const hit = !q || el.dataset.search.includes(q);
+        el.style.display = hit ? '' : 'none';
+        if (hit) shown++;
+      });
+      cat.style.display = shown ? '' : 'none';
+      cat.open = q ? shown > 0 : cat.dataset.open === '1';
     });
   }
-
-  const numOrNull = v => { const n = parseFloat(v); return Number.isFinite(n) ? n : null; };
 
   function trucksHtml(truckList, drivers) {
     const driverOpts = sel => '<option value="">No driver</option>' + drivers.map(d =>
@@ -1727,13 +1754,77 @@
 `;
   }
 
+  // Price updates: tomorrow's forecast, and the customers who said YES to receiving it
+  const STATUS_TAG = {
+    subscribed: ['next', 'Subscribed'], invited: ['pending', 'Waiting for YES'],
+    declined: ['plain', 'Said no'], unsubscribed: ['plain', 'Unsubscribed'],
+  };
+  const CONF_TEXT = { high: 'good history', medium: 'some history', low: 'little history' };
+
+  function forecastLine(f) {
+    const unit = f.unit === 'unit' ? ' each' : '/kg';
+    const move = f.direction === 'steady'
+      ? '<em class="pl-diff">steady</em>'
+      : `<em class="pl-diff ${f.direction}">${f.direction === 'up' ? '+' : '−'}${esc(peso(Math.abs(f.change)))} (${f.change_pct > 0 ? '+' : ''}${f.change_pct}%)</em>`;
+    const week = f.trend === 'flat' || !f.trend_days ? 'no change this week'
+      : `${f.trend === 'up' ? 'up' : 'down'} ${peso(Math.abs(f.week_change))} this week`;
+    return `<div class="price-line">
+      <div><b>${esc(f.name)}</b><span>Today ${esc(peso(f.current_price))}${unit} · ${esc(week)}<br>${esc(CONF_TEXT[f.confidence] || '')}</span></div>
+      <div class="r">${esc(peso(f.expected_price))}${esc(unit)}<br>${move}</div>
+    </div>`;
+  }
+
+  function updatesHtml(d) {
+    const n = d.subscribers.subscribed;
+    const thin = d.forecasts.length && d.forecasts.every(f => f.confidence === 'low');
+    const forecasts = d.forecasts.length
+      ? `<div class="card pad">${d.forecasts.map(forecastLine).join('')}</div>
+         ${thin ? `<div class="muted" style="margin:8px 2px 0;font-size:12.5px">Not much price history yet, so most items will read “steady”. Forecasts get more useful as you update prices in Price list over a few weeks.</div>` : ''}`
+      : `<div class="card pad muted">Set buying prices in Price list first. Forecasts are made from your own price changes.</div>`;
+
+    const people = d.people.length
+      ? `<div class="card pad">${d.people.map(p => {
+          const tag = STATUS_TAG[p.status] || ['plain', p.status];
+          return `<div class="price-line">
+            <div><b>${esc(p.name || p.to_hint)}</b><span>${esc(p.channel)} · ${esc(p.to_hint)}${p.last_error ? ' · last send failed' : ''}</span></div>
+            <div class="r"><span class="tag ${tag[0]}">${esc(tag[1])}</span>${p.status === 'subscribed'
+              ? `<br><button class="linkbtn danger" data-act="upd-unsub" data-id="${p.id}">Unsubscribe</button>` : ''}</div>
+          </div>`; }).join('')}</div>`
+      : `<div class="card pad muted">Nobody yet. When you answer a price question, the reply includes an invitation to get price updates. Customers join by replying YES.</div>`;
+
+    const runs = d.recent_runs.length
+      ? `<div class="sect-h">Recent sends</div><div class="card pad">${d.recent_runs.map(r =>
+          `<div class="price-line"><div><b>${esc(when(r.sent_at))}</b><span>${plural(r.delivered, 'customer')} reached${r.failed ? ` · ${r.failed} failed` : ''}</span></div></div>`).join('')}</div>` : '';
+
+    return `
+      <p class="lede" style="margin-top:0">Expected buying prices for ${esc(fmtDay(d.for_date))}. ${esc(d.method)}</p>
+      <div class="sect-h">Tomorrow's forecast</div>
+      ${forecasts}
+
+      <div class="sect-h">Send to subscribers <small>${plural(n, 'customer')}</small></div>
+      <div class="card replybox">
+        <textarea id="updText" maxlength="1500" ${d.message ? '' : 'disabled'} placeholder="Nothing to send yet">${esc(d.message)}</textarea>
+        <div class="foot"><span>Sent only to customers who replied YES. You can edit the message.</span></div>
+      </div>
+      <label class="field" style="margin:0 0 10px;display:flex;gap:8px;align-items:center">
+        <input id="updAgain" type="checkbox" style="width:auto"><span style="margin:0;font-weight:500">Also send to people who already got an update today</span>
+      </label>
+      <button class="btn primary" style="width:100%" data-act="send-updates" data-n="${n}" ${n && d.message ? '' : 'disabled'}>${icon('send')}${n ? `Send to ${plural(n, 'subscriber')}` : 'No subscribers yet'}</button>
+
+      <div class="sect-h">Customers <small>${d.subscribers.invited} waiting · ${d.subscribers.declined + d.subscribers.unsubscribed} opted out</small></div>
+      ${people}
+      ${runs}
+      <div class="muted" style="margin:14px 2px;font-size:12.5px">Messenger only delivers within 24 hours of the customer's last message, so updates to Messenger subscribers outside that window may fail. Email and SMS are not limited this way.</div>`;
+  }
+
   async function renderMoreMenu() {
     const u = session.user;
     const owner = isOwner(), driver = isDriver();
-    let truckList = [], staff = [], drivers = [], ch = {}, priceItems = [];
+    let truckList = [], staff = [], drivers = [], ch = {}, priceItems = [], updates = null;
     const jobs = [];
     if (!driver) jobs.push(api('/planning/availability').then(r => { drivers = r.drivers; }));
     if (!driver) jobs.push(api('/inventory/items').then(r => { priceItems = r.items; }));
+    if (!driver) jobs.push(api('/price-updates').then(r => { updates = r; }));
     if (owner) {
       jobs.push(api('/planning/trucks?include_inactive=true').then(r => { truckList = r.trucks; }));
       jobs.push(api('/staff').then(r => { staff = r.staff; }));
@@ -1754,6 +1845,8 @@
       sub: drivers.length ? plural(drivers.length, 'driver') + (offToday ? ` · ${offToday} off today` : '') : 'Shifts and days off' });
     if (!driver) management.push({ key: 'prices', ico: 'scale', title: 'Price list',
       sub: priceItems.length ? `${plural(priceItems.filter(i => i.is_active).length, 'item')} · prices you quote` : 'Add items and set your prices' });
+    if (!driver) management.push({ key: 'updates', ico: 'send', title: 'Price updates',
+      sub: updates ? (updates.subscribers.subscribed ? `${plural(updates.subscribers.subscribed, 'customer')} subscribed · forecast for tomorrow` : 'Forecasts for customers who opt in') : 'Forecasts for customers who opt in' });
     if (owner) management.push({ key: 'staff', ico: 'users', title: 'Staff',
       sub: staff.length ? `${plural(nDrivers, 'driver')} · ${plural(nDispatchers, 'dispatcher')}` : 'Add drivers and dispatchers' });
 
@@ -1783,7 +1876,7 @@
   async function renderMoreSection(key) {
     const head = `<div class="subhead"><button class="back" data-more="menu" aria-label="Back">${icon('back')}</button>
       <h1 class="h1">${esc(MORE_TITLES[key])}</h1></div>`;
-    if ((OWNER_ONLY.includes(key) && !isOwner()) || ((key === 'availability' || key === 'prices') && isDriver())) {
+    if ((OWNER_ONLY.includes(key) && !isOwner()) || ((key === 'availability' || key === 'prices' || key === 'updates') && isDriver())) {
       moreView = null;
       return renderMoreMenu();
     }
@@ -1798,6 +1891,8 @@
       } else if (key === 'prices') {
         const [inv, sv] = await Promise.all([api('/inventory/items'), api('/prices/materials')]);
         body = pricesHtml(inv.items, sv.materials);
+      } else if (key === 'updates') {
+        body = updatesHtml(await api('/price-updates'));
       } else if (key === 'staff') {
         body = staffHtml((await api('/staff')).staff);
       } else {
@@ -1857,6 +1952,15 @@
         });
         toast('Item added to your price list.');
       } else if (dynamic === 'avail') {
+        await api(`/planning/availability/${form.dataset.driver}`, {
+          method: 'PUT',
+          body: {
+            shift_start: form.querySelector('.av-start').value,
+            shift_end: form.querySelector('.av-end').value,
+            work_days: [...form.querySelectorAll('.av-day:checked')].map(c => parseInt(c.value, 10)),
+          },
+        });
+        toast('Shift saved.');
       } else if (dynamic === 'timeoff') {
         await api(`/planning/availability/${form.dataset.driver}/time-off`, {
           method: 'POST',
@@ -2018,6 +2122,26 @@
           ? r.history.map(h => `<div>${esc(fmtDay(h.changed_at.slice(0, 10)))} · ${h.field === 'buy_price' ? 'Buy' : 'Sell'}: ${h.old_value != null ? esc(peso(h.old_value)) : 'none'} → ${h.new_value != null ? esc(peso(h.new_value)) : 'none'}${h.changed_by ? ' · ' + esc(h.changed_by) : ''}</div>`).join('')
           : 'No price changes yet.';
 
+      } else if (act === 'send-updates') {
+        const n = parseInt(btn.dataset.n, 10) || 0;
+        const text = $('updText').value.trim();
+        if (!text) return toast('There is nothing to send.');
+        if (!confirm(`Send this to ${plural(n, 'subscribed customer')}? Only customers who replied YES receive it.`)) return;
+        btn.disabled = true;
+        const r = await api('/price-updates/send', { method: 'POST',
+          body: { text, include_already_sent: $('updAgain').checked } });
+        const bits = [`Sent to ${plural(r.delivered, 'customer')}`];
+        if (r.skipped_already_sent) bits.push(`${r.skipped_already_sent} skipped (already sent today)`);
+        if (r.failed) bits.push(`${r.failed} failed: ${r.failures[0].reason}`);
+        toast(bits.join(' · '));
+        await loadMore();
+
+      } else if (act === 'upd-unsub') {
+        if (!confirm('Stop sending price updates to this customer?')) return;
+        await api(`/price-updates/subscribers/${btn.dataset.id}/unsubscribe`, { method: 'POST' });
+        toast('Unsubscribed. They will not get more updates.');
+        await loadMore();
+
       } else if (act === 'truck-toggle') {
         const active = btn.dataset.active === '1';
         if (active && !confirm('Remove this truck from planning?')) return;
@@ -2041,7 +2165,7 @@
     }
   });
 
-  // ---------- boot ----------
+  // boot
   (async function boot() {
     if (!session) return show('login');
     try {

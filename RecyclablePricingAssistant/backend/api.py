@@ -24,9 +24,10 @@ from backend.inbox_routes import router as inbox_router
 from Operations import ops_db
 from Operations.collection_routes import router as collections_router
 from Operations.planning_routes import router as planning_router
-from Prices import inventory, price_catalog
+from Prices import inventory, price_catalog, subscriptions
 from Prices.inventory_routes import router as inventory_router
 from Prices.price_routes import router as price_router
+from Prices.update_routes import router as price_updates_router
 
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles
@@ -38,6 +39,7 @@ async def lifespan(app: FastAPI):
     db.init_db()                           # create / upgrade the database
     ops_db.init_ops_db()                   # trucks, pickups, routes tables
     price_catalog.load()                   # Junkshop price survery
+    subscriptions.init_subscriptions_db()  # customers who agreed to price updates
     inventory.init_inventory_db()          # the shop's own price list                      # Shop's price list
     accounts_db.purge_expired_sessions()
     accounts_db.purge_old_attempts((datetime.now(timezone.utc) - timedelta(days=1)).isoformat(timespec="seconds"))
@@ -80,6 +82,7 @@ app.include_router(planning_router)
 app.include_router(collections_router)
 app.include_router(price_router)
 app.include_router(inventory_router)
+app.include_router(price_updates_router)
 
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles

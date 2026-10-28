@@ -181,4 +181,11 @@ def init_db():
         conn.executescript(SCHEMA)
         # Upgrades for databases created by earlier versions
         _add_column_if_missing(conn, "messages", "reply_address", "TEXT")
+        _add_column_if_missing(conn, "messages", "handled_note", "TEXT")      # set when the app dealt with a message itself
+        # A customer's answer to one of our replies is stored as a follow-up of the original inquiry
+        # (parent_id) instead of becoming a new inquiry of its own.
+        _add_column_if_missing(conn, "messages", "parent_id", "INTEGER")
+        _add_column_if_missing(conn, "messages", "followup_unread", "INTEGER NOT NULL DEFAULT 0")
+        _add_column_if_missing(conn, "messages", "last_followup_at", "TEXT")
+        conn.execute("CREATE INDEX IF NOT EXISTS ix_messages_parent ON messages(parent_id)")
         _add_column_if_missing(conn, "messages", "replied_at", "TEXT")

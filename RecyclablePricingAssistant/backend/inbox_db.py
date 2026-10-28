@@ -28,6 +28,8 @@ def _to_dict(row):
     # The full reply address stays on the server; the app only sees a masked hint.
     record["reply_hint"] = mask_address(record.pop("reply_address", None))
     record["needs_review"] = bool(record["needs_review"])
+    if "followup_unread" in record:
+        record["followup_unread"] = bool(record["followup_unread"])
     materials = record.pop("materials_json")
     corrected = record.pop("corrected_materials_json")
     record["materials"] = json.loads(materials) if materials else None
@@ -68,18 +70,19 @@ def delete_message(shop_id, message_id):
     return cur.rowcount > 0
 
 def insert_message(shop_id, channel, sender, text, received_at, intent, intent_confidence,
-                   needs_review, materials, external_id=None, subject=None, reply_address=None):
+                   needs_review, materials, external_id=None, subject=None, reply_address=None,
+                   parent_id=None):
     """Return (record, created). created is False when it was a duplicate."""
     try:
         with connect() as conn:
             new_id = conn.execute(
                 """INSERT INTO messages
                    (shop_id, channel, external_id, sender, subject, text, received_at, created_at,
-                    intent, intent_confidence, needs_review, materials_json, reply_address)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    intent, intent_confidence, needs_review, materials_json, reply_address, parent_id)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (shop_id, channel, external_id, sender, subject, text, received_at or now_iso(),
                  now_iso(), intent, intent_confidence, int(needs_review),
-                 json.dumps(materials) if materials is not None else None, reply_address),
+                 json.dumps(materials) if materials is not None else None, reply_address, parent_id),
             ).lastrowid
     except sqlite3.IntegrityError:
         return find_by_external(shop_id, channel, external_id), False
@@ -88,7 +91,7 @@ def insert_message(shop_id, channel, sender, text, received_at, intent, intent_c
 
 def list_messages(shop_id, channel=None, intent=None, needs_review=None, status=None,
                   limit=50, offset=0):
-    where, params = ["shop_id = ?"], [shop_id]
+    where, params = ["shop_id = ?", "parent_id IS NULL"], [shop_id]      # follow-ups live inside their inquiry
     if channel:
         where.append("channel = ?"); params.append(channel)
     if intent:
@@ -99,10 +102,22 @@ def list_messages(shop_id, channel=None, intent=None, needs_review=None, status=
         where.append("status = ?"); params.append(status)
     with connect() as conn:
         rows = conn.execute(
-            f"SELECT * FROM messages WHERE {' AND '.join(where)} ORDER BY id DESC LIMIT ? OFFSET ?",
+            f"""SELECT messages.*,
+                       (SELECT c.text    FROM messages c WHERE c.parent_id = messages.id ORDER BY c.id DESC LIMIT 1) AS last_followup_text,
+                       (SELECT c.subject FROM messages c WHERE c.parent_id = messages.id ORDER BY c.id DESC LIMIT 1) AS last_followup_subject
+                FROM messages WHERE {' AND '.join(where)}
+                ORDER BY COALESCE((SELECT MAX(c.id) FROM messages c
+                                   WHERE c.parent_id = messages.id AND c.handled_note IS NULL), messages.id) DESC,
+                         messages.id DESC
+                LIMIT ? OFFSET ?""",
             (*params, limit, offset),
         ).fetchall()
-    return [_to_dict(r) for r in rows]
+    out = []
+    for r in rows:
+        record = _to_dict(r)
+        record["last_followup_text"] = strip_subject(record["last_followup_text"], record.pop("last_followup_subject"))
+        out.append(record)
+    return out
 
 
 def review_message(shop_id, message_id, intent=None, materials=None, reviewer_id=None):
@@ -129,17 +144,25 @@ def review_message(shop_id, message_id, intent=None, materials=None, reviewer_id
     return get_message(shop_id, message_id)
 
 
+def mark_handled(shop_id, message_id, note=None):
+    """The app dealt with this message itself (e.g. a YES to the price-update invitation), so it
+    does not need to wait in the 'needs review' list. `note` is the short label shown on it."""
+    with connect() as conn:
+        conn.execute("UPDATE messages SET needs_review = 0, handled_note = ? WHERE id = ? AND shop_id = ?",
+                     (note, message_id, shop_id))
+
+
 def stats(shop_id):
     with connect() as conn:
-        total = conn.execute("SELECT COUNT(*) FROM messages WHERE shop_id = ?", (shop_id,)).fetchone()[0]
+        total = conn.execute("SELECT COUNT(*) FROM messages WHERE shop_id = ? AND parent_id IS NULL", (shop_id,)).fetchone()[0]
         by_channel = conn.execute(
-            "SELECT channel, COUNT(*) c FROM messages WHERE shop_id = ? GROUP BY channel", (shop_id,)
+            "SELECT channel, COUNT(*) c FROM messages WHERE shop_id = ? AND parent_id IS NULL GROUP BY channel", (shop_id,)
         ).fetchall()
         by_intent = conn.execute(
-            f"SELECT {EFFECTIVE_INTENT} i, COUNT(*) c FROM messages WHERE shop_id = ? GROUP BY i", (shop_id,)
+            f"SELECT {EFFECTIVE_INTENT} i, COUNT(*) c FROM messages WHERE shop_id = ? AND parent_id IS NULL GROUP BY i", (shop_id,)
         ).fetchall()
         pending = conn.execute(
-            "SELECT COUNT(*) FROM messages WHERE shop_id = ? AND needs_review = 1 AND status = 'new'",
+            "SELECT COUNT(*) FROM messages WHERE shop_id = ? AND parent_id IS NULL AND needs_review = 1 AND status = 'new'",
             (shop_id,),
         ).fetchone()[0]
     return {
@@ -148,6 +171,102 @@ def stats(shop_id):
         "by_channel": {r["channel"]: r["c"] for r in by_channel},
         "by_intent": {r["i"]: r["c"] for r in by_intent},
     }
+
+
+#  conversations: a customer's answer belongs to the inquiry it answers
+def strip_subject(text, subject):
+    """Emails are stored as "subject\nbody"; the conversation only needs the body."""
+    text = (text or "").strip()
+    subject = (subject or "").strip()
+    if subject and text.lower().startswith(subject.lower()):
+        text = text[len(subject):].strip()
+    return text
+
+
+def root_id(shop_id, message_id):
+    """The inquiry a message belongs to: itself, or the inquiry it is a follow-up of."""
+    with connect() as conn:
+        row = conn.execute("SELECT id, parent_id FROM messages WHERE id = ? AND shop_id = ?",
+                           (message_id, shop_id)).fetchone()
+    return None if row is None else (row["parent_id"] or row["id"])
+
+
+def child_ids(shop_id, message_id):
+    with connect() as conn:
+        rows = conn.execute("SELECT id FROM messages WHERE shop_id = ? AND parent_id = ? ORDER BY id",
+                            (shop_id, message_id)).fetchall()
+    return [r["id"] for r in rows]
+
+
+def list_followups(shop_id, root):
+    with connect() as conn:
+        rows = conn.execute("SELECT * FROM messages WHERE shop_id = ? AND parent_id = ? ORDER BY id",
+                            (shop_id, root)).fetchall()
+    out = []
+    for row in rows:
+        r = _to_dict(row)
+        out.append({"id": r["id"], "sender": r["sender"], "channel": r["channel"], "created_at": r["created_at"],
+                    "received_at": r["received_at"], "text": strip_subject(r["text"], r["subject"]),
+                    "intent": r["corrected_intent"] or r["intent"], "handled_note": r["handled_note"]})
+    return out
+
+
+def find_thread_by_references(shop_id, channel, reference_ids):
+    """Email: the customer's reply names the message it answers (In-Reply-To / References)."""
+    ids = [i for i in dict.fromkeys(reference_ids or []) if i]
+    if not ids:
+        return None
+    marks = ",".join("?" * len(ids))
+    with connect() as conn:
+        row = conn.execute(f"SELECT id, parent_id FROM messages WHERE shop_id = ? AND channel = ? "
+                           f"AND external_id IN ({marks}) ORDER BY id LIMIT 1", (shop_id, channel, *ids)).fetchone()
+    return None if row is None else (row["parent_id"] or row["id"])
+
+
+def find_thread_by_recent_reply(shop_id, channel, reply_address, window_hours):
+    """SMS / Messenger have no thread information. A message counts as an answer when the shop has
+    already replied to this same customer's latest inquiry within `window_hours`."""
+    if not reply_address:
+        return None
+    with connect() as conn:
+        root = conn.execute("""SELECT id FROM messages WHERE shop_id = ? AND channel = ? AND reply_address = ?
+                               AND parent_id IS NULL ORDER BY id DESC LIMIT 1""",
+                            (shop_id, channel, reply_address)).fetchone()
+        if root is None:
+            return None
+        family = [root["id"], *child_ids(shop_id, root["id"])]
+        marks = ",".join("?" * len(family))
+        last = conn.execute(f"SELECT MAX(sent_at) AS t FROM message_replies WHERE shop_id = ? AND status = 'sent' "
+                            f"AND message_id IN ({marks})", (shop_id, *family)).fetchone()["t"]
+    if not last:
+        return None
+    from datetime import datetime, timedelta, timezone
+    age = datetime.now(timezone.utc) - datetime.fromisoformat(last)
+    return root["id"] if age <= timedelta(hours=window_hours) else None
+
+
+def note_followup(shop_id, root, unread=True):
+    """A customer answered: flag the inquiry and move it to the top of the inbox."""
+    with connect() as conn:
+        conn.execute("UPDATE messages SET last_followup_at = ?, followup_unread = ? WHERE id = ? AND shop_id = ?",
+                     (now_iso(), 1 if unread else 0, root, shop_id))
+
+
+def clear_followup_unread(shop_id, root):
+    with connect() as conn:
+        conn.execute("UPDATE messages SET followup_unread = 0 WHERE id = ? AND shop_id = ?", (root, shop_id))
+
+
+def list_thread_replies(shop_id, ids):
+    """Every reply the shop sent in this conversation (on the inquiry or on any follow-up)."""
+    marks = ",".join("?" * len(ids))
+    with connect() as conn:
+        rows = conn.execute(
+            f"""SELECT r.*, u.full_name AS sent_by_name FROM message_replies r
+                LEFT JOIN users u ON u.id = r.sent_by
+                WHERE r.shop_id = ? AND r.message_id IN ({marks}) ORDER BY r.id""",
+            (shop_id, *ids)).fetchall()
+    return [dict(r) for r in rows]
 
 
 #  replies sent from the app
