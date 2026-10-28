@@ -1,0 +1,7 @@
+Model,Evaluation,Accuracy / Exact Match,Precision,Recall,F1-Score,Metric definition
+Intent,5-fold cross-validation (n=457),0.973742,0.973674,0.973736,0.973502,Intent precision/recall/F1 are macro-averaged
+Intent,Held-out test (n=248),0.987903,0.988089,0.987903,0.987902,Intent precision/recall/F1 are macro-averaged
+Material,5-fold cross-validation (n=884),0.912896,0.930320,0.954589,0.942299,Exact match; micro-averaged label precision/recall/F1
+Material,Standard test (n=60),0.883333,0.905405,1.000000,0.950355,Exact match; micro-averaged label precision/recall/F1
+Material,Blind test (n=73),0.767123,0.881579,0.978102,0.927336,Exact match; micro-averaged label precision/recall/F1
+Material,Mixed test (n=70),0.985714,1.000000,0.996970,0.998483,Exact match; micro-averaged label precision/recall/F1

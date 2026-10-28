@@ -1,0 +1,5 @@
+,Price_Inquiry,Pickup_Request,Bulk_Negotiation,Other
+Price_Inquiry,61,0,0,1
+Pickup_Request,0,62,0,0
+Bulk_Negotiation,0,0,62,0
+Other,0,2,0,60

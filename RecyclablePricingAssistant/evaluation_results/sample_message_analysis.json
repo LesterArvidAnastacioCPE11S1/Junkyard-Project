@@ -1,0 +1,38 @@
+{
+  "sample_message": "Magandang umaga po, may mga bote, karton at aluminum cans po ako. Magkano po kilo? Pwede po ba kunin sa bahay?",
+  "intent": {
+    "label": "Price_Inquiry",
+    "confidence": 0.584,
+    "needs_review": false,
+    "scores": {
+      "Bulk_Negotiation": 0.036,
+      "Other": 0.015,
+      "Pickup_Request": 0.365,
+      "Price_Inquiry": 0.584
+    }
+  },
+  "materials": {
+    "labels": [
+      "Aluminum",
+      "Cardboard",
+      "Glass"
+    ],
+    "matches": [
+      {
+        "label": "Cardboard",
+        "confidence": 1.0,
+        "evidence": "karton"
+      },
+      {
+        "label": "Aluminum",
+        "confidence": 1.0,
+        "evidence": "aluminum cans po ako."
+      },
+      {
+        "label": "Glass",
+        "confidence": 0.727,
+        "evidence": "may mga bote"
+      }
+    ]
+  }
+}

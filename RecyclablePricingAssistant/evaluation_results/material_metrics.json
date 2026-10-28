@@ -1,0 +1,38 @@
+[
+  {
+    "rows": 60,
+    "exact_correct": 53,
+    "exact_match": 0.8833333333333333,
+    "precision": 0.9054054054054054,
+    "recall": 1.0,
+    "f1": 0.950354609929078,
+    "tp": 67,
+    "fp": 7,
+    "fn": 0,
+    "dataset": "standard"
+  },
+  {
+    "rows": 73,
+    "exact_correct": 56,
+    "exact_match": 0.7671232876712328,
+    "precision": 0.881578947368421,
+    "recall": 0.9781021897810219,
+    "f1": 0.9273356401384083,
+    "tp": 134,
+    "fp": 18,
+    "fn": 3,
+    "dataset": "blind"
+  },
+  {
+    "rows": 70,
+    "exact_correct": 69,
+    "exact_match": 0.9857142857142858,
+    "precision": 1.0,
+    "recall": 0.996969696969697,
+    "f1": 0.9984825493171471,
+    "tp": 329,
+    "fp": 0,
+    "fn": 1,
+    "dataset": "mixed"
+  }
+]

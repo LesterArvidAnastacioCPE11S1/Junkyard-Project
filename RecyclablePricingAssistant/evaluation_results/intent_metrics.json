@@ -1,0 +1,15 @@
+{
+  "test_rows": 248,
+  "correct": 245,
+  "accuracy": 0.9879032258064516,
+  "macro_precision": 0.9880891393442623,
+  "macro_recall": 0.9879032258064516,
+  "macro_f1": 0.987901664730933,
+  "review_count": 5,
+  "labels": [
+    "Price_Inquiry",
+    "Pickup_Request",
+    "Bulk_Negotiation",
+    "Other"
+  ]
+}
